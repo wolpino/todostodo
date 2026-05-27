@@ -1,0 +1,107 @@
+EZRA take home todo list app
+STEP ONE: 
+brain dump
+> my thought process is web like, so starting here moving forward and back happens
+
+Initial thoughts/all the ideas and functionalities that are may or may not be a part of the MVP..
+— app should be mobile friendly
+— multi user collaboration - sharing lists, roles: owner, editor, viewer
+— notifications - reminders
+— ability to assign due dates AND times
+— ability to make todo lists for current day
+Different views 
+>> one endless todo list
+>> day/week/(month year?) to do lists? 
+Status
+Nested/sub tasks
+>> 
+
+Breaking into smaller tasks
+
+Schema
+Task
+- id
+- title/task description (max length?)
+- extra description
+- created date
+- modified date
+- due date?
+- status
+- parentID nullable 
+- dependencies?
+
+> authorization user etc > I think this comes for free with .net
+
+Questions
+— who is this for? engineers? Students? 
+
+Use Case Diagram > actors and actions, CRUD
+Create/vuew/edit/complete/delete tasks
+
+- responsive to all screen sizes?
+
+>> testing
+>> logging
+>> monitoring 
+
+STEP 2
+Research and review > review C# general rules etc. I am planning to use Cursor to generate the application but need to refresh the language
+> looking at to-do list apps to get ideas/what works/doesn’t
+
+Questions
+— who is this for? engineers? Students? 
+- use case is important. Start with default. Add personas? They inherit default/person
+https://medium.com/@annchichi/cast-study-a-simple-todo-app-5f0c69b5a2ee
+User interviews
+
+Traditional to do, for everyone, or different/alternative, there are enough basic ones
+https://medium.com/thoughts-from-femke/why-the-bullet-journal-beats-to-do-lists-501f41b1203a bullet journal inspired?
+
+>> one for everything (The Index Card {gpa used to carry an index card, with names, etc, I use a note called index card
+— everything can get dumped in. 
+- groceries to get — apples, dishwasher liquid
+- books to read — Judy said to read The Emerald by? Or a link
+: is there an option on creating to direct to lists? Auto detect?
+>> that’s a different sorting. 
+My most useful todos are a stickie note brightly colored, with maybe 5 items that are genuine, actions to do, rather than something that needs to be broken down.
+— like jira tickets, can link to other tasks > related to, duplicates, parent of, depends on, do before, etc
+
+Yes bullet journal https://web.archive.org/web/20180903110802/https://bulletjournal.com/pages/learn 
+
+Ok, research has become endless so stoping with 
+The Alastair method
+https://www.reddit.com/r/bujo/comments/dxjvhm/i_have_been_loving_the_alastair_method_lately_so/
+And remember it is bullet journal INSPIRED not a bullet journal
+https://www.youtube.com/watch?v=inlYt5RsPYU 
+From https://bulletjournal.com/:
+Write a better life™
+Bujo is a simple Life OS helping over a millionpeople track the past, organize the present, and create the future, one word at a time
+
+relational todos: like jira tickets, can link to other tasks > related to, duplicates, parent of, depends on, do before, etc
+
+
+STEP 3
+design
+- Login/sign up >> SSO? 
+
+Features/questions from designing
+- how straight forward is SSO with .Net?
+- ability to hide tasks from views
+- pause/put task on back burner
+If tasks rollover, historical view/capture, end of day, view only todos so future task changes won’t change historical data
+- for parent/child, what fields are shared > not status >> can you complete a parent with incomplete children > give an alert/reminder check before marking complete
+— does a subtask start as a partial task? Can it become a plan task? subtask inherit task? Other types of tasks (linked > next task, previous)
+
+
+NEW IDEA > 
+Assisted to do list
+- brain dump > each line split into a task
+- suggest ones that need subtasks
+>> guided process, dump all ideas, 
+
+Priority/importance
+
+Must do
+Should do
+Could do
+
