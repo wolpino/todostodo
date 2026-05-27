@@ -86,30 +86,6 @@ additional views > last week - this week - next week (3 days before/after)
 
 ---
 
-## Decisions
-
-*simple* but not the *same*  
-
-Index Card - Bullet Journal > what's the middleground?
-
-## schema
-Task
-- id
-- title/task description (max length?)
-- extra description
-- created date
-- modified date
-- due date?
-- status
-- parentID nullable 
-- dependencies?
-
-User
-
-Task
-
-Views 
-
 ## Research on bullet journals
 
 - rapid logging:
@@ -133,7 +109,33 @@ facts, ideas, thoughts, observations > capture data and information you don't wa
 - *Susan is lactose intolarent*
 - *wombats have square poop*
 
+---
+
 ## FEATURES/FUNCTIONALITY
 
 - relational todos: like jira tickets, can link to other tasks > related to, duplicates, parent of, depends on, do before, etc
+
+## Decisions
+
+*simple* but not the *same*  
+
+Index Card - Bullet Journal > what's the middleground?
+
+## schema
+Task
+- id
+- title/task description (max length?)
+- extra description
+- created date
+- modified date
+- due date?
+- status
+- parentID nullable 
+- dependencies?
+
+User
+
+Task
+
+Views 
 
