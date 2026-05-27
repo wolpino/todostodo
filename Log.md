@@ -51,6 +51,14 @@ public class SqliteService
 
 I'm choosing EF Core + Sqlite for LINQ, migrations and Identity integration
 
+# 5/27
+tried to get project running before adding sqlite. remembered about Solutions vs projects so I'm going to see if I can fix this without making a new project.
+-- the issue was 
+also the HTTPS Developer Certificate was causing the Error, the suggested commands worked.... after a restart.
+https://stackoverflow.com/questions/54371101/cannot-create-developer-certificate-on-mac
+https://learn.microsoft.com/en-us/aspnet/core/breaking-changes/9/certificate-export?view=aspnetcore-10.0
+
+
 # 5/26
 
 ## generate framework for react/.net core application
