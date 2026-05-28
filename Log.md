@@ -6,6 +6,9 @@
 add SQlite
 I'm choosing EF Core + Sqlite for LINQ, migrations and Identity integration
 
+buuut for some reason this project is way out of date...which is ok because of modernize!
+https://devblogs.microsoft.com/dotnet/modernize-dotnet-anywhere-with-ghcp/ 
+
 # 5/27
 tried to get project running before adding sqlite. remembered about Solutions vs projects so I'm going to see if I can fix this without making a new project.
 -- the issue was 
