@@ -27,7 +27,7 @@ builder.Host.UseSerilog((ctx, lc) =>
 
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
-builder.Services.AddDbContext<ApplicationDbContext>(c => c.UseSqlite("Filename=DataBase.db"));
+builder.Services.AddDbContext<ApplicationDbContext>(c => c.UseSqlite("Data Source=:memory:"));
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
 {
