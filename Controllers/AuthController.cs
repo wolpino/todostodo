@@ -31,6 +31,12 @@ public class AuthController : ControllerBase
     [Route("login")]
     public async Task<ActionResult<JwtData>> Login([FromBody] LoginModel model)
     {
+        if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Password))
+        {
+            ModelState.AddModelError("", "Username and password are required");
+            return (ActionResult)_apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+        }
+
         var user = await _userManager.FindByNameAsync(model.Username) ?? await _userManager.FindByEmailAsync(model.Username);
         if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
         {
@@ -51,6 +57,12 @@ public class AuthController : ControllerBase
     [Route("register")]
     public async Task<ActionResult<Response>> Register([FromBody] RegisterModel model)
     {
+        if (string.IsNullOrWhiteSpace(model.Username) || string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Password))
+        {
+            ModelState.AddModelError("", "Username, email, and password are required");
+            return (ActionResult)_apiBehaviorOptions.Value.InvalidModelStateResponseFactory(ControllerContext);
+        }
+
         var userExists = await _userManager.FindByNameAsync(model.Username);
         if (userExists != null) ModelState.AddModelError("", "Username already taken");
         

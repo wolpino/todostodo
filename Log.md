@@ -3,6 +3,32 @@
 >> Design
 >> Nonfunctional requirements
 >> Features
+# 5/30
+the following is the prompt I used to generate the backend api. 
+
+
+add these models and build an api to connect to the ClientApp. The API should have basic CRUD actions for the Task model
+
+class Settings
+int Id
+color scheme
+font
+?
+FK ApplicationUserId
+
+class Entry
+int Id 
+string Description (max length?)
+DateTime? CreatedDate 
+datetime? ModifiedDate
+string *or enum* Status : active - inactive (defaut options, derived classes can add (or use a different enum?))
+FK ApplicationUserId
+
+class Task : Entry
+DateOnly? DueDate
+TimeOnly? DueTime
+---
+The code that produced was a decent structure but I'm going through making adjustments now. 
 
 
 # 5/29

@@ -10,11 +10,22 @@ namespace todostodo.Auth;
 
 public static class AuthUtils
 {
-    public static async Task OnTicketReceived(TicketReceivedContext ctx)
+    // TODO: figure out the code smell
+    // I don't love this system.threading.tasks.task.completedtask but it avoids an unnecessary allocation of a Task object
+    public static async System.Threading.Tasks.Task OnTicketReceived(TicketReceivedContext ctx)
     {
         var userManager = ctx.HttpContext.RequestServices.GetService<UserManager<ApplicationUser>>();
+        if (userManager == null)
+            throw new InvalidOperationException("UserManager is not registered in the dependency injection container.");
 
-        var email = ctx.Principal.Claims.First(c => c.Type == ClaimTypes.Email).Value;
+        if (ctx.Principal == null)
+            throw new InvalidOperationException("Principal is null in authentication context.");
+
+        var emailClaim = ctx.Principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+        if (string.IsNullOrEmpty(emailClaim))
+            throw new InvalidOperationException("Email claim not found or is empty.");
+
+        var email = emailClaim;
         var name = email.Split('@')[0];
 
         var user = await userManager.FindByEmailAsync(email);
@@ -49,7 +60,7 @@ public static class AuthUtils
 
         var token = AuthController.GetToken(authClaims);
 
-        ctx.Response.WriteAsJsonAsync(new JwtData()
+        await ctx.Response.WriteAsJsonAsync(new JwtData()
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             Expiration = token.ValidTo

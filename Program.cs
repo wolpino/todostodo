@@ -4,6 +4,7 @@ using System.Text;
 using todostodo.Data;
 using todostodo.Mapping;
 using todostodo.Models;
+using TaskModel = todostodo.Models.Task;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,7 @@ using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
-AuthOptions.KEY = builder.Configuration["JWT:Key"];
+AuthOptions.KEY = builder.Configuration["JWT:Key"] ?? throw new InvalidOperationException("JWT:Key configuration is missing");
 
 // Add services to the container.
 
@@ -136,14 +137,31 @@ authenticationBuilder.AddJwtBearer(options =>
                 context.Request.Headers["Sec-WebSocket-Protocol"] = newHeader;
             }
 
-            return Task.CompletedTask;
+            return System.Threading.Tasks.Task.CompletedTask;
         },
         OnTokenValidated = async context =>
         {
-            var name = context.Principal.Claims.Where(x => x.Type == ClaimTypes.Name).FirstOrDefault().Value;
-            var userManager = context.HttpContext.RequestServices.GetService<UserManager<ApplicationUser>>();
-            var user = await userManager.FindByIdAsync(name);
+            if (context.Principal == null)
+            {
+                context.Fail("Principal is null");
+                return;
+            }
 
+            var nameClaim = context.Principal.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Name);
+            if (nameClaim == null || string.IsNullOrEmpty(nameClaim.Value))
+            {
+                context.Fail("Name claim not found or is empty");
+                return;
+            }
+
+            var userManager = context.HttpContext.RequestServices.GetService<UserManager<ApplicationUser>>();
+            if (userManager == null)
+            {
+                context.Fail("UserManager is not registered");
+                return;
+            }
+
+            var user = await userManager.FindByIdAsync(nameClaim.Value);
             if (user == null)
             {
                 context.Fail("Invalid token");
