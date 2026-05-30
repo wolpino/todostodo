@@ -1,4 +1,7 @@
 # Todos To Do > TTD
+# Not Your Grandfather's Index Card
+NYGIC
+N-Y-Gick 
 
 a todo list management application
 
@@ -24,45 +27,81 @@ remove any kind of blocker or reason to not do something, any accommodation for 
 Why is a pen and paper so easy? -- Write the list at once, seeing the other tasks. as seperate inputs? or one? or can get to the next with enter or tab/a key. 
 The single input which creates the tasks, which the user can add to or update. >> so it functions like a bulk create
 
--- get an agent to break tasks into subtasks. 
+-- get an agent to break tasks into subtasks.
+-- get agent to auto tag? 
 -- timer
 -- ability to make multiple lists
 -- duplicate a task
 -- recurring tasks
--- sub tasks
+-- sub tasks // events // notes
 -- multiuser collaborations(roles), 
 -- reminders/notifications - in application? emails, email weekly summery, ability 
--- due dates and times
--- move undone tasks to the next day (toggle that)
+
+# Design
+
+Entry sorts/queries
+- due today
+- due this week
+- past due
+
 
 >> when you create your account, you have the opportnity to change the settings right away but it's even easier to use the default and change it later
 -- the ability to customize something simple >> (there's an episode of Gilmore Girls, the grandfather helps with a class project about business and their product is a first aid kit, but it fits in kids lockers, and there are a lot of options for the case colors and patterns. )
 
-views
--- current day todo list
--- previous day list (uneditable)
--- next day
->>> the days are snap shots of the one list. 
-- jsonblob? 
-
 -- archive todos, done or not >> tasks with no text, or less than two words get deleted. user gets prompted and they choose to remove. Hides the todo. (so can you unarchive? **why would you do this?**) so it doesnt display on the *one long list*, but you can see a list of archived tasks and make a copy (leave original in archive (**why**)).)
--- during the same day -you see the completed green check
-but the next day they show up bottom of the list greyed out or strikethrough something > or just always hide. 
+-- during the same day >you see the completed green check
+-- the next day they show up bottom of active todo list, top of completed list which is  greyed out or strikethrough something > or just always hide/archive. 
 
-different types of tasks > different lists etc
-index on date, type, 
-
+>> Priority, assisted? is this more or less important than this? it help sort priority, goes through, is this more important than this, than add, is this more important, 
 labeling/tagging > automatically? user picks from a list?(future feature, they can create custome tags.)
-**click on bullet > list of options/status -- bullet is status image. red? green? grey? > by emoji? by color? symbol** Does it cycle through or show a list
 
 
 *(my grandfather used to carry an index card with names, reminders, etc)* 
 Everything goes to one list, smart sort into specifics 
-
 - *groceries to get — apples, dishwasher liquid*
 - *books to read — Judy said to read The Emerald by? Or a link*
 
-**click on bullet > list of options/status -- bullet is status image. red? green? grey? > by emoji? by color? symbol** Does it cycle through or show a list
+
+# Schema
+class ApplicationUser : IdentityUser
+
+class Settings
+int Id
+color scheme
+font
+?
+FK ApplicationUserId
+
+class Entry
+int Id 
+string Description (max length?)
+DateTime? CreatedDate 
+datetime? ModifiedDate
+string *or enum* Status : active - inactive (defaut options, derived classes can add (or use a different enum?))
+FK ApplicationUserId
+
+class Task : Entry
+DateOnly? DueDate
+TimeOnly? DueTime
+
+> how do datetimes work in C#
+> handle locale (save timezone on account creation) > future feature change timezone/auto set timezone (*how do you do this?*)
+> timezone on account, time saved 
+`var specified = DateTime.SpecifyKind(meetingTime, DateTimeKind.Utc);`
+**local time is server's locale not users**
+
+# NOT MVP
+class Subtask : Task
+FK int ParentId 
+
+class Note : Entry
+string Type grocery - media (book/movie)
+
+class Event : Entry
+DateOnly? Date
+TimeOnly? Time
+string Location
+string Details *(how is this differnt than desc?)*
 
 ## Nonfunctional requirements
 - full test coverage
@@ -70,9 +109,7 @@ Everything goes to one list, smart sort into specifics
 - error and exception handling
 - retries on api calls
 - mobile friendly/ready // responsive
-
-
-
+- security? login/signup?
 
 ## MVP Production
 
@@ -88,29 +125,6 @@ Appropriate tests, logging, and security considerations
 Clean, readable code
 Sensible tradeoffs
 Documentation of your thinking
-
-## schema
-Task
-- id
-- title/task description (max length?)
-- extra description
-- created date
-- modified date
-- due date?
-- status
-- parentID nullable 
-- dependencies?
-
-User
-
-Task
-
-### Views
-create
-task
-tasks
-update
-
 
 
 

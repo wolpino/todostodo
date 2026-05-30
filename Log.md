@@ -1,11 +1,16 @@
 
 
+>> Design
+>> Nonfunctional requirements
+>> Features
+
+
 # 5/29
-Had an incident with some water and my laptop today. Luckily committed almost all of the work (but not my Log -- so if something necessary could be missing...)
+Had an incident with some water and my laptop today. Luckily committed almost all of the work (but not my Log -- so if something necessary could be missing...) But had to set up my other laptop to use dotnet
 
 Taking space from all the ideas was good, now I can go simple instead of too broad of a scope. 
 
-I'm going to reread the prompt and finalize my plan doc
+I'm going to reread the prompt and finalize my plan doc, specifically MVP
 
 # May 28
 >>added SQlite
