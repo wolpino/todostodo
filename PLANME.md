@@ -5,48 +5,72 @@ N-Y-Gick
 
 a todo list management application
 
-** just a note, this md file is best viewed as code. 
+> just a note, this md file is best viewed as code. 
 
 ## Tech Requirements
 
 **backend api:** C# and .NET Core
 **database:** SQL Lite or EF Core in memory
 **frontend:** React and Typescript
+**component library:** Chakra Ui
+`npx skills add https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-builder`
 
 ## Functional requirements
 User can...
 - create a task
 - read a task 
-- read all or multiple tasks
+- read all tasks
 - update a task (same as complete a task)
 - delete a task
-- 
 
-## Features
-remove any kind of blocker or reason to not do something, any accommodation for the recording of the task to be easier
+## Nonfunctional requirements
+- full test coverage
+- logging
+- error and exception handling
+- retries on api calls
+- mobile friendly/ready // responsive
+- security? login/signup?
+- containerize
+
+## MVP Production
+
+*what does "done" mean*
+- scalability
+- visual design
+- accessibility
+
+Clear, straightforward architecture
+Thoughtful decisions about what “production-ready MVP” means
+Appropriate tests, logging, and security considerations
+Clean, readable code
+Sensible tradeoffs
+Documentation of your thinking
+
+# Approach
+I want to experiment with various AI tools so I'm going to do a mix of my usual researching/understanding **(usually googling and looking at opinions on Stackoverflow or Reddit) > which starts by collecting data, make my own decisions** and pretend I'm pair programming with the chat...
+
+- copilot to update packages
+- copilot to generate backend scaffalding and tests
+- chakra ui agent
+
+
+
+# Ideas
+How can I remove any kind of blocker or reason to not do something, any accommodation for the recording of the task to be easier
 Why is a pen and paper so easy? -- Write the list at once, seeing the other tasks. as seperate inputs? or one? or can get to the next with enter or tab/a key. 
 The single input which creates the tasks, which the user can add to or update. >> so it functions like a bulk create
 
--- get an agent to break tasks into subtasks.
--- get agent to auto tag? 
+## Possible Features
 -- timer
 -- ability to make multiple lists
--- duplicate a task
+-- duplicate a task 
 -- recurring tasks
 -- sub tasks // events // notes
 -- multiuser collaborations(roles), 
 -- reminders/notifications - in application? emails, email weekly summery, ability 
-
-# Design
-
-Entry sorts/queries
-- due today
-- due this week
-- past due
-
-
->> when you create your account, you have the opportnity to change the settings right away but it's even easier to use the default and change it later
--- the ability to customize something simple >> (there's an episode of Gilmore Girls, the grandfather helps with a class project about business and their product is a first aid kit, but it fits in kids lockers, and there are a lot of options for the case colors and patterns. )
+-- allow user to change default settings, theme/color, views etc
+-- get an agent to break tasks into subtasks.
+-- get agent to auto tag? 
 
 -- archive todos, done or not >> tasks with no text, or less than two words get deleted. user gets prompted and they choose to remove. Hides the todo. (so can you unarchive? **why would you do this?**) so it doesnt display on the *one long list*, but you can see a list of archived tasks and make a copy (leave original in archive (**why**)).)
 -- during the same day >you see the completed green check
@@ -55,6 +79,7 @@ Entry sorts/queries
 >> Priority, assisted? is this more or less important than this? it help sort priority, goes through, is this more important than this, than add, is this more important, 
 labeling/tagging > automatically? user picks from a list?(future feature, they can create custome tags.)
 
+- sessions to save login auth?
 
 *(my grandfather used to carry an index card with names, reminders, etc)* 
 Everything goes to one list, smart sort into specifics 
@@ -71,6 +96,8 @@ color scheme
 font
 ?
 FK ApplicationUserId
+**do I need this class/why not just add to the User?** 
+>> I want to have a distinction between in app settings and user specific permissions, 
 
 class Entry
 int Id 
@@ -97,38 +124,31 @@ FK int ParentId
 class Note : Entry
 string Type grocery - media (book/movie)
 
-class Event : Entry
+class Log ? 
+
+
+class Event : Entry > scheduled plan
 DateOnly? Date
 TimeOnly? Time
 string Location
 string Details *(how is this differnt than desc?)*
 
-## Nonfunctional requirements
-- full test coverage
-- logging
-- error and exception handling
-- retries on api calls
-- mobile friendly/ready // responsive
-- security? login/signup?
+Queries
+- due today
+- due this week
+- past due
 
-## MVP Production
+# Descisions
 
-*what does "done" mean*
-
-- scalability
-- visual design
-- accessibility
-
-Clear, straightforward architecture
-Thoughtful decisions about what “production-ready MVP” means
-Appropriate tests, logging, and security considerations
-Clean, readable code
-Sensible tradeoffs
-Documentation of your thinking
+## Component Library 
+Material UI comes to mind but I think there have to be better options > asked the agent chat and reddit
+https://www.reddit.com/r/reactjs/comments/1cr53f0/chakra_ui_vs_material_ui/
+/todostodo/chats/reactcomponentlibs.md
+>> I'm going to add the Chakra Builder skill for speed.
+`npx skills add https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-builder`
 
 
-
-## Ideas, 
+## Initial ideas, 
 i.e. letting myself think through whatever ideas I have so I don't get too excited and make it harder than necessary
 ###
 
