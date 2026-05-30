@@ -1,13 +1,19 @@
 
 
+# 5/29
+Had an incident with some water and my laptop today. Luckily committed almost all of the work (but not my Log -- so if something necessary could be missing...)
 
-# NEXT
+Taking space from all the ideas was good, now I can go simple instead of too broad of a scope. 
 
-add SQlite
+I'm going to reread the prompt and finalize my plan doc
+
+# May 28
+>>added SQlite
 I'm choosing EF Core + Sqlite for LINQ, migrations and Identity integration
 
-buuut for some reason this project is way out of date...which is ok because of modernize!
+The project is way out of date with the dotnet I downloaded but thats ok because of modernize!
 https://devblogs.microsoft.com/dotnet/modernize-dotnet-anywhere-with-ghcp/ 
+>> this was successful, and entirely done by an AI agent
 
 # 5/27
 tried to get project running before adding sqlite. remembered about Solutions vs projects so I'm going to see if I can fix this without making a new project.
