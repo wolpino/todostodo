@@ -5,9 +5,22 @@
 
 
 # 5/31
+
+
+
+--
 Adding in fluentvalidation... it is almost too much for the CRUD app as it is... but not?
 >> I remmeber something about migrations sometimes causing issues but it's vague, and that's why I've been holding on creating and migrating the migrations, but I need to do it soon...
+I wasn't soon enough.
+-- easy fix adding a jwt "buffy-4-lyfe"
+but I remember I wanted to look at the models before migrating because I'm not convinced on some field names
 
+
+➜  todostodo git:(testing-plus) dotnet-ef migrations add AddTasksAndSettingsModels
+Build started...
+Build succeeded.
+An error occurred while accessing the Microsoft.Extensions.Hosting services. Continuing without the application service provider. Error: JWT:Key configuration is missing
+Unable to create a 'DbContext' of type 'ApplicationDbContext'. The exception 'Unable to resolve service for type 'Microsoft.EntityFrameworkCore.DbContextOptions`1[todostodo.Data.ApplicationDbContext]' while attempting to activate 'todostodo.Data.ApplicationDbContext'.' was thrown while attempting to create an instance. For the different patterns supported at design time, see https://go.microsoft.com/fwlink/?linkid=851728
 
 # 5/30
 the following is the prompt I used to generate the backend api. 
