@@ -1,8 +1,14 @@
 
-
 >> Design
 >> Nonfunctional requirements
 >> Features
+
+
+# 5/31
+Adding in fluentvalidation... it is almost too much for the CRUD app as it is... but not?
+>> I remmeber something about migrations sometimes causing issues but it's vague, and that's why I've been holding on creating and migrating the migrations, but I need to do it soon...
+
+
 # 5/30
 the following is the prompt I used to generate the backend api. 
 

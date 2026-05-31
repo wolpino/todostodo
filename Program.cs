@@ -4,6 +4,7 @@ using System.Text;
 using todostodo.Data;
 using todostodo.Mapping;
 using todostodo.Models;
+using todostodo.Validators;
 using TaskModel = todostodo.Models.Task;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +15,8 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 AuthOptions.KEY = builder.Configuration["JWT:Key"] ?? throw new InvalidOperationException("JWT:Key configuration is missing");
@@ -37,6 +40,9 @@ builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
 });
 
+// Register FluentValidation
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskRequestValidator>();
+builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddSwaggerGen(c =>
 {
