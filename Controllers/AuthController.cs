@@ -10,6 +10,9 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace todostodo.Controllers;
 
+/// <summary>
+/// Controller for handling user authentication, including login, registration, and OAuth.
+/// </summary>
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController : ControllerBase
@@ -19,6 +22,9 @@ public class AuthController : ControllerBase
     private readonly IConfiguration _configuration;
     private readonly IOptions<ApiBehaviorOptions> _apiBehaviorOptions;
 
+    /// <summary>
+    /// Initializes a new instance of the AuthController.
+    /// </summary>
     public AuthController(UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager, IConfiguration configuration, IOptions<ApiBehaviorOptions> apiBehaviorOptions)
     {
         _userManager = userManager;
@@ -27,6 +33,11 @@ public class AuthController : ControllerBase
         _apiBehaviorOptions = apiBehaviorOptions;
     }
 
+    /// <summary>
+    /// Authenticates a user and returns a JWT token.
+    /// </summary>
+    /// <param name="model">The login credentials.</param>
+    /// <returns>JWT token data or validation error response.</returns>
     [HttpPost]
     [Route("login")]
     public async Task<ActionResult<JwtData>> Login([FromBody] LoginModel model)

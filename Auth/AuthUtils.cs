@@ -8,8 +8,15 @@ using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegiste
 
 namespace todostodo.Auth;
 
+/// <summary>
+/// Utility methods for handling OAuth and JWT authentication callbacks.
+/// </summary>
 public static class AuthUtils
 {
+    /// <summary>
+    /// Handles the OAuth ticket received callback, creating or updating user and issuing JWT token.
+    /// </summary>
+    /// <param name="ctx">The ticket received context from the OAuth provider.</param>
     // TODO: figure out the code smell
     // I don't love this system.threading.tasks.task.completedtask but it avoids an unnecessary allocation of a Task object
     public static async System.Threading.Tasks.Task OnTicketReceived(TicketReceivedContext ctx)
