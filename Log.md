@@ -29,7 +29,12 @@ DateOnly? DueDate
 TimeOnly? DueTime
 ---
 The code that produced was a decent structure but I'm going through making adjustments now. 
-
+--
+I ran out of rate limits, which reminds me I need to better understand all of everything and why. yikes. but also I got sucked in!
+But besides that, wow! that felt like the first time understanding the workflow. someone said it was like a junior engineer, and it is?
+asking for specific things feels like crafting a slack message that's clear and communicates the correct thing. 
+*I saved the chat and will need to read back through it...*
+/chats/fullsession: CRUDapi.md
 
 # 5/29
 Had an incident with some water and my laptop today. Luckily committed almost all of the work (but not my Log -- so if something necessary could be missing...) But had to set up my other laptop to use dotnet
