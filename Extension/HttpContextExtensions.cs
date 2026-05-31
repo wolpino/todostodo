@@ -30,6 +30,11 @@ public static class HttpContextExtensions
             where string.Equals(scheme.Name, provider)
             select scheme).Any();
     }
-    
-    public static ApplicationUser GetUser(this HttpContext content) => content.Items["User"] as ApplicationUser;
+    /// <summary>
+    /// Gets the currently authenticated user from HttpContext items.
+    /// </summary>
+    /// <param name="context">The HTTP context.</param>
+    /// <returns>The authenticated ApplicationUser or null if not found.</returns>
+    public static ApplicationUser? GetUser(this HttpContext context) 
+        => context?.Items["User"] as ApplicationUser;
 }
