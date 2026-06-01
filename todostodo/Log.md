@@ -10,7 +10,6 @@ I've had some trouble getting the right tests created, partly because of ambiguo
 I need tests and a frontend.
 
 
-
 # 5/31
 
 - make a skill to save summaries from chat
