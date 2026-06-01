@@ -6,7 +6,7 @@ import { parseApiError, formatValidationErrors, type ParsedApiError } from './us
  * @example
  * const { error, setError, getDisplayMessage } = useApiError();
  * try {
- *   await TasksService.getApiTasks();
+ *   await TodosService.getApiTodos();
  * } catch (err) {
  *   setError(err);
  *   console.log(getDisplayMessage()); // User-friendly message

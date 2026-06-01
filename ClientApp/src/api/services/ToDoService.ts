@@ -2,38 +2,38 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Task } from '../models/Task';
+import type { ToDo } from '../models/ToDo';
 
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 
-export class TasksService {
+export class ToDoService {
 
     /**
-     * Get all tasks for the current user
-     * @returns Task Success
+     * Get all todos for the current user
+     * @returns Todo Success
      * @throws ApiError
      */
-    public static getApiTasks(): CancelablePromise<Array<Task>> {
+    public static getApiTodos(): CancelablePromise<Array<ToDo>> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/tasks',
+            url: '/api/todos',
         });
     }
 
     /**
-     * Get a specific task by ID
+     * Get a specific todo by ID
      * @param id 
-     * @returns Task Success
+     * @returns Todo Success
      * @throws ApiError
      */
-    public static getApiTasksById(
+    public static getApiTodosById(
         id: number,
-    ): CancelablePromise<Task> {
+    ): CancelablePromise<ToDo> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/tasks/{id}',
+            url: '/api/todos/{id}',
             path: {
                 'id': id,
             },
@@ -41,34 +41,34 @@ export class TasksService {
     }
 
     /**
-     * Create a new task
+     * Create a new todo
      * @param requestBody 
-     * @returns Task Success
+     * @returns ToDo Success
      * @throws ApiError
      */
-    public static postApiTasks(
+    public static postApiToDos(
         requestBody?: {
             description: string;
             dueDate?: string;
             dueTime?: string;
         },
-    ): CancelablePromise<Task> {
+    ): CancelablePromise<ToDo> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/tasks',
+            url: '/api/todos',
             body: requestBody,
             mediaType: 'application/json-patch+json',
         });
     }
 
     /**
-     * Update an existing task
+     * Update an existing todo
      * @param id 
      * @param requestBody 
-     * @returns Task Success
+     * @returns ToDo Success
      * @throws ApiError
      */
-    public static putApiTasksById(
+    public static putApiToDosById(
         id: number,
         requestBody?: {
             description?: string;
@@ -76,10 +76,10 @@ export class TasksService {
             dueTime?: string;
             status?: 'Active' | 'Inactive';
         },
-    ): CancelablePromise<Task> {
+    ): CancelablePromise<ToDo> {
         return __request(OpenAPI, {
             method: 'PUT',
-            url: '/api/tasks/{id}',
+            url: '/api/todos/{id}',
             path: {
                 'id': id,
             },
@@ -89,17 +89,17 @@ export class TasksService {
     }
 
     /**
-     * Delete a task
+     * Delete a todo
      * @param id 
      * @returns void 
      * @throws ApiError
      */
-    public static deleteApiTasksById(
+    public static deleteApiToDosById(
         id: number,
     ): CancelablePromise<void> {
         return __request(OpenAPI, {
             method: 'DELETE',
-            url: '/api/tasks/{id}',
+            url: '/api/todos/{id}',
             path: {
                 'id': id,
             },

@@ -1,7 +1,8 @@
 namespace todostodo.Models;
 
 /// <summary>
-/// Enum defining the possible status values for entries (tasks, notes, etc.).
+/// TODO do I need this enum? it was a bool
+/// Enum defining the possible status values for entries (todos, notes, etc.).
 /// </summary>
 public enum EntryStatus
 {

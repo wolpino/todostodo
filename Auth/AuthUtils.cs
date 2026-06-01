@@ -10,9 +10,7 @@ namespace todostodo.Auth;
 
 public static class AuthUtils
 {
-    // TODO: figure out the code smell
-    // I don't love this system.threading.tasks.task.completedtask but it avoids an unnecessary allocation of a Task object
-    public static async System.Threading.Tasks.Task OnTicketReceived(TicketReceivedContext ctx)
+    public static async Task OnTicketReceived(TicketReceivedContext ctx)
     {
         var userManager = ctx.HttpContext.RequestServices.GetService<UserManager<ApplicationUser>>();
         if (userManager == null)

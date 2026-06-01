@@ -161,11 +161,11 @@ All endpoints require `[Authorize]` and have CRUD operations:
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| GET | `/api/tasks` | Get all user's tasks |
-| GET | `/api/tasks/{id}` | Get specific task |
-| POST | `/api/tasks` | Create task (body: description, dueDate?, dueTime?) |
-| PUT | `/api/tasks/{id}` | Update task (body: description?, dueDate?, dueTime?, status?) |
-| DELETE | `/api/tasks/{id}` | Delete task |
+| GET | `/api/todos` | Get all user's tasks |
+| GET | `/api/todos/{id}` | Get specific task |
+| POST | `/api/todos` | Create task (body: description, dueDate?, dueTime?) |
+| PUT | `/api/todos/{id}` | Update task (body: description?, dueDate?, dueTime?, status?) |
+| DELETE | `/api/todos/{id}` | Delete task |
 
 ## Frontend TypeScript Services
 - **Models**: Task.ts, Entry.ts, Settings.ts interfaces
@@ -236,7 +236,7 @@ interface Task {
   description: string;
 }
 
-const response = await fetch('/api/tasks');
+const response = await fetch('/api/todos');
 const task: Task = await response.json(); // ✅ Plain object, just typed as Task
 ```
 
@@ -247,7 +247,7 @@ class Task {
   description: string;
 }
 
-const response = await fetch('/api/tasks');
+const response = await fetch('/api/todos');
 const data = await response.json(); // This is NOT a Task instance!
 const task = new Task(); // You'd have to manually construct it
 task.id = data.id; // And manually copy properties

@@ -11,12 +11,12 @@ export const ERROR_MESSAGES = {
   BAD_GATEWAY: 'The server is temporarily unavailable',
   SERVICE_UNAVAILABLE: 'The service is currently unavailable',
 
-  // Task-specific Errors
-  TASK_NOT_FOUND: 'Task not found',
-  TASK_CREATE_FAILED: 'Failed to create task',
-  TASK_UPDATE_FAILED: 'Failed to update task',
-  TASK_DELETE_FAILED: 'Failed to delete task',
-  TASK_FETCH_FAILED: 'Failed to fetch tasks',
+  // ToDo -specific Errors
+  TODO_NOT_FOUND: 'Todo not found',
+  TODO_CREATE_FAILED: 'Failed to create todo',
+  TODO_UPDATE_FAILED: 'Failed to update todo',
+  TODO_DELETE_FAILED: 'Failed to delete todo',
+  TODO_FETCH_FAILED: 'Failed to fetch todo',
 
   // Validation Errors
   VALIDATION_FAILED: 'Please check your input and try again',
