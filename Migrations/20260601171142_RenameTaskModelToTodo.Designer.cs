@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using todostodo.Data;
 
@@ -10,9 +11,11 @@ using todostodo.Data;
 namespace todostodo.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260601171142_RenameTaskModelToTodo")]
+    partial class RenameTaskModelToTodo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "10.0.8");
@@ -280,7 +283,7 @@ namespace todostodo.Migrations
                     b.Property<TimeOnly?>("DueTime")
                         .HasColumnType("TEXT");
 
-                    b.HasDiscriminator().HasValue("ToDo");
+                    b.HasDiscriminator().HasValue("Task");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>

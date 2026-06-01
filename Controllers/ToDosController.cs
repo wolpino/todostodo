@@ -4,78 +4,79 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using todostodo.Data;
 using todostodo.Models;
-using TaskModel = todostodo.Models.Task;
+using ToDo = todostodo.Models.ToDo;
 
 namespace todostodo.Controllers;
 
 /// <summary>
-/// Controller for managing user tasks with full CRUD operations.
+/// Controller for managing user todos with full CRUD operations.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class TasksController(
+public class ToDosController(
     ApplicationDbContext context) : ControllerBase
 {
     /// <summary>
-    /// Retrieves all tasks for the current authenticated user, ordered by creation date (newest first).
+    /// Retrieves all todos for the current authenticated user, ordered by creation date (newest first).
     /// </summary>
-    /// <returns>A list of tasks belonging to the user.</returns>
-    /// <response code="200">Successfully retrieved tasks.</response>
+    /// <returns>A list of todos belonging to the user.</returns>
+    /// <response code="200">Successfully retrieved todos.</response>
     /// <response code="401">User is not authenticated.</response>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<TaskModel>>> GetTasks()
+    public async Task<ActionResult<IEnumerable<ToDo>>> GetToDos()
     {
         var userId = GetCurrentUserId();
         if (userId == null)
             return Unauthorized();
 
-        var tasks = await context.Tasks
+        // TODO change to todo in ocntext
+        var todos = await context.ToDos
             .Where(t => t.ApplicationUserId == userId)
             .OrderByDescending(t => t.CreatedDate)
             .ToListAsync();
 
-        return Ok(tasks);
+        return Ok(todos);
     }
 
     /// <summary>
-    /// Retrieves a specific task by ID for the current user.
+    /// Retrieves a specific todo by ID for the current user.
     /// </summary>
-    /// <param name="id">The ID of the task to retrieve.</param>
-    /// <returns>The requested task.</returns>
-    /// <response code="200">Task found.</response>
-    /// <response code="404">Task not found or does not belong to user.</response>
+    /// <param name="id">The ID of the todo to retrieve.</param>
+    /// <returns>The requested todo.</returns>
+    /// <response code="200">Todo found.</response>
+    /// <response code="404">Todo not found or does not belong to user.</response>
     [HttpGet("{id}")]
-    public async Task<ActionResult<TaskModel>> GetTask(int id)
+    public async Task<ActionResult<ToDo>> GetTodo(int id)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
             return Unauthorized();
 
-        var task = await context.Tasks
+        var todo = await context.ToDos
             .FirstOrDefaultAsync(t => t.Id == id && t.ApplicationUserId == userId);
 
-        if (task == null)
+        if (todo == null)
             return NotFound();
 
-        return Ok(task);
+        return Ok(todo);
     }
 
     /// <summary>
-    /// Creates a new task for the current user.
+    /// Creates a new todo for the current user.
     /// </summary>
-    /// <param name="request">The task creation request containing description and optional due date/time.</param>
-    /// <returns>The created task.</returns>
-    /// <response code="201">Task created successfully.</response>
+    /// <param name="request">The todo creation request containing description and optional due date/time.</param>
+    /// <returns>The created todo.</returns>
+    /// <response code="201">Todo created successfully.</response>
     /// <response code="400">Invalid request data.</response>
     [HttpPost]
-    public async Task<ActionResult<TaskModel>> CreateTask([FromBody] CreateTaskRequest request)
+    public async Task<ActionResult<ToDo>> CreateTodo([FromBody] CreateTodoRequest request)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
             return Unauthorized();
 
-        var task = new TaskModel
+        var todo = new ToDo
         {
             Description = request.Description,
             DueDate = request.DueDate,
@@ -85,73 +86,73 @@ public class TasksController(
             CreatedDate = DateTime.UtcNow
         };
 
-        context.Tasks.Add(task);
+        context.ToDos.Add(todo);
         await context.SaveChangesAsync();
 
-        return CreatedAtAction(nameof(GetTask), new { id = task.Id }, task);
+        return CreatedAtAction(nameof(GetTodo), new { id = todo.Id }, todo);
     }
 
     /// <summary>
-    /// Updates an existing task for the current user.
+    /// Updates an existing todo for the current user.
     /// </summary>
-    /// <param name="id">The ID of the task to update.</param>
+    /// <param name="id">The ID of the todo to update.</param>
     /// <param name="request">The update request with optional fields.</param>
-    /// <returns>The updated task.</returns>
-    /// <response code="200">Task updated successfully.</response>
-    /// <response code="404">Task not found or does not belong to user.</response>
+    /// <returns>The updated todo.</returns>
+    /// <response code="200">Todo updated successfully.</response>
+    /// <response code="404">Todo not found or does not belong to user.</response>
     [HttpPut("{id}")]
-    public async Task<ActionResult<TaskModel>> UpdateTask(int id, [FromBody] UpdateTaskRequest request)
+    public async Task<ActionResult<ToDo>> UpdateTodo(int id, [FromBody] UpdateTodoRequest request)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
             return Unauthorized();
 
-        var task = await context.Tasks
+        var todo = await context.ToDos
             .FirstOrDefaultAsync(t => t.Id == id && t.ApplicationUserId == userId);
 
-        if (task == null)
+        if (todo == null)
             return NotFound();
 
         if (!string.IsNullOrEmpty(request.Description))
-            task.Description = request.Description;
+            todo.Description = request.Description;
 
         if (request.DueDate.HasValue)
-            task.DueDate = request.DueDate.Value;
+            todo.DueDate = request.DueDate.Value;
 
         if (request.DueTime.HasValue)
-            task.DueTime = request.DueTime.Value;
+            todo.DueTime = request.DueTime.Value;
 
         if (request.Status.HasValue)
-            task.Status = request.Status.Value;
+            todo.Status = request.Status.Value;
 
-        task.ModifiedDate = DateTime.UtcNow;
+        todo.ModifiedDate = DateTime.UtcNow;
 
-        context.Tasks.Update(task);
+        context.ToDos.Update(todo);
         await context.SaveChangesAsync();
 
-        return Ok(task);
+        return Ok(todo);
     }
 
     /// <summary>
-    /// Deletes a task for the current user.
+    /// Deletes a todo for the current user.
     /// </summary>
-    /// <param name="id">The ID of the task to delete.</param>
-    /// <response code="204">Task deleted successfully.</response>
-    /// <response code="404">Task not found or does not belong to user.</response>
+    /// <param name="id">The ID of the todo to delete.</param>
+    /// <response code="204">Todo deleted successfully.</response>
+    /// <response code="404">Todo not found or does not belong to user.</response>
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteTask(int id)
+    public async Task<IActionResult> DeleteTodo(int id)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
             return Unauthorized();
 
-        var task = await context.Tasks
+        var todo = await context.ToDos
             .FirstOrDefaultAsync(t => t.Id == id && t.ApplicationUserId == userId);
 
-        if (task == null)
+        if (todo == null)
             return NotFound();
 
-        context.Tasks.Remove(task);
+        context.ToDos.Remove(todo);
         await context.SaveChangesAsync();
 
         return NoContent();
@@ -171,33 +172,33 @@ public class TasksController(
 }
 
 /// <summary>
-/// Request model for creating a new task.
+/// Request model for creating a new todo.
 /// </summary>
-public class CreateTaskRequest
+public class CreateTodoRequest
 {
     /// <summary>
-    /// The task description.
+    /// The todo description.
     /// </summary>
     public required string Description { get; set; }
 
     /// <summary>
-    /// The optional due date for the task.
+    /// The optional due date for the todo.
     /// </summary>
     public DateOnly? DueDate { get; set; }
 
     /// <summary>
-    /// The optional due time for the task.
+    /// The optional due time for the todo.
     /// </summary>
     public TimeOnly? DueTime { get; set; }
 }
 
 /// <summary>
-/// Request model for updating an existing task.
+/// Request model for updating an existing todo.
 /// </summary>
-public class UpdateTaskRequest
+public class UpdateTodoRequest
 {
     /// <summary>
-    /// The updated task description (optional).
+    /// The updated todo description (optional).
     /// </summary>
     public string? Description { get; set; }
 
@@ -212,7 +213,7 @@ public class UpdateTaskRequest
     public TimeOnly? DueTime { get; set; }
 
     /// <summary>
-    /// The updated task status (optional).
+    /// The updated todo status (optional).
     /// </summary>
     public EntryStatus? Status { get; set; }
 }

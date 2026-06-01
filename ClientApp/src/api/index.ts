@@ -11,9 +11,9 @@ export type { JwtData } from './models/JwtData';
 export type { LoginModel } from './models/LoginModel';
 export type { RegisterModel } from './models/RegisterModel';
 export type { Response } from './models/Response';
-export type { Task } from './models/Task';
+export type { ToDo } from './models/ToDo';
 export type { Entry } from './models/Entry';
 export type { Settings } from './models/Settings';
 
 export { AuthService } from './services/AuthService';
-export { TasksService } from './services/TasksService';
+export { ToDoService } from './services/ToDoService';

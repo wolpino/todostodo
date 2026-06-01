@@ -4,7 +4,6 @@ using System.Text;
 using todostodo.Data;
 using todostodo.Mapping;
 using todostodo.Models;
-using TaskModel = todostodo.Models.Task;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -137,7 +136,7 @@ authenticationBuilder.AddJwtBearer(options =>
                 context.Request.Headers["Sec-WebSocket-Protocol"] = newHeader;
             }
 
-            return System.Threading.Tasks.Task.CompletedTask;
+            return Task.CompletedTask;
         },
         OnTokenValidated = async context =>
         {
