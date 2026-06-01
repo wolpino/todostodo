@@ -2,8 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
-using ToDo = todostodo.Models.ToDo;
 
 namespace todostodo.Data;
 
