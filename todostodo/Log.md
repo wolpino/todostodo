@@ -9,6 +9,10 @@ I've had some trouble getting the right tests created, partly because of ambiguo
 
 I need tests and a frontend.
 
+Ooooookay, fool me twice copilot and I'm the fool. I'm not familiar enough with C# testing to give a better prompt and I've generated two unbuild-able tests. But it did remind me why there's the project and the solution so that is fixed and I'm just going to add the tests myself. This is what I want it to be good at! 
+*note* how to generate good tests??
+
+Also my computer turned back on. Just incase whomever is reading this was waiting for an update.
 
 # 5/31
 
