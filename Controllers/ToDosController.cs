@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using todostodo.Data;
 using todostodo.Models;
-using ToDo = todostodo.Models.ToDo;
 
 namespace todostodo.Controllers;
 

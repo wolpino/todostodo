@@ -1,8 +1,52 @@
 
-
 >> Design
 >> Nonfunctional requirements
 >> Features
+
+# 6/2
+
+I've had some trouble getting the right tests created, partly because of ambiguous Tasks, my model and an async Task, which came up before, so I changed the Task mode to ToDo. I tried this before with copilot and it was not good. I missed a few Todos that should be ToDo, but letting it go for now.
+
+I need tests and a frontend.
+
+
+
+# 5/31
+
+- make a skill to save summaries from chat
+- With in memory do you need to check availability memory
+
+copilot got stuck in a weird loop trying to fix the 
+---
+
+adding tests...
+I do not remember much about C# testing. I didn't get into a groove with testing until I used Python. so deciding which framework to use
+
+fixing issues
+https://stackoverflow.com/questions/48061096/why-cant-i-call-the-useinmemorydatabase-method-on-dbcontextoptionsbuilder
+
+
+--
+Adding in fluentvalidation... it is almost too much for the CRUD app as it is... but not?
+>> I remmeber something about migrations sometimes causing issues but it's vague, and that's why I've been holding on creating and migrating the migrations, but I need to do it soon...
+I wasn't soon enough.
+
+
+`➜  todostodo git:(testing-plus) dotnet-ef migrations add` AddTasksAndSettingsModels
+Build started...
+Build succeeded.
+An error occurred while accessing the Microsoft.Extensions.Hosting services. Continuing without the application service provider. Error: JWT:Key configuration is missing
+Unable to create a 'DbContext' of type 'ApplicationDbContext'. The exception 'Unable to resolve service for type 'Microsoft.EntityFrameworkCore.DbContextOptions`1[todostodo.Data.ApplicationDbContext]' while attempting to activate 'todostodo.Data.ApplicationDbContext'.' was thrown while attempting to create an instance. For the different patterns supported at `design time, see https://go.microsoft.com/fwlink/?linkid=851728`
+
+-- easy fix adding a jwt "buffy-4-lyfe"
+but I remember I wanted to look at the models before migrating because I'm not convinced on some field names >> overthinking it gotta move forward
+
+>> AI things I like,
+- I can confirm if my plan is correct and then also get more context
+that is helping solidfy things in my mind
+
+
+
 # 5/30
 the following is the prompt I used to generate the backend api. 
 
