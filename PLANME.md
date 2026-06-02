@@ -52,8 +52,17 @@ I want to experiment with various AI tools so I'm going to do a mix of my usual 
 - copilot to update packages
 - copilot to generate backend scaffalding and tests
 - chakra ui agent
+- cusor to develop the frontend
 
-
+# Design
+mostly single page application 
+-- The idea of going to a different page or even using a pop up on a list feels very clunky to me. 
+-- first empty item and click to enter 
+there's a bullet to the left of the input, then icons to the right. a calendar for the date. a clock for time. 
+click on the calendar icon, calendar will pop up, user clicks on a day, and the date now displays were the calendar was or to right of icon (so user would click it again to edit? I think I like clicking in the same place)
+click clock icon, input for time, then display time. 
+on the right is a red x.
+click the bullet to get a green check, swipe? to cross it off. confetti?
 
 # Ideas
 How can I remove any kind of blocker or reason to not do something, any accommodation for the recording of the task to be easier

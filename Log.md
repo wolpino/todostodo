@@ -3,7 +3,7 @@
 >> Nonfunctional requirements
 >> Features
 
-# 6/2
+# 6/1
 
 I've had some trouble getting the right tests created, partly because of ambiguous Tasks, my model and an async Task, which came up before, so I changed the Task mode to ToDo. I tried this before with copilot and it was not good. I missed a few Todos that should be ToDo, but letting it go for now.
 
@@ -13,6 +13,10 @@ Ooooookay, fool me twice copilot and I'm the fool. I'm not familiar enough with 
 *note* how to generate good tests??
 
 Also my computer turned back on. Just incase whomever is reading this was waiting for an update.
+
+I have blown through my free credit limit in vsc, but that's great cause now I can try out Cursor for the frontend. 
+
+But first I'm looping back to my Plan doc. I like starting with the backend it's easier for me to hold it all in my head when its front to back linking. Going to play with some designs in excalidraw and work on a prompt/spec sheet
 
 # 5/31
 
