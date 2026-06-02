@@ -1,0 +1,43 @@
+---
+description: FluentValidation patterns for request/model validation
+globs: **/*.cs
+alwaysApply: false
+---
+
+# FluentValidation
+
+- Create one validator per request DTO, named `<Dto>Validator`
+- Register validators with `AddFluentValidationAutoValidation()` in `Program.cs` — don't manually call `.Validate()` in controllers
+- Keep validation rules declarative; use `.WithMessage()` for user-facing errors
+- Use `.MustAsync()` for rules that require DB lookups
+
+## Example: basic validator for a ToDo request
+```csharp
+// ✅ Clean validator — controller stays thin
+public class CreateToDoRequestValidator : AbstractValidator<CreateToDoRequest>
+{
+    public CreateToDoRequestValidator()
+    {
+        RuleFor(x => x.Description)
+            .NotEmpty().WithMessage("Description is required.")
+            .MaximumLength(500).WithMessage("Description must be 500 characters or fewer.");
+
+        RuleFor(x => x.DueDate)
+            .GreaterThanOrEqualTo(DateOnly.FromDateTime(DateTime.Today))
+            .When(x => x.DueDate.HasValue)
+            .WithMessage("Due date cannot be in the past.");
+    }
+}
+
+// ❌ Don't validate manually in the controller
+if (string.IsNullOrEmpty(request.Description)) return BadRequest("...");
+```
+
+## Example: async rule checking uniqueness
+```csharp
+// ✅ Use MustAsync for DB-dependent rules
+RuleFor(x => x.Description)
+    .MustAsync(async (desc, ct) =>
+        !await db.ToDos.AnyAsync(t => t.Description == desc, ct))
+    .WithMessage("A ToDo with that description already exists.");
+```

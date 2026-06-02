@@ -1,0 +1,37 @@
+---
+description: Core context about the todostodo project stack and structure
+alwaysApply: true
+---
+
+# todostodo — Project Overview
+
+ASP.NET Core Web API + React frontend. Key stack:
+- **ORM**: Entity Framework Core with SQLite
+- **Auth**: ASP.NET Core Identity + JWT bearer tokens
+- **Validation**: FluentValidation
+- **Models**: `Entry` (base), `ToDo : Entry`, `Settings`; all scoped to `ApplicationUser`
+
+Before running locally:
+```
+dotnet user-secrets set JWT:Key "your-key"
+dotnet ef database update
+```
+
+## Example: correct model ownership pattern
+```csharp
+// ✅ Always scope queries to the authenticated user
+var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+var items = await _db.ToDos.Where(t => t.ApplicationUserId == userId).ToListAsync();
+
+// ❌ Never return unscoped data
+var items = await _db.ToDos.ToListAsync();
+```
+
+## Example: consistent status values
+```csharp
+// ✅ Use the Status field values established in Entry
+public string Status { get; set; } = "active"; // "active" | "inactive"
+
+// ❌ Don't invent new status strings inline
+item.Status = "done"; // not a valid status
+```
