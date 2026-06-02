@@ -3,6 +3,12 @@
 >> Nonfunctional requirements
 >> Features
 
+# 6/2
+I'm doing some Cursor learning because it was very easy to hit the credit limit, and also my prompting hasn't been giving me what I want. I struggle sometimes with tech vocabulary. I don't know if it's a working memory thing, but I don't think I was explicit enough. But also not having the vocabulary is definitely a cop out.
+> regardless, I have more confidence explaining the frontend probably because I visualize in words// not images. sure.
+
+
+
 # 6/1
 
 I've had some trouble getting the right tests created, partly because of ambiguous Tasks, my model and an async Task, which came up before, so I changed the Task mode to ToDo. I tried this before with copilot and it was not good. I missed a few Todos that should be ToDo, but letting it go for now.
