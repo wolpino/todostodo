@@ -52,7 +52,18 @@ I want to experiment with various AI tools so I'm going to do a mix of my usual 
 - copilot to update packages
 - copilot to generate backend scaffalding and tests
 - chakra ui agent
+- cusor to develop the frontend
 
+# Design
+mostly single page application 
+-- The idea of going to a different page or even using a pop up on a list feels very clunky to me. 
+-- first empty item and click to enter 
+there's a bullet to the left of the input, then icons to the right. a calendar for the date. a clock for time. 
+click on the calendar icon, calendar will pop up, user clicks on a day, and the date now displays were the calendar was or to right of icon (so user would click it again to edit? I think I like clicking in the same place)
+> initially all previous dates will be disabled, but adding the Event type will enable it.
+click clock icon, input for time, then display time. 
+on the right is a red x.
+click the bullet to get a green check, swipe? to cross it off. confetti?
 
 
 # Ideas
@@ -148,7 +159,7 @@ https://www.reddit.com/r/reactjs/comments/1cr53f0/chakra_ui_vs_material_ui/
 `npx skills add https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-builder`
 
 
-## Initial ideas, 
+## Initial ideas:
 i.e. letting myself think through whatever ideas I have so I don't get too excited and make it harder than necessary
 ###
 

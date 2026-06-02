@@ -1,0 +1,7 @@
+/Users/ari/codes/todostodo/todostodoTests/obj/Debug/net10.0/todostodoTests.csproj.AssemblyReference.cache
+/Users/ari/codes/todostodo/todostodoTests/obj/Debug/net10.0/MvcTestingAppManifest.json
+/Users/ari/codes/todostodo/todostodoTests/obj/Debug/net10.0/todostodoTests.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ari/codes/todostodo/todostodoTests/obj/Debug/net10.0/todostodoTests.AssemblyInfoInputs.cache
+/Users/ari/codes/todostodo/todostodoTests/obj/Debug/net10.0/todostodoTests.AssemblyInfo.cs
+/Users/ari/codes/todostodo/todostodoTests/obj/Debug/net10.0/todostodoTests.csproj.CoreCompileInputs.cache
+/Users/ari/codes/todostodo/todostodoTests/obj/Debug/net10.0/todostodoTests.sourcelink.json
