@@ -77,10 +77,10 @@ The single input which creates the tasks, which the user can add to or update. >
 
 ## Possible Features
 -- timer
--- ability to make multiple lists
+- ability to make multiple lists
 -- duplicate a task 
 - recurring tasks
--- sub tasks // events // notes
+- sub tasks // events // notes
 -- multiuser collaborations(roles), 
 - reminders/notifications - in application? emails, email weekly summery, ability 
 - allow user to change default settings, theme/color, views etc
