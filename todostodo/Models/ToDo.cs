@@ -1,6 +1,6 @@
 namespace todostodo.Models;
 
-public class ToDo : Entry
+public class Todo : Entry
 {
     public DateOnly? DueDate { get; set; }
     

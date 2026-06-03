@@ -81,7 +81,7 @@ public static class DevDataSeeder
             if (!result.Succeeded)
                 continue;
 
-            var todos = todosPerDog[dog.UserName].Select(t => new ToDo
+            var todos = todosPerDog[dog.UserName].Select(t => new Todo
             {
                 Description = t.Description,
                 DueDate = t.DueDate,

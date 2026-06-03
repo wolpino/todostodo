@@ -23,7 +23,7 @@ public class ToDosController(
     /// <response code="200">Successfully retrieved todos.</response>
     /// <response code="401">User is not authenticated.</response>
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<ToDo>>> GetToDos()
+    public async Task<ActionResult<IEnumerable<Todo>>> GetToDos()
     {
         var userId = GetCurrentUserId();
         if (userId == null)
@@ -46,7 +46,7 @@ public class ToDosController(
     /// <response code="200">Todo found.</response>
     /// <response code="404">Todo not found or does not belong to user.</response>
     [HttpGet("{id}")]
-    public async Task<ActionResult<ToDo>> GetTodo(int id)
+    public async Task<ActionResult<Todo>> GetTodo(int id)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
@@ -69,13 +69,13 @@ public class ToDosController(
     /// <response code="201">Todo created successfully.</response>
     /// <response code="400">Invalid request data.</response>
     [HttpPost]
-    public async Task<ActionResult<ToDo>> CreateTodo([FromBody] CreateTodoRequest request)
+    public async Task<ActionResult<Todo>> CreateTodo([FromBody] CreateTodoRequest request)
     {
         var userId = GetCurrentUserId();
         if (userId == null)
             return Unauthorized();
 
-        var todo = new ToDo
+        var todo = new Todo
         {
             Description = request.Description,
             DueDate = request.DueDate,
@@ -100,7 +100,7 @@ public class ToDosController(
     /// <response code="200">Todo updated successfully.</response>
     /// <response code="404">Todo not found or does not belong to user.</response>
     [HttpPut("{id}")]
-    public async Task<ActionResult<ToDo>> UpdateTodo(int id, [FromBody] UpdateTodoRequest request)
+    public async Task<ActionResult<Todo>> UpdateTodo(int id, [FromBody] UpdateTodoRequest request)
     {
         var userId = GetCurrentUserId();
         if (userId == null)

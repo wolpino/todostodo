@@ -65,6 +65,10 @@ click clock icon, input for time, then display time.
 on the right is a red x.
 click the bullet to get a green check, swipe? to cross it off. confetti?
 
+- testdata, 5 users with 
+- 
+)
+
 
 # Ideas
 How can I remove any kind of blocker or reason to not do something, any accommodation for the recording of the task to be easier
@@ -75,11 +79,11 @@ The single input which creates the tasks, which the user can add to or update. >
 -- timer
 -- ability to make multiple lists
 -- duplicate a task 
--- recurring tasks
+- recurring tasks
 -- sub tasks // events // notes
 -- multiuser collaborations(roles), 
--- reminders/notifications - in application? emails, email weekly summery, ability 
--- allow user to change default settings, theme/color, views etc
+- reminders/notifications - in application? emails, email weekly summery, ability 
+- allow user to change default settings, theme/color, views etc
 -- get an agent to break tasks into subtasks.
 -- get agent to auto tag? 
 

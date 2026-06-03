@@ -11,7 +11,7 @@ export const ERROR_MESSAGES = {
   BAD_GATEWAY: 'The server is temporarily unavailable',
   SERVICE_UNAVAILABLE: 'The service is currently unavailable',
 
-  // ToDo -specific Errors
+  //  -specific Errors
   TODO_NOT_FOUND: 'Todo not found',
   TODO_CREATE_FAILED: 'Failed to create todo',
   TODO_UPDATE_FAILED: 'Failed to update todo',

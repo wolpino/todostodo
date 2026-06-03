@@ -53,7 +53,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
         var okResult = result.Result as OkObjectResult;
         okResult!.StatusCode.Should().Be(200);
 
-        var todos = okResult.Value as IEnumerable<ToDo>;
+        var todos = okResult.Value as IEnumerable<Todo>;
         todos.Should().NotBeNull();
         todos!.Should().BeEmpty();
     }
@@ -78,7 +78,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
         // Assert
         result.Result.Should().BeOfType<OkObjectResult>();
         var okResult = result.Result as OkObjectResult;
-        var returnedTodos = (okResult!.Value as IEnumerable<ToDo>)!.ToList();
+        var returnedTodos = (okResult!.Value as IEnumerable<Todo>)!.ToList();
 
         returnedTodos.Should().HaveCount(3);
         returnedTodos.Should().BeInDescendingOrder(t => t.CreatedDate);
@@ -98,7 +98,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
 
         result.Result.Should().BeOfType<OkObjectResult>();
         var okResult = result.Result as OkObjectResult;
-        var returnedTodo = okResult!.Value as ToDo;
+        var returnedTodo = okResult!.Value as Todo;
 
         returnedTodo.Should().NotBeNull();
         returnedTodo!.Id.Should().Be(todo.Id);
@@ -121,7 +121,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
         createdResult!.StatusCode.Should().Be(201);
         createdResult.ActionName.Should().Be(nameof(ToDosController.GetTodo));
 
-        var createdTodo = createdResult.Value as ToDo;
+        var createdTodo = createdResult.Value as Todo;
         createdTodo.Should().NotBeNull();
         createdTodo!.Description.Should().Be("New Todo Item");
         createdTodo.ApplicationUserId.Should().Be(_testUser.Id);
@@ -145,7 +145,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
         var result = await _controller.CreateTodo(request);
 
         var createdResult = result.Result as CreatedAtActionResult;
-        var createdTodo = createdResult!.Value as ToDo;
+        var createdTodo = createdResult!.Value as Todo;
 
         createdTodo!.DueDate.Should().Be(dueDate);
         createdTodo.DueTime.Should().Be(dueTime);
@@ -167,7 +167,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
 
         result.Result.Should().BeOfType<OkObjectResult>();
         var okResult = result.Result as OkObjectResult;
-        var updatedTodo = okResult!.Value as ToDo;
+        var updatedTodo = okResult!.Value as Todo;
 
         updatedTodo!.Id.Should().Be(originalTodo.Id);
         updatedTodo.Description.Should().Be("Updated Description");
@@ -189,7 +189,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
         var result = await _controller.UpdateTodo(todo.Id, updateRequest);
 
         var okResult = result.Result as OkObjectResult;
-        var updatedTodo = okResult!.Value as ToDo;
+        var updatedTodo = okResult!.Value as Todo;
 
         updatedTodo!.Status.Should().Be(EntryStatus.Inactive);
     }
@@ -212,7 +212,7 @@ public class ToDosControllerHappyPathTests : IAsyncLifetime
         var result = await _controller.UpdateTodo(originalTodo.Id, updateRequest);
 
         var okResult = result.Result as OkObjectResult;
-        var updatedTodo = okResult!.Value as ToDo;
+        var updatedTodo = okResult!.Value as Todo;
 
         updatedTodo!.Description.Should().Be("Updated Description");
         updatedTodo.DueDate.Should().Be(new DateOnly(2026, 5, 31));
