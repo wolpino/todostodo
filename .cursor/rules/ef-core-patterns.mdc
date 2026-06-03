@@ -1,0 +1,35 @@
+---
+description: Entity Framework Core patterns for this project (SQLite, Identity, migrations)
+globs: **/*.cs
+alwaysApply: false
+---
+
+# EF Core Patterns
+
+- Inject `ApplicationDbContext` via constructor DI — never `new` it directly
+- Always `await` async EF methods (`ToListAsync`, `SaveChangesAsync`, etc.)
+- Use `FindAsync(id)` for single-PK lookups; use `FirstOrDefaultAsync` when filtering
+- Do not call `SaveChangesAsync` inside a loop — batch changes then save once
+- Migrations live in the project, not the solution root — run `dotnet ef` from the API project directory
+
+## Example: correct context usage in a service
+```csharp
+// ✅ Inject and await
+public class ToDoService(ApplicationDbContext db)
+{
+    public async Task<ToDo?> GetByIdAsync(int id, string userId) =>
+        await db.ToDos.FirstOrDefaultAsync(t => t.Id == id && t.ApplicationUserId == userId);
+}
+
+// ❌ Never instantiate DbContext manually
+var db = new ApplicationDbContext(); // breaks DI lifetime management
+```
+
+## Example: adding a migration
+```bash
+# ✅ Run from the API project directory
+dotnet ef migrations add AddDueDateIndex
+
+# ❌ Don't run from the solution root — EF won't find the startup project
+dotnet ef migrations add AddDueDateIndex  # run from todostodo/, not todostodo.sln location
+```

@@ -1,5 +1,5 @@
+using todostodo.Controllers;
 using todostodo.Models;
-using todostodo.Models.ToDo;
 
 namespace todostodo.Tests.Fixtures;
 
@@ -35,12 +35,12 @@ public class ToDoFixture
     /// <summary>
     /// Creates a CreateToDoRequest for testing.
     /// </summary>
-    public static CreateToDoRequest CreateToDoRequest(
+    public static CreateTodoRequest CreateToDoRequest(
         string? description = null,
         DateOnly? dueDate = null,
         TimeOnly? dueTime = null)
     {
-        return new CreateToDoRequest
+        return new CreateTodoRequest
         {
             Description = description ?? "New Test ToDo",
             DueDate = dueDate,
@@ -49,15 +49,15 @@ public class ToDoFixture
     }
 
     /// <summary>
-    /// Creates an UpdateToDoRequest for testing.
+    /// Creates an UpdateTodoRequest for testing.
     /// </summary>
-    public static UpdateToDoRequest CreateUpdateToDoRequest(
+    public static UpdateTodoRequest CreateUpdateToDoRequest(
         string? description = null,
         DateOnly? dueDate = null,
         TimeOnly? dueTime = null,
         EntryStatus? status = null)
     {
-        return new UpdateToDoRequest
+        return new UpdateTodoRequest
         {
             Description = description,
             DueDate = dueDate,

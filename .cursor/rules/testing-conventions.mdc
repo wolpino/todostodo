@@ -1,0 +1,54 @@
+---
+description: Test conventions for xUnit tests in this project
+globs: **/*Tests*/**/*.cs,**/*.Tests/**/*.cs,**/*Test.cs
+alwaysApply: false
+---
+
+# Testing Conventions
+
+- Use **xUnit** with `EF Core InMemory` provider for DB tests (already in the project)
+- Name tests: `MethodName_Scenario_ExpectedResult`
+- Use `async Task` for all test methods that touch the DB or services
+- Seed the in-memory DB inside each test or in a shared fixture — do not share state between tests
+- Never test controller actions directly; test the service layer
+
+## Example: in-memory DB setup per test
+```csharp
+// ✅ Fresh DB per test — prevents state bleed
+private ApplicationDbContext CreateDb()
+{
+    var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+        .UseInMemoryDatabase(Guid.NewGuid().ToString())
+        .Options;
+    return new ApplicationDbContext(options);
+}
+
+[Fact]
+public async Task GetByIdAsync_ExistingId_ReturnsToDo()
+{
+    await using var db = CreateDb();
+    db.ToDos.Add(new ToDo { Id = 1, Description = "test", ApplicationUserId = "u1" });
+    await db.SaveChangesAsync();
+    var service = new ToDoService(db);
+    var result = await service.GetByIdAsync(1, "u1");
+    Assert.NotNull(result);
+}
+```
+
+## Example: naming and assertion style
+```csharp
+// ✅ Clear name, single assertion focus
+[Fact]
+public async Task GetByIdAsync_WrongUser_ReturnsNull()
+{
+    // arrange / act / assert pattern
+    await using var db = CreateDb();
+    // ... seed with userId "u1"
+    var result = await service.GetByIdAsync(1, "u2"); // different user
+    Assert.Null(result);
+}
+
+// ❌ Vague name, multiple unrelated assertions
+[Fact]
+public async Task TestStuff() { ... }
+```

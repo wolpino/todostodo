@@ -1,0 +1,44 @@
+---
+description: C# coding conventions for this project
+globs: **/*.cs
+alwaysApply: false
+---
+
+# C# Conventions
+
+- Use `async`/`await` throughout — no `.Result` or `.Wait()`
+- Return `IActionResult` or `ActionResult<T>` from controller actions
+- Use `var` when the type is obvious from the right-hand side
+- Prefer `record` types for DTOs; use classes for entities
+- Keep controllers thin — business logic belongs in services
+
+## Example: async controller action
+```csharp
+// ✅ Correct
+[HttpGet("{id}")]
+public async Task<ActionResult<ToDoDto>> GetToDo(int id)
+{
+    var item = await _service.GetByIdAsync(id);
+    return item is null ? NotFound() : Ok(item);
+}
+
+// ❌ Avoid blocking calls
+public ActionResult<ToDoDto> GetToDo(int id)
+{
+    var item = _service.GetByIdAsync(id).Result;
+    return Ok(item);
+}
+```
+
+## Example: DTO vs entity
+```csharp
+// ✅ DTO as a record — immutable, no EF tracking concerns
+public record ToDoDto(int Id, string Description, string Status, DateOnly? DueDate);
+
+// ✅ Entity as a class — EF Core needs a parameterless constructor
+public class ToDo : Entry
+{
+    public DateOnly? DueDate { get; set; }
+    public TimeOnly? DueTime { get; set; }
+}
+```

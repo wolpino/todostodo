@@ -1,6 +1,5 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using todostodo.Controllers;
-using TodoToDo = todostodo.Models.ToDo;
 
 namespace todostodo.Tests.Fixtures;
 
