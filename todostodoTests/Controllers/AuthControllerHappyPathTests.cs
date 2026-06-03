@@ -6,7 +6,7 @@ using Moq;
 using todostodo.Controllers;
 using todostodo.Models;
 using todostodo.Tests.Fixtures;
-using System.Threading.ToDos;
+using Microsoft.Extensions.Configuration;
 
 namespace todostodo.Tests.Controllers;
 
@@ -83,7 +83,7 @@ public class AuthControllerHappyPathTests
         var jwtData = okResult.Value as JwtData;
         jwtData.Should().NotBeNull();
         jwtData!.Token.Should().NotBeNullOrEmpty();
-        jwtData.Expiration.Should().BeGreaterThan(DateTime.UtcNow);
+        jwtData.Expiration.Should().BeAfter(DateTime.UtcNow);
     }
 
     /// <summary>
