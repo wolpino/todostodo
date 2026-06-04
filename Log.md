@@ -1,7 +1,10 @@
 
->> Design
->> Nonfunctional requirements
->> Features
+
+TODO NEXT
+> Double check non functional requirements are all MVP, also if any are missing
+> Make comprehensive to do (haha) list for whatever Needs to be done, but then go through it and figure out what does not actually need to be done. 
+
+
 
 # 6/3
 
@@ -32,6 +35,17 @@ No Database.Migrate() or EnsureCreated() in startup."
 
 Neither file defines connection strings, JWT, or OAuth settings — those come from user secrets (JWT:Key on the project) and commented OAuth config in Program.cs.
 - which files? should they have connection strings, JWT, and OAuth settings? show me an example based on best practices in C#/.NET web applications (from https://learn.microsoft.com/en-us/dotnet/csharp/ )
+
+--
+
+I made a @uglywireframe.png which made me realize the todo list is functional without the date and time, but not with out the Todo and the Status. so I'm going with design B, please please do not judge me on this wireframe.
+I thought about leaving the settings for after the MVP too, but I've liked the idea of it being customizable from the beginning. Both of these options SEEM relatively straight forward, but I'm suspicious of that. 
+This would typically be a internet search (probably something like 'implement settings in react app') but I caught myself and am going chat instead. 
+-- There's a way to add color themes with Chakra's dark/light toggle that uses Semantic tokens which is interesting but possibly (probably) has a high risk for error.
+-- adding fonts is simpler to implement so I'm going with that for initial MVP so I can have a setting, but it won't slow things down too much (hopefully).
+
+>> PRD is looking less messy. 
+
 
 # 6/2
 I'm doing some Cursor learning because it was very easy to hit the credit limit, and also my prompting hasn't been giving me what I want. I struggle sometimes with tech vocabulary. I don't know if it's a working memory thing, but I don't think I was explicit enough. But also not having the vocabulary is definitely a cop out.
