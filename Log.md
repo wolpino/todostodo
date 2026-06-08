@@ -1,17 +1,64 @@
 
->> Design
->> Nonfunctional requirements
->> Features
+
+TODO NEXT
+> Double check non functional requirements are all MVP, also if any are missing
+> Make comprehensive to do (haha) list for whatever Needs to be done, but then go through it and figure out what does not actually need to be done. 
+
+
+
+# 6/3
+
+Today is time for solidifying my next steps and full plan. Usually I'd do this earlier, but I wanted to leave things kind of open for more chances to learn.
+> moving into Cursor and exploring the current project structure led to a few comments I want to understand more or fix, now, before I go further.
+
+
+Tasks in response to project structure exploration:
+
+"there is no Startup.cs — the app uses minimal hosting in Program.cs only." 
+- Should there be a Startup.cs file? Why is it necessary? Where does it go and what should it look like?
+
+"JWT key is expected via user secrets (dotnet user-secrets set JWT:Key "..."), not in appsettings.json."
+- Add a ADDKEYHERE jwt key to appsettings.json
+
+"SQLite in-memory (Data Source=:memory:) at runtime in Program.cs.
+No Database.Migrate() or EnsureCreated() in startup."
+- Would Database.Migrate() or EnsureCreated() go into the startup file? is this the best way to initiate an in-memory SQLite database?
+
+"Auth/authorization middleware is registered after MapControllerRoute / MapFallbackToFile (unusual ordering)."
+- What is the usual ordering? Does this have any affect on the code?
+
+"Gap: TasksControllerHappyPathTests references a DatabaseFixture class that does not exist in the repo (no class DatabaseFixture anywhere). Tests expect _databaseFixture.InitializeAsync() and .DbContext."
+- rewrite TasksControllerHappyPathTests to include all necessary references and expectations
+
+"README documents DB setup as: dotnet ef database update (file-based SQLite via migrations), which differs from the in-memory connection string in Program.cs."
+- How do I fix this? I want in-memory Sqlite for the database. Is it possible to use entity framework along side in-memory Sqlite
+
+Neither file defines connection strings, JWT, or OAuth settings — those come from user secrets (JWT:Key on the project) and commented OAuth config in Program.cs.
+- which files? should they have connection strings, JWT, and OAuth settings? show me an example based on best practices in C#/.NET web applications (from https://learn.microsoft.com/en-us/dotnet/csharp/ )
+
+--
+
+I made a @uglywireframe.png which made me realize the todo list is functional without the date and time, but not with out the Todo and the Status. so I'm going with design B, please please do not judge me on this wireframe.
+I thought about leaving the settings for after the MVP too, but I've liked the idea of it being customizable from the beginning. Both of these options SEEM relatively straight forward, but I'm suspicious of that. 
+This would typically be a internet search (probably something like 'implement settings in react app') but I caught myself and am going chat instead. 
+-- There's a way to add color themes with Chakra's dark/light toggle that uses Semantic tokens which is interesting but possibly (probably) has a high risk for error.
+-- adding fonts is simpler to implement so I'm going with that for initial MVP so I can have a setting, but it won't slow things down too much (hopefully).
+
+>> PRD is looking less messy. 
+
 
 # 6/2
 I'm doing some Cursor learning because it was very easy to hit the credit limit, and also my prompting hasn't been giving me what I want. I struggle sometimes with tech vocabulary. I don't know if it's a working memory thing, but I don't think I was explicit enough. But also not having the vocabulary is definitely a cop out.
 > regardless, I have more confidence explaining the frontend probably because I visualize in words// not images. sure.
 
+https://blog.logrocket.com/frontend-devs-heres-how-to-get-the-most-out-of-cursor/
 
+- problems and fixes file?
+- rename ToDo to Todo
 
 # 6/1
 
-I've had some trouble getting the right tests created, partly because of ambiguous Tasks, my model and an async Task, which came up before, so I changed the Task mode to ToDo. I tried this before with copilot and it was not good. I missed a few Todos that should be ToDo, but letting it go for now.
+I've had some trouble getting the right tests created, partly because of ambiguous Tasks, my model and an async Task, which came up before, so I changed the Task model to ToDo. I tried this before with copilot and it was not good. I missed a few Todos that should be ToDo, but letting it go for now.
 
 I need tests and a frontend.
 

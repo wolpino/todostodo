@@ -12,7 +12,7 @@ public class ToDoFixture
     /// <summary>
     /// Creates a test ToDo with default values.
     /// </summary>
-    public static ToDo CreateTestToDo(
+    public static Todo CreateTestToDo(
         int? id = null,
         int? userId = null,
         string? description = null,
@@ -20,7 +20,7 @@ public class ToDoFixture
         TimeOnly? dueTime = null,
         EntryStatus status = EntryStatus.Active)
     {
-        return new ToDo
+        return new Todo
         {
             Id = id ?? 1,
             Description = description ?? "Test ToDo",
@@ -69,7 +69,7 @@ public class ToDoFixture
     /// <summary>
     /// Creates multiple test ToDos.
     /// </summary>
-    public static List<ToDo> CreateTestToDos(int count = 3, int userId = 1)
+    public static List<Todo> CreateTestToDos(int count = 3, int userId = 1)
     {
         return Enumerable.Range(1, count)
             .Select(i => CreateTestToDo(

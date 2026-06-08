@@ -13,7 +13,7 @@ public class ApplicationDbContext: IdentityDbContext<ApplicationUser, IdentityRo
     }
     
     public DbSet<Entry> Entries { get; set; }
-    public DbSet<ToDo> ToDos { get; set; }
+    public DbSet<Todo> ToDos { get; set; }
     public DbSet<Settings> Settings { get; set; }
         
     protected override void OnModelCreating(ModelBuilder builder)
@@ -24,7 +24,7 @@ public class ApplicationDbContext: IdentityDbContext<ApplicationUser, IdentityRo
         builder.Entity<Entry>()
             .HasDiscriminator<string>("EntryType")
             .HasValue<Entry>("Entry")
-            .HasValue<ToDo>("ToDo");
+            .HasValue<Todo>("ToDo");
         
         // Configure relationships
         builder.Entity<Entry>()
