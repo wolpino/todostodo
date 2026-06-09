@@ -7,10 +7,7 @@ namespace todostodo.Data;
 
 public class ApplicationDbContext: IdentityDbContext<ApplicationUser, IdentityRole<int>, int> 
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-    {
-       
-    }
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
     
     public DbSet<Entry> Entries { get; set; }
     public DbSet<Todo> ToDos { get; set; }
@@ -23,18 +20,18 @@ public class ApplicationDbContext: IdentityDbContext<ApplicationUser, IdentityRo
         // Configure Todo as derived from Entry (Table-per-hierarchy)
         builder.Entity<Entry>()
             .HasDiscriminator<string>("EntryType")
-            .HasValue<Entry>("Entry")
             .HasValue<Todo>("ToDo");
         
         // Configure relationships
         builder.Entity<Entry>()
+            // HasOne is for dependent to principal 
             .HasOne(e => e.ApplicationUser)
-            .WithMany()
-            .HasForeignKey(e => e.ApplicationUserId);
+            .WithOne()
+            .HasForeignKey<ApplicationUser>(e => e.Id);
         
         builder.Entity<Settings>()
             .HasOne(s => s.ApplicationUser)
-            .WithMany()
-            .HasForeignKey(s => s.ApplicationUserId);
+            .WithOne()
+            .HasForeignKey<ApplicationUser>(s => s.Id);
     }
 }

@@ -27,9 +27,7 @@ builder.Host.UseSerilog((ctx, lc) =>
 
 builder.Services.AddAutoMapper(typeof(AppMappingProfile));
 
-var sqliteConnectionString = builder.Environment.IsDevelopment()
-    ? "Data Source=todostodo_dev;Mode=Memory;Cache=Shared"
-    : "Data Source=:memory:";
+var sqliteConnectionString = "Data Source=:memory:";
 builder.Services.AddDbContext<ApplicationDbContext>(c => c.UseSqlite(sqliteConnectionString));
 
 builder.Services.AddControllersWithViews().AddNewtonsoftJson(options =>
@@ -190,11 +188,11 @@ authenticationBuilder.AddJwtBearer(options =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    using var scope = app.Services.CreateScope();
-    await DevDataSeeder.SeedAsync(scope.ServiceProvider);
-}
+// if (app.Environment.IsDevelopment())
+// {
+//     using var scope = app.Services.CreateScope();
+//     await DevDataSeeder.SeedAsync(scope.ServiceProvider);
+// }
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
