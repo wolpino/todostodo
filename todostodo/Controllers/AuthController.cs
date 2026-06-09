@@ -115,8 +115,15 @@ public class AuthController : ControllerBase
     [Authorize]
     public async Task<ActionResult<ApplicationUser>> CurrentUserInfo()
     {
-        var user = HttpContext.GetUser();
-        return user;
+        try 
+        {
+            var user = HttpContext.GetUser();
+            return user;
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     private async Task<JwtSecurityToken> GetToken(ApplicationUser user)

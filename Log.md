@@ -4,6 +4,9 @@ TODO NEXT
 > Double check non functional requirements are all MVP, also if any are missing
 > Make comprehensive to do (haha) list for whatever Needs to be done, but then go through it and figure out what does not actually need to be done. 
 
+# 6/8
+- add try/catches
+
 
 
 # 6/3
