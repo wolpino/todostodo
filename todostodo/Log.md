@@ -2,6 +2,69 @@
 
 TODO NEXT
 
+# 6/9
+Alright, I just went for the wipe clean and start simpler with docs. I let myself get side tracked with AI tools, but I think that was part of the plan. It helped me review a lot of C# which came back easier than I expected.  
+
+I do this when drafting stories, my thought patterns are really web like, so I can get a big picture but it doesn’t come at once. So moving to a clean page, just helps reset and focus and decide how to move forward.
+And today it will be a list
+
+-- using Identity for auth/login/signup/auth feels really heavy in the application, but I think it's needed for a prod app
+but will look for alternatives.
+- It also finally registered that in -emory would not need database migrations, so it's cool I remmebered how to do them but it wasn't necessary
+
+1. installs > dotnet, node, npm
+2. create a solution file `dotnet net sln -n todostodo`
+3. create backend api > in backend folder `dotnet new webapi -n todostodo.api`
+4. add backend to solution file ` dotnet sln add backend/todostodo.api/todostodo.api.csprg`
+5. in api project add packages
+```
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Microsoft.EntityFrameworkCore.Design
+dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore\
+```
+6. Create domain model(s) >> start with Entry, and the basics >> Id, Title, Status > but this time I'm adding Description as optional because it's a use case with it for all the future entry types.
+>> but I need a userId, so figure out Identity options here
+- Entry
+- EntryStatus (type for Status field)
+- User/ApplicationUser
+
+6.a. Identity > 
+- add packages 
+`Microsoft.AspNetCore.Identity.EntityFrameworkCore` and `Microsoft.EntityFrameworkCore.Sqlite`
+- add db context have AppDbContext inherit from `IdentityDbContext<TUser>`
+- configure db in program.cs file and add authorization, Identity route mappping
+>> manual test on localhost via swagger UI, register and login successful. need to remmeber to add logout
+```
+app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
+    [FromBody] object empty) =>
+{
+    if (empty != null)
+    {
+        await signInManager.SignOutAsync();
+        return Results.Ok();
+    }
+    return Results.Unauthorized();
+})
+.WithOpenApi()
+.RequireAuthorization();
+
+Identity - https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?view=aspnetcore-10.0
+```
+```
+public signOut() {
+  return this.http.post('/logout', {}, {
+    withCredentials: true,
+    observe: 'response',
+    responseType: 'text'
+```
+7. configure sqlite in-memory
+
+
+
+
+
+
 # 6/8
 took a break! time to finish!
 
@@ -25,12 +88,6 @@ took a break! time to finish!
 Ok, things are feeling messy and like I let AI do tooo much so I'm going to backtrack to a previous commit maybe
 
 Now to decide if I want to try a clean repo....not really, it never works as smoothly as I think it might be... but there's too much in this project..
-
-
-
-
-
-
 
 
 # 6/3

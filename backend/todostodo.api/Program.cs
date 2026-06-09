@@ -1,41 +1,65 @@
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using todostodo.api.Data;
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.AspNetCore.Identity;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// :memory: is what makes it in-memory
+var connection = new SqliteConnection("Data Source=:memory:");
+
+connection.Open();
+
+// add db context with the in-memory connection
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlite(connection)
+);
+
+// adds Identity services to the dependency injection container
+builder.Services.AddAuthorization();
+
+// activate API endpoints for Identity
+// by default cookies and proprietary tokens are activated >> issuesd at login if the useCookies query string param is true
+builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>(); 
+
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("frontend", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+}); 
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+// map identity api endpoints
+app.MapIdentityApi<IdentityUser>();
+
+// TODO secure endpoints - in controller [Authorize] attribute
+
+using (var scope = app.Services.CreateScope())
 {
-    app.MapOpenApi();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.EnsureCreated();
 }
 
-app.UseHttpsRedirection();
+// only in dev
+app.UseSwagger();
+app.UseSwaggerUI();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+app.UseCors("frontend");
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast");
+app.MapControllers();
 
 app.Run();
-
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
