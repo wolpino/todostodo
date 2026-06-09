@@ -1,4 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace todostodo.api.Models;
+
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum EntryStatus
 {
     // when an entry is created, it is not started yet

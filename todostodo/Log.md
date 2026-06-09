@@ -3,9 +3,15 @@
 TODO NEXT
 
 # 6/9
-Alright, I just went for the wipe clean and start simpler with docs. I let myself get side tracked with AI tools, but I think that was part of the plan. It helped me review a lot of C# which came back easier than I expected.  
+Alright, I just went for the wipe clean and start simpler with docs. I let myself get side tracked with AI tools, but I think that was part of the plan. It helped me review a lot of C# which came back easier than I expected. BUT, I think I remembered enough C# to remind me how much I don't know, and therefore can't easily check the generated code. 
 
 I do this when drafting stories, my thought patterns are really web like, so I can get a big picture but it doesn’t come at once. So moving to a clean page, just helps reset and focus and decide how to move forward.
+
+
+
+
+
+
 And today it will be a list
 
 -- using Identity for auth/login/signup/auth feels really heavy in the application, but I think it's needed for a prod app
@@ -30,6 +36,7 @@ dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore\
 - User/ApplicationUser
 
 6.a. Identity > 
+https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?view=aspnetcore-10.0
 - add packages 
 `Microsoft.AspNetCore.Identity.EntityFrameworkCore` and `Microsoft.EntityFrameworkCore.Sqlite`
 - add db context have AppDbContext inherit from `IdentityDbContext<TUser>`
@@ -48,8 +55,6 @@ app.MapPost("/logout", async (SignInManager<IdentityUser> signInManager,
 })
 .WithOpenApi()
 .RequireAuthorization();
-
-Identity - https://learn.microsoft.com/en-us/aspnet/core/security/authentication/identity-api-authorization?view=aspnetcore-10.0
 ```
 ```
 public signOut() {
@@ -59,9 +64,23 @@ public signOut() {
     responseType: 'text'
 ```
 7. configure sqlite in-memory
+https://learn.microsoft.com/en-us/dotnet/standard/data/sqlite/in-memory-databases
 
+8. CRUD controller
+-- I am thinking about try/catch blocks, but also wondering about a larger try/catch because it seems too easy to put them everywhere
+https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-way-to-handle-errors-9c6d76302485
 
+-- also thinking about logging.
+-- as I'm writing the update endpoint, I'm trying to not get sidetracked by deserialization/validation.
+-- request and return objects
+-- tests
 
+-- manual testing in swagger not working due to a string not mapping to enum.
+
+time for some baseball... next steps:
+
+- serialization/validation/tests/error handling 
+- then react app
 
 
 
