@@ -39,13 +39,12 @@ public class EntryController : ControllerBase
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<Entry>> Create(CreateEntryRequest req)
     {
+        // TODO: replace UserId placeholder with authenticated user's ID once auth is wired up
         var entry = new Entry
         {
             Title = req.Title,
             Description = req.Description,
             Status = req.Status,
-            UserId = 0,
-            User = null!
         };
 
         _db.Entries.Add(entry);

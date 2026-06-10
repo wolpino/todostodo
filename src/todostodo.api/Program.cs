@@ -1,8 +1,8 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using todostodo.api.Data;
-using Microsoft.AspNetCore.Identity;
 using todostodo.api.Middleware;
+using todostodo.api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,7 +22,7 @@ builder.Services.AddAuthorization();
 // activate API endpoints for Identity
 // by default cookies and proprietary tokens are activated >> issuesd at login if the useCookies query string param is true
 // this calls what would be AddAuthentication() on a non-Identity API
-builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>(); 
+builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 // replacement for swagger
@@ -49,7 +49,7 @@ builder.Services.AddCors(options =>
 var app = builder.Build();
 
 // map identity api endpoints
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<User>();
 
 if (app.Environment.IsDevelopment())
 {

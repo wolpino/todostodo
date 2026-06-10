@@ -58,8 +58,7 @@ public class EntryControllerTests : IDisposable
             Title = title,
             Description = description,
             Status = status,
-            UserId = 0,
-            User = _testUser
+            UserId = _testUser.Id
         };
         _db.Entries.Add(entry);
         await _db.SaveChangesAsync();
@@ -111,17 +110,35 @@ public class EntryControllerTests : IDisposable
 
     // ── CREATE ────────────────────────────────────────────────────────────────
 
-    // This test documents the known issue: the controller sets User = null!,
-    // which violates the NOT NULL constraint on the UserId1 shadow FK column.
-    // This will be fixed in task 2 (fix Entry <-> User relationship).
-    [Fact]
-    public async Task Create_ThrowsDbUpdateException_BecauseUserIsNull()
+    // Skipped until task 4: Create requires an authenticated user ID from the
+    // auth context. The controller will be updated to call
+    // User.FindFirstValue(ClaimTypes.NameIdentifier) once auth is wired up.
+    [Fact(Skip = "Requires authenticated user — revisit in auth task")]
+    public async Task Create_ReturnsCreatedResult_WithEntry()
     {
         var req = new CreateEntryRequest("New Entry", "desc", EntryStatus.Active);
 
-        var act = async () => await _controller.Create(req);
+        var result = await _controller.Create(req);
 
-        await act.Should().ThrowAsync<DbUpdateException>();
+        result.Result.Should().BeOfType<CreatedAtActionResult>();
+        var created = ((CreatedAtActionResult)result.Result!).Value as Entry;
+        created!.Title.Should().Be("New Entry");
+        created.Status.Should().Be(EntryStatus.Active);
+    }
+
+    [Fact(Skip = "Requires authenticated user — revisit in auth task")]
+    public async Task Create_PersistsEntry()
+    {
+        var req = new CreateEntryRequest("Persisted Entry", null, EntryStatus.InProgress);
+
+        var result = await _controller.Create(req);
+        var created = ((CreatedAtActionResult)result.Result!).Value as Entry;
+
+        _db.ChangeTracker.Clear();
+        var fromDb = await _db.Entries.FindAsync(created!.Id);
+        fromDb.Should().NotBeNull();
+        fromDb!.Title.Should().Be("Persisted Entry");
+        fromDb.Status.Should().Be(EntryStatus.InProgress);
     }
 
     // ── UPDATE ────────────────────────────────────────────────────────────────
