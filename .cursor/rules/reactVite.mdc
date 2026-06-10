@@ -10,7 +10,8 @@ You are building a scalable, high-performance, and secure single page applicatio
 - **Build Tool:** Vite v7+ (ESM native, Environment API).
 - **Language:** TypeScript v5.9+ (Strictest settings, no `any`).
 - **Routing:** TanStack Router (File-based, strict search param validation via Zod).
-- **Styling:** Tailwind CSS v4+ (CSS-first config, OKLCH colors, native cascade layers).
+- **Component Library:** Chakra UI v3+ (`@chakra-ui/react`, built on Ark UI).
+- **Styling:** Chakra UI design tokens + Tailwind CSS v4+ for layout utilities only.
 - **Package Manager:** pnpm.
 - **State Management:** React Context API (Global UI state).
 - **API Generation:** @hey-api/openapi-ts (OpenAPI/Swagger to TypeScript client automation).
@@ -72,29 +73,35 @@ You are building a scalable, high-performance, and secure single page applicatio
 - **Auth:** Use `HttpOnly` cookies (issued by ASP.NET Core Identity) — no manual token attachment needed for same-origin requests via the Vite proxy.
 - **Error handling:** Check `response.ok` on every fetch and surface errors via state rather than throwing globally.
 
-## 7. Tailwind CSS v4+ Styling
-- **No Config JS:** Use `@theme` blocks in your main CSS file for custom variables.
-- **Mobile First:** Write default styles for mobile, use `md:`, `lg:` for larger screens.
-- **Color Palette:** Use OKLCH color space for modern vibrancy.
-- **Sorting:** Sort utility classes logically.
+## 7. Chakra UI v3 Conventions
+- **Provider:** Wrap the app in `<ChakraProvider>` (+ optional `<ColorModeProvider>`) in `main.tsx`.
+- **Components first:** Always prefer a Chakra component (`Box`, `Stack`, `Button`, `Input`, `Text`, etc.) over a raw HTML element with Tailwind classes.
+- **Style props:** Use Chakra style props (`color`, `bg`, `p`, `mt`, `gap`, etc.) for component-level styling. Reserve Tailwind only for layout concerns not covered by Chakra (e.g. CSS Grid utilities).
+- **Tokens:** Use semantic tokens (`colorPalette`, `fg`, `bg`) from the Chakra theme rather than hardcoded values.
+- **Variants:** Extend the theme via `createSystem` / `defineConfig` — do not inline one-off styles on every usage.
+- **No Emotion / no CSS-in-JS outside Chakra:** Chakra v3 handles its own CSS-in-JS; don't mix in styled-components or raw Emotion.
+
+## 8. Theme (Dark/Light Mode)
+- Use Chakra's built-in `ColorModeProvider` and `useColorMode` hook — no custom `ThemeContext` needed.
+- Extend tokens in `createSystem` config for brand colors and spacing.
+- Tailwind `dark:` variants are available for the rare cases Tailwind is used directly.
+
+## 9. Tailwind CSS v4+ (Layout Utilities Only)
+- Use Tailwind only where Chakra style props fall short (e.g. complex grid templates).
+- **No Config JS:** Use `@theme` blocks for any custom Tailwind variables.
 - **Avoid `@apply`:** Use utility classes directly in JSX.
 
-## 8. Internationalization (i18n)
+## 10. Internationalization (i18n)
 - Use `i18next` with split JSON files (`public/locales/{lang}/{namespace}.json`).
 - Use keys that represent the path: `t('header.navigation.home')`.
 
-## 9. Theme (Dark/Light Mode)
-- Implement a `ThemeContext`.
-- Use Tailwind's `dark:` variant.
-- Sync `color-scheme` on `<html>`.
-
-## 10. Testing Strategies
+## 11. Testing Strategies
 - **Unit:** `Vitest` for logic/hooks.
 - **Component:** `React Testing Library` for accessibility/interaction.
 - **E2E:** `Playwright` for critical flows (Login, Payment).
 - **Rule:** Critical features must have a spec file.
 
-## 11. Security Best Practices
+## 12. Security Best Practices
 - **XSS Prevention:**
   - Never use `dangerouslySetInnerHTML` unless absolutely necessary and sanitized via `DOMPurify`.
   - Escaping is handled automatically by React, do not bypass it.
@@ -112,9 +119,9 @@ src/
 │   ├── generated/   # @hey-api/openapi-ts generated files (DO NOT EDIT MANUALLY)
 │   └── model/       # Manual Zod schemas (if not generated)
 ├── components/
-│   ├── ui/          # Generic, reusable UI components
+│   ├── ui/          # Chakra-based reusable UI wrappers/extensions
 │   ├── features/    # Domain-specific components
-│   └── layout/      # Layout wrappers
+│   └── layout/      # Layout wrappers (Header, Sidebar, Page shell)
 ├── hooks/           # Custom hooks (non-API)
 ├── lib/             # Utility libraries (Zod, DOMPurify, formatters)
 ├── locales/         # i18n configurations
@@ -125,6 +132,6 @@ src/
 
 # Response Guidelines for AI
 1.  **Thinking Process:** Briefly explain the architectural choice, citing specific rules, as comments in files.
-2.  **Code generation:** Include necessary imports. Use Tailwind v4 syntax.
+2.  **Code generation:** Include necessary imports. Prefer Chakra UI components and style props; use Tailwind only for layout utilities.
 3.  **Refactoring:** Prioritize removing `useEffect` for data fetching, adopting `useOptimistic`, and leveraging generated API client functions.
 4.  **Dependencies:** If a new library is needed, suggest installing via `pnpm add`.
