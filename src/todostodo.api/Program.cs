@@ -1,7 +1,6 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using todostodo.api.Data;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,12 +23,13 @@ builder.Services.AddAuthorization();
 builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<AppDbContext>(); 
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// replacement for swagger
 builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// builder.Services.AddEndpointsApiExplorer();
+// builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
@@ -46,6 +46,11 @@ var app = builder.Build();
 // map identity api endpoints
 app.MapIdentityApi<IdentityUser>();
 
+if (app.Environment.IsDevelopment())
+{
+    app.MapOpenApi();
+}
+
 // TODO secure endpoints - in controller [Authorize] attribute
 
 using (var scope = app.Services.CreateScope())
@@ -54,7 +59,7 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.EnsureCreated();
 }
 
-// only in dev
+// only in dev >> remove for openapi?
 app.UseSwagger();
 app.UseSwaggerUI();
 

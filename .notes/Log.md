@@ -1,22 +1,63 @@
+Ari's Work Log
+chronological bottom to top
 
 
-TODO NEXT
+# before prod
+- possible rename 
+
+# 6/10
+
+> Where I left off yesteday:
+
+8. CRUD controller
+-- I am thinking about try/catch blocks, but also wondering about a larger try/catch because it seems too easy to put them everywhere
+https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-way-to-handle-errors-9c6d76302485
+
+-- also thinking about logging.
+-- as I'm writing the update endpoint, I'm trying to not get sidetracked by deserialization/validation.
+-- request and return objects
+-- tests
+
+-- manual testing in swagger not working due to a string not mapping to enum.
+
+- serialization/validation/tests/error handling 
+- then react app
+
+-----
+
+9. TESTING
+- xUnit, NUnit and MSUnit are all familiar to me, and a look at testing framework overview confirms xUnit is my choice
+> more modern friendly than NUnit, good for API, async/await testing etc..
+> but honestly I think it's more because I've ruled out the other too, MSTest is slower and in general less liked (I'm remmebering now that my team are Microsoft used xUnit over MSUnit), and then NUnit isn't as quick to set up, and is less "modern" not that new is always better, but here it is.
+
+>> this also led me to questioning my folder structure so I added an src folder next to the tests folder 
+>> might as well add, I've accidently used some bad mix of python and c# capitalization approaches. going to start a pre-prod list so if it's necessary I can do it later (uch, later)
+
+SET UP TESTING
+`dotnet new xunit -n todostodo.api.test`
+`dotnet add package Moq --version 4.20.72`
+`dotnet add package FluentAssertions --version 6.12.2`
+`dotnet add reference ../src/backend/todostodo.api/todostodo.api.csprj`
+
+
+**Implementation:**
+- Full test coverage for models, validators, and controllers
+- Happy path + edge case tests for everything
+- Proper mocking patterns
+
+
+
 
 # 6/9
 Alright, I just went for the wipe clean and start simpler with docs. I let myself get side tracked with AI tools, but I think that was part of the plan. It helped me review a lot of C# which came back easier than I expected. BUT, I think I remembered enough C# to remind me how much I don't know, and therefore can't easily check the generated code. 
 
 I do this when drafting stories, my thought patterns are really web like, so I can get a big picture but it doesn’t come at once. So moving to a clean page, just helps reset and focus and decide how to move forward.
 
-
-
-
-
-
 And today it will be a list
 
 -- using Identity for auth/login/signup/auth feels really heavy in the application, but I think it's needed for a prod app
-but will look for alternatives.
-- It also finally registered that in -emory would not need database migrations, so it's cool I remmebered how to do them but it wasn't necessary
+but will look for alternatives. -- but the heaviness might just be normal C# scaffolding 
+- It also finally registered that in-memory would not need database migrations, so it's cool I remmebered how to do them but it wasn't necessary
 
 1. installs > dotnet, node, npm
 2. create a solution file `dotnet net sln -n todostodo`
