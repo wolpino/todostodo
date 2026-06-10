@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+        <!--Turn on generation of .xml into build output folder that would contain all the XML documentation comments in the project-->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!--Switch off compiler warnings:
+
+     CS1573 that arises due to missing XML documentation comments in handler parameters (I do this deliberately otherwise OpenAPI document spuriously contains documentation comments from non-model-bound handler parameters)
+
+     and CS1591 because I do not always place XML documentation comments on all publicly visible types and members (except on handlers and on model-bound types in handler parameters) -->
+    <!-- <NoWarn>$(NoWarn);1591;1573</NoWarn> -->
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.9" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.9">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="10.0.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.1" />
+  </ItemGroup>
+
+</Project>

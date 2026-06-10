@@ -1,0 +1,467 @@
+I want to build a fullstack application in visual studio code that uses .net 10 for a CRUD backend api and react frontend with both projects linked in the solution file. it should use typescript and sqlite in-memory for the db. how do I set up the scaffolding?
+
+You can scaffold this as a single Visual Studio Code workspace with:
+
+    .NET 10 Web API backend
+
+    React + TypeScript frontend (Vite)
+
+    SQLite in-memory via Entity Framework Core
+
+    Both projects organized under one solution (.sln)
+
+    API and frontend running independently during development
+
+A typical structure:
+
+MyApp/
+│
+├── MyApp.sln
+│
+├── backend/
+│   └── MyApp.Api/
+│       ├── Controllers/
+│       ├── Data/
+│       ├── Models/
+│       ├── Program.cs
+│       └── ...
+│
+└── frontend/
+    └── myapp-ui/
+        ├── src/
+        ├── package.json
+        └── ...
+
+1. Install prerequisites
+
+Verify:
+
+dotnet --version
+node --version
+npm --version
+
+You'll want a .NET 10 SDK preview/RTM and Node.js 20+.
+2. Create the solution
+
+mkdir MyApp
+cd MyApp
+
+dotnet new sln -n MyApp
+
+3. Create the backend API
+
+Create folders:
+
+mkdir backend
+cd backend
+
+Create API:
+
+dotnet new webapi -n MyApp.Api
+
+Add it to the solution:
+
+cd ..
+
+dotnet sln add backend/MyApp.Api/MyApp.Api.csproj
+
+4. Add EF Core + SQLite packages
+
+Go into the API project:
+
+cd backend/MyApp.Api
+
+Add packages:
+
+dotnet add package Microsoft.EntityFrameworkCore
+dotnet add package Microsoft.EntityFrameworkCore.Sqlite
+dotnet add package Microsoft.EntityFrameworkCore.Design
+
+5. Create the domain model
+
+Create:
+
+Models/
+└── TodoItem.cs
+
+namespace MyApp.Api.Models;
+
+public class TodoItem
+{
+    public int Id { get; set; }
+
+    public string Title { get; set; } = "";
+
+    public bool IsCompleted { get; set; }
+}
+
+6. Create DbContext
+
+Create:
+
+Data/
+└── AppDbContext.cs
+
+using Microsoft.EntityFrameworkCore;
+using MyApp.Api.Models;
+
+namespace MyApp.Api.Data;
+
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options)
+        : base(options)
+    {
+    }
+
+    public DbSet<TodoItem> TodoItems => Set<TodoItem>();
+}
+
+7. Configure SQLite in-memory
+
+Update Program.cs:
+
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
+using MyApp.Api.Data;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connection = new SqliteConnection(
+    "DataSource=:memory:");
+
+connection.Open();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlite(connection);
+});
+
+builder.Services.AddControllers();
+
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("frontend", policy =>
+    {
+        policy
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin();
+    });
+});
+
+var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider
+        .GetRequiredService<AppDbContext>();
+
+    db.Database.EnsureCreated();
+}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+
+app.UseCors("frontend");
+
+app.MapControllers();
+
+app.Run();
+
+This keeps SQLite entirely in memory while the application is running.
+8. Create CRUD controller
+
+Create:
+
+Controllers/
+└── TodoController.cs
+
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyApp.Api.Data;
+using MyApp.Api.Models;
+
+namespace MyApp.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public class TodoController : ControllerBase
+{
+    private readonly AppDbContext _db;
+
+    public TodoController(AppDbContext db)
+    {
+        _db = db;
+    }
+
+    [HttpGet]
+    public async Task<IEnumerable<TodoItem>> Get()
+    {
+        return await _db.TodoItems.ToListAsync();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<TodoItem>> Get(int id)
+    {
+        var item = await _db.TodoItems.FindAsync(id);
+
+        return item is null
+            ? NotFound()
+            : item;
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<TodoItem>> Create(
+        TodoItem item)
+    {
+        _db.TodoItems.Add(item);
+
+        await _db.SaveChangesAsync();
+
+        return CreatedAtAction(
+            nameof(Get),
+            new { id = item.Id },
+            item);
+    }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Update(
+        int id,
+        TodoItem item)
+    {
+        if (id != item.Id)
+            return BadRequest();
+
+        _db.Entry(item).State =
+            EntityState.Modified;
+
+        await _db.SaveChangesAsync();
+
+        return NoContent();
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var item = await _db.TodoItems.FindAsync(id);
+
+        if (item is null)
+            return NotFound();
+
+        _db.TodoItems.Remove(item);
+
+        await _db.SaveChangesAsync();
+
+        return NoContent();
+    }
+}
+
+9. Create React frontend
+
+From the root:
+
+mkdir frontend
+cd frontend
+
+Create Vite app:
+
+npm create vite@latest myapp-ui -- --template react-ts
+
+Install:
+
+cd myapp-ui
+npm install
+
+10. Create API client
+
+Create:
+
+src/api/todoApi.ts
+
+export interface TodoItem {
+  id: number;
+  title: string;
+  isCompleted: boolean;
+}
+
+const API_URL = "https://localhost:5001/api/todo";
+
+export async function getTodos(): Promise<TodoItem[]> {
+  const response = await fetch(API_URL);
+
+  return response.json();
+}
+
+export async function createTodo(
+  title: string
+): Promise<void> {
+  await fetch(API_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      title,
+      isCompleted: false,
+    }),
+  });
+}
+
+11. Create React component
+
+Replace App.tsx:
+
+import { useEffect, useState } from "react";
+import {
+  getTodos,
+  createTodo,
+  TodoItem,
+} from "./api/todoApi";
+
+function App() {
+  const [todos, setTodos] =
+    useState<TodoItem[]>([]);
+
+  const [title, setTitle] =
+    useState("");
+
+  async function loadTodos() {
+    const data = await getTodos();
+    setTodos(data);
+  }
+
+  async function addTodo() {
+    if (!title.trim()) return;
+
+    await createTodo(title);
+
+    setTitle("");
+
+    await loadTodos();
+  }
+
+  useEffect(() => {
+    loadTodos();
+  }, []);
+
+  return (
+    <>
+      <h1>Todo App</h1>
+
+      <input
+        value={title}
+        onChange={(e) =>
+          setTitle(e.target.value)
+        }
+      />
+
+      <button onClick={addTodo}>
+        Add
+      </button>
+
+      <ul>
+        {todos.map((todo) => (
+          <li key={todo.id}>
+            {todo.title}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
+
+export default App;
+
+12. Configure Vite proxy
+
+Edit vite.config.ts:
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    proxy: {
+      "/api": {
+        target: "https://localhost:5001",
+        secure: false,
+      },
+    },
+  },
+});
+
+Then your API URL can become:
+
+const API_URL = "/api/todo";
+
+No CORS headaches during development.
+13. Open in VS Code
+
+Open root folder:
+
+code .
+
+Recommended extensions:
+
+    C#
+
+    C# Dev Kit
+
+    ESLint
+
+    Prettier
+
+    SQLite Viewer
+
+14. Run both projects
+
+Terminal 1:
+
+cd backend/MyApp.Api
+dotnet run
+
+Terminal 2:
+
+cd frontend/myapp-ui
+npm run dev
+
+API:
+
+https://localhost:5001/swagger
+
+Frontend:
+
+http://localhost:5173
+
+Optional: One-command startup
+
+At the solution root, create a package.json:
+
+{
+  "scripts": {
+    "api": "dotnet run --project backend/MyApp.Api",
+    "ui": "npm run dev --prefix frontend/myapp-ui",
+    "dev": "concurrently \"npm run api\" \"npm run ui\""
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
+
+Install:
+
+npm install
+
+Then:
+
+npm run dev
+
+starts both the .NET API and React frontend together. This is a clean, modern setup for a .NET 10 + React TypeScript CRUD application in VS Code.
+
+
+1Password menu is available. Press down arrow to select.
