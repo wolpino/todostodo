@@ -17,13 +17,15 @@ public class EntryController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType<IEnumerable<Entry>>(StatusCodes.Status200OK)]
     public async Task<IEnumerable<Entry>> Get()
     {
         return await _db.Entries.ToListAsync();
-
     }
 
     [HttpGet("{id}")]
+    [ProducesResponseType<Entry>(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<Entry>> Get(int id)
     {
         var entry = await _db.Entries.FindAsync(id);
@@ -33,8 +35,19 @@ public class EntryController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<Entry>> Create(Entry entry)
+    [ProducesResponseType<Entry>(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Entry>> Create(CreateEntryRequest req)
     {
+        var entry = new Entry
+        {
+            Title = req.Title,
+            Description = req.Description,
+            Status = req.Status,
+            UserId = 0,
+            User = null!
+        };
+
         _db.Entries.Add(entry);
 
         await _db.SaveChangesAsync();
@@ -43,50 +56,42 @@ public class EntryController : ControllerBase
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Entry>> Update(int id, Entry entryChanges)
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Update(int id, UpdateEntryRequest req)
     {
-        if (id != entryChanges.Id)
-        {
+        if (id != req.Id)
             return BadRequest();
-        }
 
-        var currentEntry = await _db.Entries.FindAsync(id);
-        if (currentEntry is null)
-        {
+        var entry = await _db.Entries.FindAsync(id);
+        if (entry is null)
             return NotFound();
-        }
 
-        // check for changed fields, update only those that have changed
-        // if the title is not empty and has changed, update it
-        if (!String.IsNullOrEmpty(entryChanges.Title) && currentEntry.Title != entryChanges.Title)
-        {
-            currentEntry.Title = entryChanges.Title;
-        }
-        // if the status has changed, update it
-        if (currentEntry.Status != entryChanges.Status)
-        {
-            currentEntry.Status = entryChanges.Status;
-        }
+        if (!string.IsNullOrEmpty(req.Title) && entry.Title != req.Title)
+            entry.Title = req.Title;
+
+        if (req.Status.HasValue && entry.Status != req.Status.Value)
+            entry.Status = req.Status.Value;
 
         await _db.SaveChangesAsync();
-        
+
         return NoContent();
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Delete(int id)
     {
         var entry = await _db.Entries.FindAsync(id);
-        if (entry is null)        
+        if (entry is null)
             return NotFound();
 
         _db.Entries.Remove(entry);
 
         await _db.SaveChangesAsync();
-        
-        return NoContent();    
+
+        return NoContent();
     }
-
-
 }
-
