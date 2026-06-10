@@ -6,7 +6,8 @@ namespace todostodo.api.Models;
 public enum EntryStatus
 {
     // when an entry is created, it is not started yet
-    NotStarted,
+    // Active instead NotStarted to add flexibility for future entry types
+    Active,
     // when an entry is being worked on, it is in progress
     InProgress,
     // when an entry is completed

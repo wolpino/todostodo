@@ -45,6 +45,10 @@ SET UP TESTING
 - Happy path + edge case tests for everything
 - Proper mocking patterns
 
+>> i have to stop over thinking the little details! structure? naming? 
+
+10. add react app
+`npm create vite@latest todostodo.web -- --template react-ts`
 
 
 

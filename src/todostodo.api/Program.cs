@@ -28,16 +28,14 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddControllers();
 
-// builder.Services.AddEndpointsApiExplorer();
-// builder.Services.AddSwaggerGen();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("frontend", policy =>
+    options.AddPolicy(name: "todostodo.web", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
     });
 }); 
 
@@ -63,7 +61,7 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 
-app.UseCors("frontend");
+app.UseCors("todostodo.web");
 
 app.MapControllers();
 

@@ -4,6 +4,15 @@
     <TargetFramework>net10.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+        <!--Turn on generation of .xml into build output folder that would contain all the XML documentation comments in the project-->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!--Switch off compiler warnings:
+
+     CS1573 that arises due to missing XML documentation comments in handler parameters (I do this deliberately otherwise OpenAPI document spuriously contains documentation comments from non-model-bound handler parameters)
+
+     and CS1591 because I do not always place XML documentation comments on all publicly visible types and members (except on handlers and on model-bound types in handler parameters) -->
+    <!-- <NoWarn>$(NoWarn);1591;1573</NoWarn> -->
   </PropertyGroup>
 
   <ItemGroup>

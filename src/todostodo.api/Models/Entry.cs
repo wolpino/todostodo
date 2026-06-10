@@ -10,5 +10,6 @@ namespace todostodo.api.Models
         public EntryStatus Status { get; set; }
         public int UserId { get; set; }
         public required User User { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }
