@@ -38,15 +38,9 @@ function StatusIconPaths({ status }: { status: EntryStatus }) {
     case 'Completed':
       return (
         <>
-          <circle cx="8" cy="8" r="5.5" fill="currentColor" />
-          <polyline
-            points="5.5,8 7,9.5 10.5,6"
-            fill="none"
-            stroke="white"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+        <>
+          <circle cx="8" cy="8" r="5.5" fill="currentColor" stroke="currentColor" strokeWidth="1.5" />
+        </>
         </>
       )
     case 'Archived':

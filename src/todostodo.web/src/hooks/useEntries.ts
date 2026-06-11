@@ -35,8 +35,8 @@ export const useCreateEntry = () => {
     },
     onSuccess: (newEntry) => {
       queryClient.setQueryData<AnyEntry[]>(ENTRIES_QUERY_KEY, (old = []) => [
-        ...old,
         newEntry,
+        ...old,
       ])
     },
   })

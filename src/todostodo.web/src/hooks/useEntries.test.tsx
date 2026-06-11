@@ -93,7 +93,7 @@ describe('useCreateEntry', () => {
     vi.clearAllMocks()
   })
 
-  it('appends the new entry to the cache on success', async () => {
+  it('prepends the new entry to the top of the cache on success', async () => {
     queryClient.setQueryData(ENTRIES_QUERY_KEY, [makeEntry(1, 'Existing')])
 
     vi.mocked(postApiEntry).mockResolvedValue({
@@ -109,7 +109,7 @@ describe('useCreateEntry', () => {
 
     const entries = queryClient.getQueryData<AnyEntry[]>(ENTRIES_QUERY_KEY)
     expect(entries).toHaveLength(2)
-    expect(entries?.[1]).toMatchObject({ id: 2, title: 'New', entryType: 'Todo' })
+    expect(entries?.[0]).toMatchObject({ id: 2, title: 'New', entryType: 'Todo' })
   })
 })
 
