@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using todostodo.api.Data;
@@ -35,16 +37,21 @@ public class EntryController : ControllerBase
     }
 
     [HttpPost]
+    [Authorize]
     [ProducesResponseType<Entry>(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public async Task<ActionResult<Entry>> Create(CreateEntryRequest req)
     {
-        // TODO: replace UserId placeholder with authenticated user's ID once auth is wired up
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (userId is null)
+            return Unauthorized();
+
         var entry = new Entry
         {
             Title = req.Title,
             Description = req.Description,
             Status = req.Status,
+            UserId = userId
         };
 
         _db.Entries.Add(entry);

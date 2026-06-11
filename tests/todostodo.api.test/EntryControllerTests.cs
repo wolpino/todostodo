@@ -1,4 +1,6 @@
+using System.Security.Claims;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
@@ -39,7 +41,18 @@ public class EntryControllerTests : IDisposable
         _db.Users.Add(_testUser);
         _db.SaveChanges();
 
-        _controller = new EntryController(_db);
+        _controller = new EntryController(_db)
+        {
+            ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext
+                {
+                    User = new ClaimsPrincipal(new ClaimsIdentity(
+                        [new Claim(ClaimTypes.NameIdentifier, _testUser.Id)],
+                        "TestScheme"))
+                }
+            }
+        };
     }
 
     public void Dispose()
@@ -110,10 +123,7 @@ public class EntryControllerTests : IDisposable
 
     // ── CREATE ────────────────────────────────────────────────────────────────
 
-    // Skipped until task 4: Create requires an authenticated user ID from the
-    // auth context. The controller will be updated to call
-    // User.FindFirstValue(ClaimTypes.NameIdentifier) once auth is wired up.
-    [Fact(Skip = "Requires authenticated user — revisit in auth task")]
+    [Fact]
     public async Task Create_ReturnsCreatedResult_WithEntry()
     {
         var req = new CreateEntryRequest("New Entry", "desc", EntryStatus.Active);
@@ -126,7 +136,7 @@ public class EntryControllerTests : IDisposable
         created.Status.Should().Be(EntryStatus.Active);
     }
 
-    [Fact(Skip = "Requires authenticated user — revisit in auth task")]
+    [Fact]
     public async Task Create_PersistsEntry()
     {
         var req = new CreateEntryRequest("Persisted Entry", null, EntryStatus.InProgress);
