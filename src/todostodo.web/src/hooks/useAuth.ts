@@ -30,7 +30,7 @@ export const useLogin = () => {
       const { response } = await postLogin({ query: { useCookies: true }, body })
       if (!response?.ok) throw new Error('Login failed')
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY }),
+    onSuccess: () => queryClient.refetchQueries({ queryKey: AUTH_QUERY_KEY }),
   })
 }
 
@@ -49,9 +49,13 @@ export const useLogout = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async () => {
-      const response = await fetch('/logout', { method: 'POST' })
-      if (!response?.ok) throw new Error('Logout failed')
+      const response = await fetch('/logout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      })
+      if (!response.ok) throw new Error('Logout failed')
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY }),
+    onSuccess: () => queryClient.setQueryData(AUTH_QUERY_KEY, null),
   })
 }

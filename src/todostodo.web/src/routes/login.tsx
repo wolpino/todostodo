@@ -31,14 +31,11 @@ function LoginPage() {
   const isPending = loginMutation.isPending || registerMutation.isPending
 
   // Show the most recent error from either mutation
-  const errorMessage = (() => {
-    if (registerMutation.isError) return 'Registration failed. Try a stronger password (6+ chars, digit, uppercase).'
-    if (loginMutation.isError) return 'Invalid email or password.'
-    return null
-  })()
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.SubmitEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setErrorMessage(null)
     loginMutation.reset()
     registerMutation.reset()
 
@@ -46,15 +43,25 @@ function LoginPage() {
       try {
         await registerMutation.mutateAsync({ email, password })
       } catch {
+        setErrorMessage('Registration failed. Password must be 6+ characters with a digit and uppercase letter.')
         return
       }
+      try {
+        await loginMutation.mutateAsync({ email, password })
+        navigate({ to: '/' })
+      } catch {
+        setErrorMessage('Account created but sign-in failed. Please try signing in.')
+      }
+      return
     }
 
+    // Login mode: try login, prompt to register if it fails
     try {
       await loginMutation.mutateAsync({ email, password })
-      await navigate({ to: '/' })
+      navigate({ to: '/' })
     } catch {
-      // error displayed via loginMutation.isError
+      setMode('register')
+      setErrorMessage("No account found. Create one below.")
     }
   }
 

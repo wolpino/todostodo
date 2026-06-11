@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using todostodo.api.Data;
@@ -50,6 +51,13 @@ var app = builder.Build();
 
 // map identity api endpoints
 app.MapIdentityApi<User>();
+
+// Explicit logout — MapIdentityApi doesn't expose this in .NET 10
+app.MapPost("/logout", async (SignInManager<User> signInManager) =>
+{
+    await signInManager.SignOutAsync();
+    return Results.Ok();
+}).RequireAuthorization();
 
 if (app.Environment.IsDevelopment())
 {
