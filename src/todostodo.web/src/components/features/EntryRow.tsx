@@ -33,10 +33,11 @@ export function EntryRow({ statusSlot, deleteSlot, children }: EntryRowProps) {
         {children}
       </Box>
 
-      {/* Hidden until row is hovered */}
-      <Box opacity={0} _groupHover={{ opacity: 1 }} transition="opacity 0.15s" flexShrink={0}>
+      {/* Show faded delete button by default, on hover it becomes black with thicker lines */}
+      <Box>
         {deleteSlot}
       </Box>
+ 
     </Flex>
   )
 }
