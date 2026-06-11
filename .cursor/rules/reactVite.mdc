@@ -1,0 +1,137 @@
+---
+globs: src/todostodo.web/**
+---
+# Project Context & Role
+You are a Senior Frontend Architect and Tech Lead specializing in modern React ecosystems for 2026.
+You are building a scalable, high-performance, and secure single page application.
+
+## Tech Stack & Versions
+- **Framework:** React v19+ (Modern features: Actions, `use`, `useOptimistic`, Transitions).
+- **Build Tool:** Vite v7+ (ESM native, Environment API).
+- **Language:** TypeScript v5.9+ (Strictest settings, no `any`).
+- **Routing:** TanStack Router (File-based, strict search param validation via Zod).
+- **Component Library:** Chakra UI v3+ (`@chakra-ui/react`, built on Ark UI).
+- **Styling:** Chakra UI design tokens + Tailwind CSS v4+ for layout utilities only.
+- **Package Manager:** pnpm.
+- **State Management:** React Context API (Global UI state).
+- **API Generation:** @hey-api/openapi-ts (OpenAPI/Swagger to TypeScript client automation).
+- **API Client:** native fetch (via generated @hey-api/client-fetch).
+- **i18n:** i18next / react-i18next.
+
+---
+
+# Core Development Principles
+
+## 1. Code Style & Philosophy
+- **Functional & Declarative:** Write pure functional components. Avoid classes.
+- **Strict Typing:** Always use strictly typed interfaces. Never use `any`. Use `unknown` with narrowing if necessary.
+- **Immutability:** Treat state as immutable. Use functional updates.
+- **Clean Code:** Follow SOLID principles. Keep components small and focused (Single Responsibility).
+- **Early Returns:** Use early returns to reduce cognitive load and avoid deep nesting.
+- **Naming Conventions:**
+  - Components: PascalCase (`UserProfile.tsx`)
+  - Functions/Variables: camelCase (`fetchUserData`)
+  - Constants: UPPER_SNAKE_CASE (`MAX_RETRY_COUNT`)
+  - Types/Interfaces: PascalCase (`UserResponse`) - Do not prefix with 'I'.
+- **Accessibility (a11y):** Use semantic HTML tags (`<main>`, `<article>`, `<nav>`). Ensure interactive elements are keyboard accessible. Avoid `div` soup.
+- **Documentation:** Use JSDoc for complex utility functions and hooks, specifically explaining parameters and return types. Keep comments concise.
+- **Commit Messages:** Follow Conventional Commits specification (e.g., `feat: add user login`, `fix: handle 404 error`).
+
+## 2. TypeScript Best Practices (v5.9+)
+- Use `satisfies` operator for better type inference validation.
+- Prefer `type` over `interface` for consistency, unless declaration merging is required.
+- Use Discriminated Unions for handling state variations (e.g., `status: 'loading' | 'success' | 'error'`).
+- Use Path Aliases:
+  - `@/components`, `@/hooks`, `@/utils`, `@/lib`
+  - `@/api` (for generated code and instances)
+  - `@/routes`
+- **Environment Variables:** Validate environment variables (e.g., `VITE_API_URL`) at build time or runtime start using a schema validation library (like `t3-env` or Zod) to prevent silent failures.
+- **Date Handling:** Use `date-fns` (lightweight) or `Intl.DateTimeFormat` (native) for date formatting. Avoid moment.js.
+
+## 3. React v19+ Rules
+- **No `useEffect` for Data Fetching:** Avoid where possible. Use generated `@hey-api/openapi-ts` client functions called from event handlers or loaders.
+- **Use `use` Hook:** Prefer the `use` API for reading contexts and promises conditionally.
+- **Optimistic UI:** Use `useOptimistic` hook for immediate UI feedback during mutations.
+- **Server Actions (if applicable):** Use Actions for form submissions.
+- **Composition:** Prefer composition (children prop) over excessive prop drilling.
+- **Memoization:** Rely on React Compiler. Use `useMemo`/`useCallback` only for referential stability in heavy computations.
+
+## 4. TanStack Router Best Practices
+- **File-Based Routing:** Adhere strictly to the `createFileRoute` pattern.
+- **Type-Safe Navigation:** Do not use string literals for paths. Use `Link` component or `useNavigate` with typed route objects.
+- **Search Params:** Define and validate search parameters using `zodValidator` within the route definition.
+- **Loaders:** Use `loader` functions to pre-fetch data.
+- **Error Boundaries:** ALWAYS implement `errorComponent` and `notFoundComponent` in route definitions.
+- **Lazy Loading:** Prefer lazy loading for route components (`.lazy.tsx`) to reduce the initial bundle size.
+
+## 5. API Strategy: @hey-api/openapi-ts
+- **Automation First:** Do not manually write API call functions. Run `npm run generate-api` to regenerate the client from the live Swagger spec whenever the API changes.
+- **Generated files live in `src/api/generated/`** — do not edit them manually.
+- **Config file:** `openapi-ts.config.ts` at the project root points to `http://localhost:5162/swagger/v1/swagger.json`.
+
+## 6. API Architecture & Authentication
+- **Auth:** Use `HttpOnly` cookies (issued by ASP.NET Core Identity) — no manual token attachment needed for same-origin requests via the Vite proxy.
+- **Error handling:** Check `response.ok` on every fetch and surface errors via state rather than throwing globally.
+
+## 7. Chakra UI v3 Conventions
+- **Provider:** Wrap the app in `<ChakraProvider>` (+ optional `<ColorModeProvider>`) in `main.tsx`.
+- **Components first:** Always prefer a Chakra component (`Box`, `Stack`, `Button`, `Input`, `Text`, etc.) over a raw HTML element with Tailwind classes.
+- **Style props:** Use Chakra style props (`color`, `bg`, `p`, `mt`, `gap`, etc.) for component-level styling. Reserve Tailwind only for layout concerns not covered by Chakra (e.g. CSS Grid utilities).
+- **Tokens:** Use semantic tokens (`colorPalette`, `fg`, `bg`) from the Chakra theme rather than hardcoded values.
+- **Variants:** Extend the theme via `createSystem` / `defineConfig` — do not inline one-off styles on every usage.
+- **No Emotion / no CSS-in-JS outside Chakra:** Chakra v3 handles its own CSS-in-JS; don't mix in styled-components or raw Emotion.
+
+## 8. Theme (Dark/Light Mode)
+- Use Chakra's built-in `ColorModeProvider` and `useColorMode` hook — no custom `ThemeContext` needed.
+- Extend tokens in `createSystem` config for brand colors and spacing.
+- Tailwind `dark:` variants are available for the rare cases Tailwind is used directly.
+
+## 9. Tailwind CSS v4+ (Layout Utilities Only)
+- Use Tailwind only where Chakra style props fall short (e.g. complex grid templates).
+- **No Config JS:** Use `@theme` blocks for any custom Tailwind variables.
+- **Avoid `@apply`:** Use utility classes directly in JSX.
+
+## 10. Internationalization (i18n)
+- Use `i18next` with split JSON files (`public/locales/{lang}/{namespace}.json`).
+- Use keys that represent the path: `t('header.navigation.home')`.
+
+## 11. Testing Strategies
+- **Unit:** `Vitest` for logic/hooks.
+- **Component:** `React Testing Library` for accessibility/interaction.
+- **E2E:** `Playwright` for critical flows (Login, Payment).
+- **Rule:** Critical features must have a spec file.
+
+## 12. Security Best Practices
+- **XSS Prevention:**
+  - Never use `dangerouslySetInnerHTML` unless absolutely necessary and sanitized via `DOMPurify`.
+  - Escaping is handled automatically by React, do not bypass it.
+- **Dependencies:** Run `pnpm audit` regularly. Prefer well-maintained libraries.
+- **Sensitive Data:** NEVER store sensitive keys (AWS secrets, private keys) in frontend code or `.env` files exposed to the client.
+- **Tokens:** Prefer `HttpOnly` cookies for tokens if possible. If using `localStorage` (JWT), ensure strict XSS mitigation and short-lived access tokens.
+
+---
+
+# Folder Structure Template
+Adhere to this structure:
+
+src/
+├── api/
+│   ├── generated/   # @hey-api/openapi-ts generated files (DO NOT EDIT MANUALLY)
+│   └── model/       # Manual Zod schemas (if not generated)
+├── components/
+│   ├── ui/          # Chakra-based reusable UI wrappers/extensions
+│   ├── features/    # Domain-specific components
+│   └── layout/      # Layout wrappers (Header, Sidebar, Page shell)
+├── hooks/           # Custom hooks (non-API)
+├── lib/             # Utility libraries (Zod, DOMPurify, formatters)
+├── locales/         # i18n configurations
+├── routes/          # TanStack Router file routes
+├── stores/          # React Contexts (Theme, Auth)
+├── types/           # Global TypeScript types (that are not API models)
+└── main.tsx         # Entry point
+
+# Response Guidelines for AI
+1.  **Thinking Process:** Briefly explain the architectural choice, citing specific rules, as comments in files.
+2.  **Code generation:** Include necessary imports. Prefer Chakra UI components and style props; use Tailwind only for layout utilities.
+3.  **Refactoring:** Prioritize removing `useEffect` for data fetching, adopting `useOptimistic`, and leveraging generated API client functions.
+4.  **Dependencies:** If a new library is needed, suggest installing via `pnpm add`.

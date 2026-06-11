@@ -23,6 +23,12 @@ https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-wa
 - serialization/validation/tests/error handling 
 - then react app
 
+- settings can be post MVP
+
+>> new Cursor approach... I used VSC to set up the project and get scaffolding and general understanding in the simplest changes possible. 
+>> now I'm back to Cursor, I have rules for .Net and react and Vite (a little apprehensive these might clash even though they are globbed to the right folders) I'm also making a plan, then pausing between each task so I can review and commit.
+
+All 7 todos complete. The full workflow going forward: when the API changes, start the API and run npm run generate-api to regenerate the client — App.tsx and anything else importing from src/api/generated/ will get updated types automatically.
 -----
 
 9. TESTING
@@ -49,7 +55,8 @@ SET UP TESTING
 
 10. add react app
 `npm create vite@latest todostodo.web -- --template react-ts`
-
+ and link api >> I beat the CORS errors and have communication between front and back!
+ >> I jumped past testing just to get a little win!
 
 
 # 6/9
