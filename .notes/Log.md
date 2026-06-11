@@ -5,6 +5,82 @@ chronological bottom to top
 # before prod
 - possible rename 
 
+
+# 6/11
+
+debug life before moving forward.
+
+- before changes >> frontend component tests
+more backend tests (model)
+- login/sign up work but don't redirect properly
+-- error message same for everything but real message in response
+-- clicking on login without an account should create an account and log you un
+
+- entry items
+-- new todo goes to the bottom of the list, this does make sense, but visually I think it's better to drop just to the top instead of the bottom of the list
+-- no way to delete a todo >> actually the delete button is hidden from display
+-- I don't like the highlighting
+
+- list
+-- status button is close but a little weird. maybe no green check, but a line through the italicised entry
+-- just full circle? and confetti?
+-- should be left aligned not centered
+-- width isn't right > added w="100% to main Box holding the list 
+
+
+- buttons
+-- sign out button is kind of gross
+- 
+
+- to come
+-- one command run
+-- ci/cd
+-- readme
+-- Add settings fonts colors >> add settings api > gear, drop down, three choices for each setting
+
+-- completed celebration - confetti? canvas-confetti
+
+------
+Needed to get a decent visual, so I fixed the width and changed the font.
+I need to rank/sort the bugs and such above and what's left to do...
+
+
+- frontend component tests
+- more backend tests (model)
+
+- login/sign up 'work' 
+> don't redirect properly
+> error message same for everything but real message in response
+> clicking on login without an account should create an account and log you in
+
+- header
+-- keep todostodo as the title
+-- signout button is kind of gross replace with symbol button?
+
+- entry items
+>  the delete button is hidden from display but works
+-- I don't like the hover grey highlight, maybe a border highlight would be better
+>  status button is close but a little weird. maybe no green check, but a line through the italicised entry. just full circle? and confetti?
+> should be left aligned not centered
+
+- entry list
+> new todo should go to top of list (reverse sort order of list)
+DONE - width isn't right > added w="100% to main Box holding the list 
+
+
+- to come
+-- one command run
+-- ci/cd
+-- readme
+-- completed celebration - confetti? canvas-confetti
+-- Add settings fonts colors >> add settings api > gear, drop down, three choices for each setting
+-- implement JWTs TODO: make sure JWT set up is safe
+@https://workos.com/blog/secure-jwt-storage
+-- try/catch blocks, but also wondering about a larger try/catch because it seems too easy to put them everywhere
+https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-way-to-handle-errors-9c6d76302485
+-- NEED LOGGING
+
+
 # 6/10
 
 > Where I left off yesteday:

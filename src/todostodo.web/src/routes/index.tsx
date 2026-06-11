@@ -15,7 +15,7 @@ function HomePage() {
   const logout = useLogout()
 
   return (
-    <Box maxW="680px" mx="auto" px={4} minH="100svh">
+    <Box w="100%" maxW="500px" mx="auto" px={4} minH="100svh">
       <Flex as="header" justify="space-between" align="center" py={5}>
         <Text fontWeight="600" letterSpacing="-0.02em">
           todostodo

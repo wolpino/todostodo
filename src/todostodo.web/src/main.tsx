@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react'
+import { ChakraProvider, createSystem, defaultConfig } from '@chakra-ui/react'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { createRouter, RouterProvider } from '@tanstack/react-router'
@@ -18,15 +18,29 @@ const router = createRouter({
   context: { queryClient },
 })
 
+// set system font in Chakra
+const systemComicShanns = createSystem(defaultConfig, {
+  theme: {
+    tokens: {
+      fonts: {
+        body: { value: "'Comic Shanns', system-ui, sans-serif" },
+        heading: { value: "'Comic Shanns', system-ui, sans-serif" },
+        mono: { value: "'Comic Shanns', ui-monospace, monospace" },
+      },
+    },
+  },
+})
+
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router
   }
 }
 
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ChakraProvider value={defaultSystem}>
+    <ChakraProvider value={systemComicShanns}>
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
