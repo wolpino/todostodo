@@ -21,6 +21,9 @@
       "@/*": ["src/*"]
     },
 
+    /* Required by TanStack Router */
+    "strictNullChecks": true,
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,

@@ -30,13 +30,12 @@ export function EntryList() {
     )
   }
 
-  if (!entries || entries.length === 0) {
-    return <EmptyRow />
-  }
-
   return (
     <Box role="list" aria-label="Todo entries">
-      {entries.map((entry) => (
+      <Box role="listitem">
+        <EmptyRow />
+      </Box>
+      {entries?.map((entry) => (
         <Box key={entry.id} role="listitem">
           <EntryDispatcher entry={entry} />
         </Box>

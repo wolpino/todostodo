@@ -87,7 +87,7 @@ export function EmptyRow() {
           />
         ) : (
           <Box px={1} color="gray.400" fontSize="inherit" fontStyle="italic" userSelect="none">
-            Click to add a todo…
+            Add a todo…
           </Box>
         )}
       </Box>

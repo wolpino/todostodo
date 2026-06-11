@@ -16,7 +16,7 @@ export const useEntries = () =>
     queryKey: ENTRIES_QUERY_KEY,
     queryFn: async () => {
       const { data, response } = await getApiEntry()
-      if (!response.ok) throw new Error('Failed to fetch entries')
+      if (!response?.ok) throw new Error('Failed to fetch entries')
       return (data ?? []).map(toAnyEntry)
     },
   })
@@ -30,7 +30,7 @@ export const useCreateEntry = () => {
   return useMutation({
     mutationFn: async (body: CreateEntryRequest) => {
       const { data, response } = await postApiEntry({ body })
-      if (!response.ok) throw new Error('Failed to create entry')
+      if (!response?.ok) throw new Error('Failed to create entry')
       return toAnyEntry(data!)
     },
     onSuccess: (newEntry) => {
@@ -49,9 +49,9 @@ export const useCreateEntry = () => {
 export const useUpdateEntry = () => {
   const queryClient = useQueryClient()
   return useMutation({
-    mutationFn: async ({ id, ...body }: UpdateEntryRequest & { id: number }) => {
-      const { response } = await putApiEntryById({ path: { id }, body })
-      if (!response.ok) throw new Error('Failed to update entry')
+    mutationFn: async ({ id, ...rest }: UpdateEntryRequest & { id: number }) => {
+      const { response } = await putApiEntryById({ path: { id }, body: { id, ...rest } })
+      if (!response?.ok) throw new Error('Failed to update entry')
     },
     onMutate: async ({ id, ...updates }) => {
       await queryClient.cancelQueries({ queryKey: ENTRIES_QUERY_KEY })
@@ -81,7 +81,7 @@ export const useDeleteEntry = () => {
   return useMutation({
     mutationFn: async (id: number) => {
       const { response } = await deleteApiEntryById({ path: { id } })
-      if (!response.ok) throw new Error('Failed to delete entry')
+      if (!response?.ok) throw new Error('Failed to delete entry')
     },
     onMutate: async (id) => {
       await queryClient.cancelQueries({ queryKey: ENTRIES_QUERY_KEY })
