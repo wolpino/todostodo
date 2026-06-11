@@ -75,6 +75,7 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
           onKeyDown={handleKeyDown}
           size="sm"
           fontSize="inherit"
+          textAlign="left"
           placeholder="What needs doing?"
           _placeholder={{ color: 'gray.400' }}
           px={1}
@@ -83,6 +84,7 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
         <Text
           as="span"
           display="block"
+          textAlign="left"
           px={1}
           py="2px"
           fontSize="inherit"

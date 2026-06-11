@@ -18,9 +18,9 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": { target: "http://localhost:5162", secure: false },
-      "/login": { target: "http://localhost:5162", secure: false },
-      "/logout": { target: "http://localhost:5162", secure: false },
-      "/register": { target: "http://localhost:5162", secure: false },
+      "/login": { target: "http://localhost:5162", secure: false, bypass: (req) => req.method === 'GET' ? '/index.html' : null },
+      "/logout": { target: "http://localhost:5162", secure: false, bypass: (req) => req.method === 'GET' ? '/index.html' : null },
+      "/register": { target: "http://localhost:5162", secure: false, bypass: (req) => req.method === 'GET' ? '/index.html' : null },
       "/manage": { target: "http://localhost:5162", secure: false },
     },
   },

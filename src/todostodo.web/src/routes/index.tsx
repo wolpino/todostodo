@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from '@tanstack/react-router'
+import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
 import { Box, Button, Flex, Text } from '@chakra-ui/react'
 import { authQueryOptions, useLogout } from '@/hooks/useAuth'
 import { EntryList } from '@/components/features/EntryList'
@@ -12,10 +12,11 @@ export const Route = createFileRoute('/')({
 })
 
 function HomePage() {
+  const navigate = useNavigate()
   const logout = useLogout()
 
   return (
-    <Box maxW="680px" mx="auto" px={4} minH="100svh">
+    <Box w="100%" maxW="500px" mx="auto" px={4} minH="100svh">
       <Flex as="header" justify="space-between" align="center" py={5}>
         <Text fontWeight="600" letterSpacing="-0.02em">
           todostodo
@@ -24,7 +25,7 @@ function HomePage() {
           variant="ghost"
           size="sm"
           color="gray.500"
-          onClick={() => logout.mutate()}
+          onClick={() => logout.mutateAsync().then(() => navigate({ to: '/login' }))}
           loading={logout.isPending}
           loadingText="Signing out…"
         >

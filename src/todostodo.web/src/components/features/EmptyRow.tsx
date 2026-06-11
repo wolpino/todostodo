@@ -28,7 +28,11 @@ export function EmptyRow() {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      inputRef.current?.blur()
+      const trimmed = draft.trim()
+      if (trimmed) {
+        createMutation.mutate({ title: trimmed, status: 'Active' })
+        setDraft('')
+      }
     } else if (e.key === 'Escape') {
       setDraft('')
       setIsEditing(false)
@@ -80,6 +84,7 @@ export function EmptyRow() {
             onKeyDown={handleKeyDown}
             size="sm"
             fontSize="inherit"
+            textAlign="left"
             placeholder="What needs doing?"
             _placeholder={{ color: 'gray.400' }}
             px={1}
