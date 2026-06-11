@@ -13,7 +13,8 @@ You are building a scalable, high-performance, and secure single page applicatio
 - **Component Library:** Chakra UI v3+ (`@chakra-ui/react`, built on Ark UI).
 - **Styling:** Chakra UI design tokens + Tailwind CSS v4+ for layout utilities only.
 - **Package Manager:** pnpm.
-- **State Management:** React Context API (Global UI state).
+- **Server State:** TanStack Query v5+ (`@tanstack/react-query`) — all API data fetching, caching, and mutations. This includes auth state (derived from `getManageInfo()`).
+- **UI State:** `useState` for local component state. React Context only for state that is (a) global, (b) synchronous, and (c) genuinely not derived from the server — e.g. a UI-only modal registry. Chakra's built-in Context handles theme/color mode.
 - **API Generation:** @hey-api/openapi-ts (OpenAPI/Swagger to TypeScript client automation).
 - **API Client:** native fetch (via generated @hey-api/client-fetch).
 - **i18n:** i18next / react-i18next.
@@ -49,9 +50,9 @@ You are building a scalable, high-performance, and secure single page applicatio
 - **Date Handling:** Use `date-fns` (lightweight) or `Intl.DateTimeFormat` (native) for date formatting. Avoid moment.js.
 
 ## 3. React v19+ Rules
-- **No `useEffect` for Data Fetching:** Avoid where possible. Use generated `@hey-api/openapi-ts` client functions called from event handlers or loaders.
+- **No `useEffect` for Data Fetching:** Avoid where possible. Use TanStack Query `useQuery` in components or `loader` functions in routes.
 - **Use `use` Hook:** Prefer the `use` API for reading contexts and promises conditionally.
-- **Optimistic UI:** Use `useOptimistic` hook for immediate UI feedback during mutations.
+- **Optimistic UI:** Use TanStack Query's `useMutation` `onMutate`/`onError`/`onSettled` pattern for cache-level optimism and automatic rollback. Reserve React 19's `useOptimistic` for local UI-only transitions (e.g. animating a row out before the server confirms).
 - **Server Actions (if applicable):** Use Actions for form submissions.
 - **Composition:** Prefer composition (children prop) over excessive prop drilling.
 - **Memoization:** Rely on React Compiler. Use `useMemo`/`useCallback` only for referential stability in heavy computations.
@@ -69,11 +70,19 @@ You are building a scalable, high-performance, and secure single page applicatio
 - **Generated files live in `src/api/generated/`** — do not edit them manually.
 - **Config file:** `openapi-ts.config.ts` at the project root points to `http://localhost:5162/swagger/v1/swagger.json`.
 
-## 6. API Architecture & Authentication
-- **Auth:** Use `HttpOnly` cookies (issued by ASP.NET Core Identity) — no manual token attachment needed for same-origin requests via the Vite proxy.
-- **Error handling:** Check `response.ok` on every fetch and surface errors via state rather than throwing globally.
+## 6. TanStack Query v5 Best Practices
+- **QueryClient:** Create a single `QueryClient` in `src/lib/queryClient.ts` and wrap the app in `<QueryClientProvider client={queryClient}>` in `main.tsx`.
+- **Query keys:** Use typed constant arrays as query keys (e.g. `['entries'] as const`). Co-locate keys with their hooks.
+- **Custom hooks:** Wrap every `useQuery` / `useMutation` in a named hook in `src/hooks/` (e.g. `useEntries`, `useUpdateEntry`). Never call `useQuery` directly in a component.
+- **Optimistic mutations:** In `onMutate`, cancel in-flight queries, snapshot the current cache, apply the optimistic update. In `onError`, restore the snapshot. In `onSettled`, invalidate the query to sync with the server.
+- **Stale time:** Default `staleTime: 1000 * 60` (1 min) for list queries. Set to `0` only when real-time accuracy is required.
+- **Server state only:** Never put data that came from an API into React Context. Auth status is server state — use `useQuery(['auth'], getManageInfo)` with `staleTime: Infinity`. Login/logout mutations invalidate `['auth']` and all dependent queries update automatically.
 
-## 7. Chakra UI v3 Conventions
+## 7. API Architecture & Authentication
+- **Auth:** Use `HttpOnly` cookies (issued by ASP.NET Core Identity) — no manual token attachment needed for same-origin requests via the Vite proxy.
+- **Error handling:** Check `response.ok` on every fetch and surface errors via TanStack Query's `error` state rather than throwing globally.
+
+## 8. Chakra UI v3 Conventions
 - **Provider:** Wrap the app in `<ChakraProvider>` (+ optional `<ColorModeProvider>`) in `main.tsx`.
 - **Components first:** Always prefer a Chakra component (`Box`, `Stack`, `Button`, `Input`, `Text`, etc.) over a raw HTML element with Tailwind classes.
 - **Style props:** Use Chakra style props (`color`, `bg`, `p`, `mt`, `gap`, etc.) for component-level styling. Reserve Tailwind only for layout concerns not covered by Chakra (e.g. CSS Grid utilities).
@@ -81,27 +90,27 @@ You are building a scalable, high-performance, and secure single page applicatio
 - **Variants:** Extend the theme via `createSystem` / `defineConfig` — do not inline one-off styles on every usage.
 - **No Emotion / no CSS-in-JS outside Chakra:** Chakra v3 handles its own CSS-in-JS; don't mix in styled-components or raw Emotion.
 
-## 8. Theme (Dark/Light Mode)
+## 9. Theme (Dark/Light Mode)
 - Use Chakra's built-in `ColorModeProvider` and `useColorMode` hook — no custom `ThemeContext` needed.
 - Extend tokens in `createSystem` config for brand colors and spacing.
 - Tailwind `dark:` variants are available for the rare cases Tailwind is used directly.
 
-## 9. Tailwind CSS v4+ (Layout Utilities Only)
+## 10. Tailwind CSS v4+ (Layout Utilities Only)
 - Use Tailwind only where Chakra style props fall short (e.g. complex grid templates).
 - **No Config JS:** Use `@theme` blocks for any custom Tailwind variables.
 - **Avoid `@apply`:** Use utility classes directly in JSX.
 
-## 10. Internationalization (i18n)
+## 11. Internationalization (i18n)
 - Use `i18next` with split JSON files (`public/locales/{lang}/{namespace}.json`).
 - Use keys that represent the path: `t('header.navigation.home')`.
 
-## 11. Testing Strategies
+## 12. Testing Strategies
 - **Unit:** `Vitest` for logic/hooks.
 - **Component:** `React Testing Library` for accessibility/interaction.
 - **E2E:** `Playwright` for critical flows (Login, Payment).
 - **Rule:** Critical features must have a spec file.
 
-## 12. Security Best Practices
+## 13. Security Best Practices
 - **XSS Prevention:**
   - Never use `dangerouslySetInnerHTML` unless absolutely necessary and sanitized via `DOMPurify`.
   - Escaping is handled automatically by React, do not bypass it.
@@ -126,12 +135,12 @@ src/
 ├── lib/             # Utility libraries (Zod, DOMPurify, formatters)
 ├── locales/         # i18n configurations
 ├── routes/          # TanStack Router file routes
-├── stores/          # React Contexts (Theme, Auth)
+├── stores/          # React Contexts for UI state only (Auth, Theme) — never server data
 ├── types/           # Global TypeScript types (that are not API models)
 └── main.tsx         # Entry point
 
 # Response Guidelines for AI
 1.  **Thinking Process:** Briefly explain the architectural choice, citing specific rules, as comments in files.
 2.  **Code generation:** Include necessary imports. Prefer Chakra UI components and style props; use Tailwind only for layout utilities.
-3.  **Refactoring:** Prioritize removing `useEffect` for data fetching, adopting `useOptimistic`, and leveraging generated API client functions.
+3.  **Refactoring:** Prioritize removing `useEffect` for data fetching. Replace with TanStack Query `useQuery` hooks. Use `useMutation` with the `onMutate`/`onError`/`onSettled` pattern for optimistic updates.
 4.  **Dependencies:** If a new library is needed, suggest installing via `pnpm add`.

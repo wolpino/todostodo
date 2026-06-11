@@ -15,6 +15,15 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Path aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+
+    /* Required by TanStack Router */
+    "strictNullChecks": true,
+
     /* Linting */
     "noUnusedLocals": true,
     "noUnusedParameters": true,

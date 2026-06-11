@@ -179,7 +179,15 @@ ClientBin/
 *.publishsettings
 orleans.codegen.cs
 
-/node_modules
+# pnpm
+.pnpm-store/
+*.pnpm-debug.log
+# Vite
+**/.vite/
+# Node modules (all depths)
+**/node_modules/
+# TanStack Router generated file
+src/todostodo.web/src/routeTree.gen.ts
 
 # RIA/Silverlight projects
 Generated_Code/
