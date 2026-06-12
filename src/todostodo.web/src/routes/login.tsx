@@ -74,7 +74,7 @@ function LoginPage() {
   return (
     <Box maxW="360px" mx="auto" px={4} pt="20vh">
       <Text fontSize="2xl" fontWeight="600" letterSpacing="-0.03em" mb={8}>
-        todostodo
+        TodosToDo
       </Text>
 
       <Box as="form" onSubmit={handleSubmit}>
@@ -106,7 +106,7 @@ function LoginPage() {
 
           <Button
             type="submit"
-            colorPalette="purple"
+            colorPalette="green"
             loading={isPending}
             loadingText={mode === 'login' ? 'Signing in…' : 'Creating account…'}
             w="full"
