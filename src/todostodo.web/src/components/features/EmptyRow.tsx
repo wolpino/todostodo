@@ -30,9 +30,12 @@ export function EmptyRow() {
     if (e.key === 'Enter') {
       const trimmed = draft.trim()
       if (trimmed) {
-        createMutation.mutate({ title: trimmed, status: 'Active' })
-        setDraft('')
+        // TODO ideally on enter the next input is focused and a user can type wihtout selecting
+        // createMutation.mutate({ title: trimmed, status: 'Active' })
+        // setDraft('')
+        inputRef.current?.blur()
       }
+
     } else if (e.key === 'Escape') {
       setDraft('')
       setIsEditing(false)
