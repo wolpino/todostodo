@@ -2,83 +2,81 @@ Ari's Work Log
 chronological bottom to top
 
 
-# before prod
-- possible rename 
+# 6/12
+
+I was told yesterday this won't be reviewed until after the 22nd, so I have more time which is nice but not if I don't draw a line somewhere! So another list and some decisions.
+
+> Finalizing production needs
+## one command run // containerize?
+## ci/cd for automatic testing
+## readme
+
+> Production needs that are too much for this app but would be great to add
+-- performance test to make sure there is no lagging, flashing renders, unnecessary rerenders
+
+> Improvements (ordered from needs to wants)
+-  status button is close but a little weird. maybe no green check, but a line through the italicised entry. just full circle? and confetti?
+- (MAKE DECISION) - try/catch blocks, but also wondering about a larger try/catch because it seems too easy to put them everywhere
+https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-way-to-handle-errors-9c6d76302485
+> NEED LOGGING
+> retries on api calls
+-- frontend error messages
+-- signout button is kind of gross replace with symbol button?
+-- Add settings fonts colors >> add settings api > gear, drop down, three choices for each setting
+
+-- completed celebration - confetti? canvas-confetti
+
+-- change title to TodosToDo
+->>  ( Do I stick with TodosToDo? Did I want it to be The Index Card? That might take too much explaining. and it doesn't look like an index card...)
+
 
 
 # 6/11
 
-debug life before moving forward.
-
+### debug life before moving forward > first run through
 - before changes >> frontend component tests
 more backend tests (model)
 - login/sign up work but don't redirect properly
 -- error message same for everything but real message in response
 -- clicking on login without an account should create an account and log you un
-
 - entry items
 -- new todo goes to the bottom of the list, this does make sense, but visually I think it's better to drop just to the top instead of the bottom of the list
 -- no way to delete a todo >> actually the delete button is hidden from display
 -- I don't like the highlighting
-
 - list
 -- status button is close but a little weird. maybe no green check, but a line through the italicised entry
 -- just full circle? and confetti?
 -- should be left aligned not centered
 -- width isn't right > added w="100% to main Box holding the list 
-
-
 - buttons
 -- sign out button is kind of gross
-- 
 
-- to come
--- one command run
--- ci/cd
--- readme
--- Add settings fonts colors >> add settings api > gear, drop down, three choices for each setting
+### debug log
 
--- completed celebration - confetti? canvas-confetti
+Needed to get a decent visual, so I fixed the width and changed the font right away.
 
-------
-Needed to get a decent visual, so I fixed the width and changed the font.
-I need to rank/sort the bugs and such above and what's left to do...
+DONE [4] frontend component tests
+DONE > [3] more backend tests (model)
 
+DONE [2] - login/sign up 'work' 
+DONE don't redirect properly
+DONE error message same for everything but real message in response
+DONE clicking on login without an account should create an account and log you in
 
-- frontend component tests
-- more backend tests (model)
+DONE (it works but still isn't quite right)  the delete button is hidden from display but works 
+##  status button is close but a little weird. maybe no green check, but a line through the italicised entry. just full circle? and confetti?
+DONE should be left aligned not centered
 
-- login/sign up 'work' 
-> don't redirect properly
-> error message same for everything but real message in response
-> clicking on login without an account should create an account and log you in
+DONE new todo should go to top of list (reverse sort order of list)
+DONE [1]- width isn't right > added w="100% to main Box holding the list 
+> NO? if a user clicks enter, the next todo is "clicked" so they can keep typing
 
-- header
--- keep todostodo as the title
--- signout button is kind of gross replace with symbol button?
-
-- entry items
->  the delete button is hidden from display but works
--- I don't like the hover grey highlight, maybe a border highlight would be better
->  status button is close but a little weird. maybe no green check, but a line through the italicised entry. just full circle? and confetti?
-> should be left aligned not centered
-
-- entry list
-> new todo should go to top of list (reverse sort order of list)
-DONE - width isn't right > added w="100% to main Box holding the list 
-
-
-- to come
--- one command run
--- ci/cd
--- readme
--- completed celebration - confetti? canvas-confetti
--- Add settings fonts colors >> add settings api > gear, drop down, three choices for each setting
--- implement JWTs TODO: make sure JWT set up is safe
+DONE (as in not doing) (MAKE DECISION) implement JWTs TODO: make sure JWT set up is safe
 @https://workos.com/blog/secure-jwt-storage
--- try/catch blocks, but also wondering about a larger try/catch because it seems too easy to put them everywhere
-https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-way-to-handle-errors-9c6d76302485
--- NEED LOGGING
+
+DONE signout needs to redirect to /login not /
+DONE sign in when a user isn't found >> go to /signup instead of staying at /login
+sign up works right and logs the user in...
 
 
 # 6/10
