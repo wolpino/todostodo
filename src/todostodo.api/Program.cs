@@ -45,7 +45,7 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
     });
-}); 
+});
 
 var app = builder.Build();
 
@@ -64,20 +64,18 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-// TODO secure endpoints - in controller [Authorize] attribute
-
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.EnsureCreated();
 }
 
+// UseExceptionHandler must be first so it wraps all subsequent middleware exceptions.
 app.UseExceptionHandler();
 
 app.UseAuthentication();
 app.UseAuthorization();
 
-// only in dev >> remove for openapi?
 app.UseSwagger();
 app.UseSwaggerUI();
 

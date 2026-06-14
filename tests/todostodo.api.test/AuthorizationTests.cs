@@ -15,16 +15,14 @@ namespace todostodo.api.test;
 ///
 /// The <c>[Authorize]</c> attribute (pipeline-level enforcement) is covered by
 /// <c>Integration/AuthFlowIntegrationTests.cs</c>, where the full middleware stack runs.
-/// These tests cover two separate concerns that live inside the action methods themselves:
+/// These tests cover the logic inside the action methods:
 ///
 ///   1. Defense-in-depth: the controller checks that the NameIdentifier claim exists
-///      even after the framework has already authenticated the user, guarding against
-///      edge cases like tokens without standard claims.
+///      even after the framework has already authenticated the user.
 ///
-///   2. Ownership gap documentation: PUT and DELETE are currently open to any caller.
-///      The tests below assert the current (insecure) behaviour and will act as canaries
-///      when ownership enforcement is eventually added — they should then be updated to
-///      expect 403/404 instead of 204.
+///   2. Ownership enforcement: all mutating endpoints and both GET endpoints now
+///      scope their queries to the authenticated user's entries. Cross-user access
+///      returns 404 to avoid confirming that another user's entry exists.
 /// </summary>
 public class AuthorizationTests : IDisposable
 {
@@ -103,38 +101,95 @@ public class AuthorizationTests : IDisposable
         created!.UserId.Should().NotBe(_otherUser.Id);
     }
 
-    // ── Update / Delete — current ownership gap ────────────────────────────────
-
-    // These two tests document that PUT and DELETE have no [Authorize] attribute and
-    // perform no ownership check. They are written as "currently passes" so that adding
-    // the [Authorize] attribute or an ownership guard will break them, signalling that
-    // the tests below need to be updated to expect 401 / 403 / 404.
+    // ── Get — ownership enforcement ────────────────────────────────────────────
 
     [Fact]
-    public async Task Update_CurrentlyAllows_CrossUserModification()
+    public async Task GetAll_ExcludesOtherUsersEntries()
     {
-        var entry = await SeedEntryAsync(_ownerUser.Id, "Owner's Entry");
-        var otherController = ControllerFor(_otherUser.Id);
+        // The list endpoint must only return the authenticated user's own entries.
+        // Leaking other users' entries is a privacy violation regardless of whether
+        // the client chooses to display them.
+        await SeedEntryAsync(_ownerUser.Id, "Owner Entry");
+        await SeedEntryAsync(_otherUser.Id, "Other User Entry");
+        var controller = ControllerFor(_ownerUser.Id);
 
-        var req = new UpdateEntryRequest(entry.Id, "Tampered by Other", null);
-        var result = await otherController.Update(entry.Id, req);
+        var result = await controller.Get();
 
-        // TODO: update this expectation to 403/404 once [Authorize] + ownership check is added.
-        result.Should().BeOfType<NoContentResult>(
-            "ownership enforcement is not yet implemented");
+        result.Should().HaveCount(1);
+        result.Single().Title.Should().Be("Owner Entry");
     }
 
     [Fact]
-    public async Task Delete_CurrentlyAllows_CrossUserDeletion()
+    public async Task GetById_ReturnsNotFound_ForOtherUsersEntry()
+    {
+        // 404 (not 403) is intentional: returning 403 would confirm that the entry exists,
+        // which leaks information about another user's data. 404 is the correct response
+        // when the caller has no access — from their perspective, the resource doesn't exist.
+        var otherEntry = await SeedEntryAsync(_otherUser.Id, "Private Entry");
+        var controller = ControllerFor(_ownerUser.Id);
+
+        var result = await controller.Get(otherEntry.Id);
+
+        result.Result.Should().BeOfType<NotFoundResult>();
+    }
+
+    // ── Update — ownership enforcement ────────────────────────────────────────
+
+    [Fact]
+    public async Task Update_ReturnsNotFound_ForOtherUsersEntry()
+    {
+        // Same 404-not-403 rationale as GetById: the caller should not learn
+        // that a given id belongs to a different user.
+        var entry = await SeedEntryAsync(_ownerUser.Id, "Owner's Entry");
+        var otherController = ControllerFor(_otherUser.Id);
+
+        var req = new UpdateEntryRequest(entry.Id, "Tampered", null);
+        var result = await otherController.Update(entry.Id, req);
+
+        result.Should().BeOfType<NotFoundResult>();
+    }
+
+    [Fact]
+    public async Task Update_DoesNotPersistChange_WhenCalledByOtherUser()
+    {
+        // Verify the entry is actually unchanged in the DB, not just that the
+        // controller returned 404. Belt-and-suspenders guard against a future
+        // refactor that accidentally writes before checking ownership.
+        var entry = await SeedEntryAsync(_ownerUser.Id, "Original Title");
+        var otherController = ControllerFor(_otherUser.Id);
+
+        await otherController.Update(entry.Id, new UpdateEntryRequest(entry.Id, "Tampered", null));
+
+        _db.ChangeTracker.Clear();
+        var unchanged = await _db.Entries.FindAsync(entry.Id);
+        unchanged!.Title.Should().Be("Original Title");
+    }
+
+    // ── Delete — ownership enforcement ────────────────────────────────────────
+
+    [Fact]
+    public async Task Delete_ReturnsNotFound_ForOtherUsersEntry()
     {
         var entry = await SeedEntryAsync(_ownerUser.Id, "Owner's Entry");
         var otherController = ControllerFor(_otherUser.Id);
 
         var result = await otherController.Delete(entry.Id);
 
-        // TODO: update this expectation to 403/404 once [Authorize] + ownership check is added.
-        result.Should().BeOfType<NoContentResult>(
-            "ownership enforcement is not yet implemented");
+        result.Should().BeOfType<NotFoundResult>();
+    }
+
+    [Fact]
+    public async Task Delete_DoesNotRemoveEntry_WhenCalledByOtherUser()
+    {
+        // Belt-and-suspenders: confirm the row still exists after the rejected delete.
+        var entry = await SeedEntryAsync(_ownerUser.Id, "Owner's Entry");
+        var otherController = ControllerFor(_otherUser.Id);
+
+        await otherController.Delete(entry.Id);
+
+        _db.ChangeTracker.Clear();
+        var stillExists = await _db.Entries.FindAsync(entry.Id);
+        stillExists.Should().NotBeNull();
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────

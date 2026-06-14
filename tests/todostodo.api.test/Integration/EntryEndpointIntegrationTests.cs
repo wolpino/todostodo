@@ -158,11 +158,11 @@ public class EntryEndpointIntegrationTests(CustomWebApplicationFactory factory)
     [Fact]
     public async Task GetById_Returns404_WithProblemDetailsBody_ForMissingEntry()
     {
-        // This is a weak smoke-test that the exception handling / ProblemDetails pipeline
-        // is configured and that controllers return structured responses. A proper 404
-        // from the controller is not the same as an unhandled exception, but it confirms
-        // that the response serialisation infrastructure is wired correctly.
+        // Confirms the ProblemDetails / response infrastructure is wired correctly.
+        // Uses an authenticated client because GET /{id} now requires authorization.
         var client = factory.CreateClient();
+        var token = await RegisterAndLoginAsync(client, "get404@example.com", "Password1!");
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
         var response = await client.GetAsync("/api/Entry/999999");
 
