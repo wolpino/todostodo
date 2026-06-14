@@ -1,36 +1,41 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { Box, Button, Flex, Text } from '@chakra-ui/react'
-import { authQueryOptions, useLogout } from '@/hooks/useAuth'
+import { createFileRoute, redirect } from '@tanstack/react-router'
+import { Box, Flex, Text } from '@chakra-ui/react'
+import { authQueryOptions } from '@/hooks/useAuth'
+import { settingsQueryOptions, useSettings } from '@/hooks/useSettings'
 import { EntryList } from '@/components/features/EntryList'
+import { FontApplier } from '@/components/layout/FontApplier'
+import { SettingsMenu } from '@/components/layout/SettingsMenu'
+import { fontStackFor } from '@/lib/fonts'
 
 export const Route = createFileRoute('/')({
   beforeLoad: async ({ context }) => {
     const user = await context.queryClient.ensureQueryData(authQueryOptions)
     if (!user) throw redirect({ to: '/login' })
+    await context.queryClient.ensureQueryData(settingsQueryOptions)
   },
   component: HomePage,
 })
 
 function HomePage() {
-  const navigate = useNavigate()
-  const logout = useLogout()
+  const { data: settings } = useSettings()
+  const fontFamily = fontStackFor(settings?.font)
 
   return (
-    <Box w="100%" maxW="500px" mx="auto" minH="100svh" borderWidth="5px" borderColor="black">
-      <Flex as="header" justify="space-between" align="center" py={5} px={4}>
+    <Box
+      w="100%"
+      maxW="500px"
+      mx="auto"
+      minH="100svh"
+      borderWidth="5px"
+      borderColor="black"
+      fontFamily={fontFamily}
+    >
+      <FontApplier />
+      <Flex as="header" align="center" py={5} px={4} gap={2}>
+        <SettingsMenu />
         <Text fontWeight="600" letterSpacing="-0.02em">
           TodosToDo
         </Text>
-        <Button
-          variant="ghost"
-          size="sm"
-          color="gray.500"
-          onClick={() => logout.mutateAsync().then(() => navigate({ to: '/login' }))}
-          loading={logout.isPending}
-          loadingText="Signing out…"
-        >
-          Sign out
-        </Button>
       </Flex>
 
       <Box as="main">

@@ -67,9 +67,6 @@ export const useUpdateEntry = () => {
         queryClient.setQueryData(ENTRIES_QUERY_KEY, ctx.previous)
       }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ENTRIES_QUERY_KEY })
-    },
   })
 }
 
