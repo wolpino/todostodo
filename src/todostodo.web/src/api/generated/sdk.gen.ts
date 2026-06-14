@@ -2,7 +2,7 @@
 
 import type { Client, ClientMeta, Options as Options2, RequestResult, TDataShape } from './client';
 import { client } from './client.gen';
-import type { DeleteApiEntryByIdData, DeleteApiEntryByIdErrors, DeleteApiEntryByIdResponses, GetApiEntryByIdData, GetApiEntryByIdErrors, GetApiEntryByIdResponses, GetApiEntryData, GetApiEntryResponses, GetManageInfoData, GetManageInfoErrors, GetManageInfoResponses, MapIdentityApiConfirmEmailData, MapIdentityApiConfirmEmailResponses, PostApiEntryData, PostApiEntryErrors, PostApiEntryResponses, PostForgotPasswordData, PostForgotPasswordErrors, PostForgotPasswordResponses, PostLoginData, PostLoginResponses, PostManage2FaData, PostManage2FaErrors, PostManage2FaResponses, PostManageInfoData, PostManageInfoErrors, PostManageInfoResponses, PostRefreshData, PostRefreshResponses, PostRegisterData, PostRegisterErrors, PostRegisterResponses, PostResendConfirmationEmailData, PostResendConfirmationEmailResponses, PostResetPasswordData, PostResetPasswordErrors, PostResetPasswordResponses, PutApiEntryByIdData, PutApiEntryByIdErrors, PutApiEntryByIdResponses } from './types.gen';
+import type { DeleteApiEntryByIdData, DeleteApiEntryByIdErrors, DeleteApiEntryByIdResponses, GetApiEntryByIdData, GetApiEntryByIdErrors, GetApiEntryByIdResponses, GetApiEntryData, GetApiEntryResponses, GetManageInfoData, GetManageInfoErrors, GetManageInfoResponses, MapIdentityApiConfirmEmailData, MapIdentityApiConfirmEmailResponses, PostApiEntryData, PostApiEntryErrors, PostApiEntryResponses, PostForgotPasswordData, PostForgotPasswordErrors, PostForgotPasswordResponses, PostLoginData, PostLoginResponses, PostLogoutData, PostLogoutResponses, PostManage2FaData, PostManage2FaErrors, PostManage2FaResponses, PostManageInfoData, PostManageInfoErrors, PostManageInfoResponses, PostRefreshData, PostRefreshResponses, PostRegisterData, PostRegisterErrors, PostRegisterResponses, PostResendConfirmationEmailData, PostResendConfirmationEmailResponses, PostResetPasswordData, PostResetPasswordErrors, PostResetPasswordResponses, PutApiEntryByIdData, PutApiEntryByIdErrors, PutApiEntryByIdResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -117,3 +117,5 @@ export const postManageInfo = <ThrowOnError extends boolean = false>(options: Op
         ...options.headers
     }
 });
+
+export const postLogout = <ThrowOnError extends boolean = false>(options?: Options<PostLogoutData, ThrowOnError>): RequestResult<PostLogoutResponses, unknown, ThrowOnError> => (options?.client ?? client).post<PostLogoutResponses, unknown, ThrowOnError>({ url: '/logout', ...options });

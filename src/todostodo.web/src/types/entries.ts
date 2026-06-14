@@ -50,19 +50,23 @@ export const isNoteEntry = (entry: AnyEntry): entry is NoteEntry =>
 // Helpers
 // ---------------------------------------------------------------------------
 
-/** The ordered status cycle used by the status toggle button. */
+/** The ordered status cycle used by the status toggle button. Stops at Archived. */
 export const STATUS_CYCLE = [
   'Active',
   'InProgress',
   'Completed',
   'Archived',
-  'Inactive',
 ] as const satisfies readonly EntryStatus[]
 
-/** Returns the next status in the cycle, wrapping from Inactive back to Active. */
+/**
+ * Returns the next status in the cycle.
+ * Stops at Archived — clicking beyond it does nothing.
+ * Inactive is only reachable via the delete button, not this cycle.
+ */
 export const nextStatus = (current: EntryStatus): EntryStatus => {
-  const idx = STATUS_CYCLE.indexOf(current)
-  return STATUS_CYCLE[(idx + 1) % STATUS_CYCLE.length]
+  const idx = STATUS_CYCLE.indexOf(current as (typeof STATUS_CYCLE)[number])
+  if (idx === -1 || idx === STATUS_CYCLE.length - 1) return current
+  return STATUS_CYCLE[idx + 1]
 }
 
 /**

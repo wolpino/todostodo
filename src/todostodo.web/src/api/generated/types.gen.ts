@@ -13,18 +13,22 @@ export type AccessTokenResponse = {
 
 export type CreateEntryRequest = {
     title?: string | null;
-    description?: string | null;
     status?: EntryStatus;
+    assignedDate?: string | null;
+    assignedTime?: string | null;
 };
 
 export type Entry = {
     id?: number;
     title: string | null;
-    description?: string | null;
     status?: EntryStatus;
-    userId?: number;
-    user: User;
+    userId?: string | null;
+    user?: User;
     createdAt?: string;
+    modifiedAt?: string | null;
+    completedAt?: string | null;
+    assignedDate?: string | null;
+    assignedTime?: string | null;
 };
 
 export type EntryStatus = 'Active' | 'InProgress' | 'Completed' | 'Archived' | 'Inactive';
@@ -111,6 +115,8 @@ export type UpdateEntryRequest = {
     id?: number;
     title?: string | null;
     status?: EntryStatus;
+    assignedDate?: string | null;
+    assignedTime?: string | null;
 };
 
 export type User = {
@@ -162,9 +168,9 @@ export type PostApiEntryData = {
 
 export type PostApiEntryErrors = {
     /**
-     * Bad Request
+     * Unauthorized
      */
-    400: ProblemDetails;
+    401: ProblemDetails;
 };
 
 export type PostApiEntryError = PostApiEntryErrors[keyof PostApiEntryErrors];
@@ -485,3 +491,17 @@ export type PostManageInfoResponses = {
 };
 
 export type PostManageInfoResponse = PostManageInfoResponses[keyof PostManageInfoResponses];
+
+export type PostLogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/logout';
+};
+
+export type PostLogoutResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};
