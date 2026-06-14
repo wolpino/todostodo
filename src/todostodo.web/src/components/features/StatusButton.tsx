@@ -11,14 +11,13 @@ const STATUS_LABELS: Record<EntryStatus, string> = {
   Inactive: 'Inactive',
 }
 
-/** Hex colors are intentionally hardcoded — these are semantic status colors,
- *  not theme tokens, and should be the same in light and dark mode. */
-const STATUS_COLORS: Record<EntryStatus, string> = {
-  Active: '#7c3aed',
-  InProgress: '#f59e0b',
-  Completed: '#22c55e',
-  Archived: '#9ca3af',
-  Inactive: '#f87171',
+/** Archived is the terminal state — clicking the button does nothing. */
+const IS_TERMINAL: Record<EntryStatus, boolean> = {
+  Active: false,
+  InProgress: false,
+  Completed: false,
+  Archived: true,
+  Inactive: true,
 }
 
 function StatusIconPaths({ status }: { status: EntryStatus }) {
@@ -67,7 +66,12 @@ export const StatusButton = memo(function StatusButton({
   onCycle,
   isLoading = false,
 }: StatusButtonProps) {
+  const terminal = IS_TERMINAL[status]
   const next = nextStatus(status)
+  const ariaLabel = terminal
+    ? `Status: ${STATUS_LABELS[status]}`
+    : `Status: ${STATUS_LABELS[status]}. Click to set ${STATUS_LABELS[next]}`
+
   return (
     <Button
       type="button"
@@ -78,12 +82,13 @@ export const StatusButton = memo(function StatusButton({
       minW="32px"
       p={0}
       borderRadius="full"
-      color={STATUS_COLORS[status]}
-      aria-label={`Status: ${STATUS_LABELS[status]}. Click to set ${STATUS_LABELS[next]}`}
-      onClick={onCycle}
-      disabled={isLoading}
-      cursor={isLoading ? 'wait' : 'pointer'}
-      _hover={{ opacity: 0.7, bg: 'transparent' }}
+      color="currentColor"
+      opacity={status === 'Archived' ? 0.35 : 1}
+      aria-label={ariaLabel}
+      onClick={terminal ? undefined : onCycle}
+      disabled={isLoading || terminal}
+      cursor={isLoading ? 'wait' : terminal ? 'default' : 'pointer'}
+      _hover={{ opacity: status === 'Archived' ? 0.35 : 0.6, bg: 'transparent' }}
     >
       <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true">
         <StatusIconPaths status={status} />

@@ -88,12 +88,16 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
           px={1}
           py="2px"
           fontSize="inherit"
-          // <TODO> add more styling for different statuses
-          color={entry.status === 'Completed' ? 'gray.400' : 'inherit'}
-          textDecoration={entry.status === 'Completed' ? 'line-through' : 'none'}
-          cursor="text"
+          opacity={entry.status === 'Archived' ? 0.4 : 1}
+          fontStyle={entry.status === 'Archived' ? 'italic' : 'normal'}
+          textDecoration={
+            entry.status === 'Completed' || entry.status === 'Archived'
+              ? 'line-through'
+              : 'none'
+          }
+          cursor={entry.status === 'Archived' ? 'default' : 'text'}
           userSelect="none"
-          onClick={handleTextClick}
+          onClick={entry.status === 'Archived' ? undefined : handleTextClick}
           fontWeight="bold"
         >
           {entry.title ?? (
