@@ -4,6 +4,8 @@ import { getManageInfo, postLogin, postRegister } from '@/api/generated'
 import type { LoginRequest, RegisterRequest } from '@/api/generated'
 import { ENTRIES_QUERY_KEY } from '@/hooks/useEntries'
 import { SETTINGS_QUERY_KEY } from '@/hooks/useSettings'
+import { getLoginErrorMessage, getRegisterErrorMessage } from '@/lib/authErrors'
+import { HttpError } from '@/lib/httpError'
 
 export const AUTH_QUERY_KEY = ['auth'] as const
 
@@ -37,7 +39,9 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: async (body: LoginRequest) => {
       const { response } = await postLogin({ query: { useCookies: true }, body })
-      if (!response?.ok) throw new Error('Login failed')
+      if (!response?.ok) {
+        throw new HttpError(response?.status ?? 500, getLoginErrorMessage(response?.status ?? 500))
+      }
     },
     onSuccess: () => {
       clearUserScopedQueries(queryClient)
@@ -50,8 +54,10 @@ export const useRegister = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (body: RegisterRequest) => {
-      const { response } = await postRegister({ body })
-      if (!response?.ok) throw new Error('Registration failed')
+      const { error, response } = await postRegister({ body })
+      if (!response?.ok) {
+        throw new HttpError(response?.status ?? 400, getRegisterErrorMessage(error))
+      }
     },
     onSuccess: () => {
       clearUserScopedQueries(queryClient)
