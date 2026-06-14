@@ -88,12 +88,13 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
           px={1}
           py="2px"
           fontSize="inherit"
+          // <TODO> add more styling for different statuses
           color={entry.status === 'Completed' ? 'gray.400' : 'inherit'}
           textDecoration={entry.status === 'Completed' ? 'line-through' : 'none'}
           cursor="text"
           userSelect="none"
           onClick={handleTextClick}
-          // noOfLines={1}
+          fontWeight="bold"
         >
           {entry.title ?? (
             <Text as="span" color="gray.400" fontStyle="italic">

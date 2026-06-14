@@ -99,6 +99,33 @@ public class EntryControllerTests : IDisposable
         result.Should().HaveCount(2);
     }
 
+    [Fact]
+    public async Task Get_DoesNotReturnOtherUsersEntries()
+    {
+        // Entries scoped to another user must never appear in the current user's list.
+        // This is the core data-isolation requirement: users can only see their own work.
+        var otherUser = new User
+        {
+            Id = Guid.NewGuid().ToString(),
+            UserName = "other@test.com",
+            NormalizedUserName = "OTHER@TEST.COM",
+            Email = "other@test.com",
+            NormalizedEmail = "OTHER@TEST.COM",
+            SecurityStamp = Guid.NewGuid().ToString()
+        };
+        _db.Users.Add(otherUser);
+        await _db.SaveChangesAsync();
+
+        _db.Entries.Add(new Entry { Title = "My Entry", UserId = _testUser.Id });
+        _db.Entries.Add(new Entry { Title = "Their Entry", UserId = otherUser.Id });
+        await _db.SaveChangesAsync();
+
+        var result = await _controller.Get();
+
+        result.Should().HaveCount(1);
+        result.Single().Title.Should().Be("My Entry");
+    }
+
     // ── GET by id ─────────────────────────────────────────────────────────────
 
     [Fact]

@@ -4,30 +4,76 @@ chronological bottom to top
 
 # 6/12
 
-I was told yesterday this won't be reviewed until after the 22nd, so I have more time which is nice but not if I don't draw a line somewhere! So another list and some decisions.
+I was told yesterday this won't be reviewed until after the 22nd, so I have more time which is nice but not if I don't draw a line somewhere! But for now it means maybe step away until Monday.... after I dump all the thoughts!
+
+> Build a small to-do task management API and frontend is the objective
+I defintiely interpreted it as a 'todo list management application' but I think that's ok
+
+BUGS
+### all users can see all the tasks. oops
+
+
 
 > Finalizing production needs
 ## one command run // containerize?
 ## ci/cd for automatic testing
-## readme
-
+● Clean code, architecture structure, and thought proces, Trade-offs and assumptions. scalability, and what you would
+implement in the future.
+● Include a short README.md with setup steps and your explanation notes.
+● Please add any features you feel are required for a Production MVP.
 > Production needs that are too much for this app but would be great to add
 -- performance test to make sure there is no lagging, flashing renders, unnecessary rerenders
-
-> Improvements (ordered from needs to wants)
--  status button is close but a little weird. maybe no green check, but a line through the italicised entry. just full circle? and confetti?
-- (MAKE DECISION) - try/catch blocks, but also wondering about a larger try/catch because it seems too easy to put them everywhere
-https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-way-to-handle-errors-9c6d76302485
 > NEED LOGGING
 > retries on api calls
--- frontend error messages
--- signout button is kind of gross replace with symbol button?
--- Add settings fonts colors >> add settings api > gear, drop down, three choices for each setting
+- (MAKE DECISION) - try/catch blocks, but also wondering about a larger try/catch because it seems too easy to put them everywhere
+https://medium.com/@nikhil-sharma22/stop-using-try-catch-everywhere-a-smarter-way-to-handle-errors-9c6d76302485
 
+> UX focused Improvements
+-- signout button is kind of gross replace with symbol button?
+> the idea is customability -- visual choices instead of complicated set up.
+--  fonts and colors >> add settings api > gear, drop down, three choices for each setting (does the menu come from the bottom so you can see how the changes look)
+-- implementing the Events and Notes types?
+this includes hooking up the description field, plus added date and time fields to the Entry
+Is a note just an entry?
+- add completed_date
 -- completed celebration - confetti? canvas-confetti
 
--- change title to TodosToDo
-->>  ( Do I stick with TodosToDo? Did I want it to be The Index Card? That might take too much explaining. and it doesn't look like an index card...)
+> running through the app flows a few times to find and fix
+login/signup
+- add hint for password requirements 
+
+- error messages
+
+-  status button 
+- the empty row symbol is odd and could/should be a greyed  circle
+  Active: 'Active', > unfilled black circle
+  InProgress: 'In Progress', > half filled black circle >> move to the top?
+  Completed: 'Completed', > filled black circle plus cross off item >> stays in order
+  confetti
+  Archived: 'Archived', grey circle and line through todo + italics >> drops to the end of the list, but still visable
+  
+  >> click archived status button, it gets replicated and added to the top of the list as active
+
+delete button
+  Inactive: 'Inactive', > "delete" removed from list (don't need to expose trash now, but could be a future feature to restore tasks)
+- does the delete button mark a task as Inactive? yes 
+- make delete button smaller// only shows on hover
+
+- color themes... I was intentionally thinking about a symbol rather than color incase someone is color blind. but it will also work with color themes, different colors would be the same circle steps
+
+- visually it hasn't been looking finished to me >> so that is an aim
+> added border and extended the lines to the edge but still not right
+> how to make it more of a management system > dates, today is the list. arrow to go yesterday and see what was completed
+
+
+
+
+>> Notes for assumptions etc write up
+(what a todo task management application is)
+- any time somethign seems like magic or a black box, that's a thing to dig into
+
+
+DONE - change title to TodosToDo ->>  ( Do I stick with TodosToDo? Did I want it to be The Index Card? That might take too much explaining. and it doesn't look like an index card...)
 
 
 

@@ -16,10 +16,10 @@ function HomePage() {
   const logout = useLogout()
 
   return (
-    <Box w="100%" maxW="500px" mx="auto" px={4} minH="100svh">
-      <Flex as="header" justify="space-between" align="center" py={5}>
+    <Box w="100%" maxW="500px" mx="auto" minH="100svh" borderWidth="5px" borderColor="black">
+      <Flex as="header" justify="space-between" align="center" py={5} px={4}>
         <Text fontWeight="600" letterSpacing="-0.02em">
-          todostodo
+          TodosToDo
         </Text>
         <Button
           variant="ghost"

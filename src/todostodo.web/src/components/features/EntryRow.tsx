@@ -18,10 +18,10 @@ export function EntryRow({ statusSlot, deleteSlot, children }: EntryRowProps) {
     <Flex
       align="center"
       minH="44px"
-      px={1}
+      px={4}
       gap={1}
-      borderBottom="1px solid"
-      borderColor="gray.200"
+      border="1px solid"
+      borderColor="black.200"
       _dark={{ borderColor: 'gray.700' }}
       data-group
       _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
@@ -29,7 +29,8 @@ export function EntryRow({ statusSlot, deleteSlot, children }: EntryRowProps) {
     >
       {statusSlot}
 
-      <Box flex={1} minW={0} py={1}>
+      <Box flex={1} minW={0} py={1} fontWeight="bold"
+      >
         {children}
       </Box>
 
