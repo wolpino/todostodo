@@ -68,21 +68,6 @@ public class EntryEndpointIntegrationTests(CustomWebApplicationFactory factory)
     }
 
     [Fact]
-    public async Task Create_Returns400_WhenDescriptionExceedsMaxLength()
-    {
-        // [MaxLength(1000)] on Description protects against payloads that would waste
-        // DB storage or exceed column constraints.
-        var client = factory.CreateClient();
-        var token = await RegisterAndLoginAsync(client, "val_longdesc@example.com", "Password1!");
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
-        var response = await client.PostAsJsonAsync("/api/Entry",
-            new { title = "Valid Title", description = new string('x', 1001), status = "Active" });
-
-        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
-    }
-
-    [Fact]
     public async Task Create_Returns400_WithValidationProblemDetailsBody()
     {
         // RFC 7807 (Problem Details) requires an "errors" map for validation failures.

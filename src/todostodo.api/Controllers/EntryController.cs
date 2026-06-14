@@ -29,7 +29,7 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
         // handles the unauthenticated case before this code runs.
         var userId = CurrentUserId ?? string.Empty;
         return await db.Entries
-            .Where(e => e.UserId == userId)
+            .Where(e => e.UserId == userId && e.Status != EntryStatus.Inactive)
             .ToListAsync();
     }
 
@@ -71,9 +71,10 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
         var entry = new Entry
         {
             Title = req.Title,
-            Description = req.Description,
             Status = req.Status,
-            UserId = userId
+            UserId = userId,
+            AssignedDate = req.AssignedDate,
+            AssignedTime = req.AssignedTime,
         };
 
         db.Entries.Add(entry);
@@ -116,7 +117,19 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             entry.Title = req.Title;
 
         if (req.Status.HasValue && entry.Status != req.Status.Value)
+        {
             entry.Status = req.Status.Value;
+            if (req.Status.Value == EntryStatus.Completed)
+                entry.CompletedAt = DateTime.UtcNow;
+        }
+
+        if (req.AssignedDate.HasValue)
+            entry.AssignedDate = req.AssignedDate;
+
+        if (req.AssignedTime.HasValue)
+            entry.AssignedTime = req.AssignedTime;
+
+        entry.ModifiedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync();
 
@@ -144,12 +157,11 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             return NotFound();
         }
 
-        db.Entries.Remove(entry);
+        entry.Status = EntryStatus.Inactive;
+        entry.ModifiedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
 
-        // Deletions are always logged at Information — they're irreversible and
-        // the most useful data point for "what happened to my entry?" support questions.
-        logger.LogInformation("Entry {EntryId} deleted by user {UserId}", id, userId);
+        logger.LogInformation("Entry {EntryId} set Inactive by user {UserId}", id, userId);
 
         return NoContent();
     }
