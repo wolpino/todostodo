@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using todostodo.api.Controllers;
 using todostodo.api.Data;
 using todostodo.api.Models;
@@ -210,7 +211,7 @@ public class AuthorizationTests : IDisposable
             ? [new Claim(ClaimTypes.NameIdentifier, userId)]
             : Array.Empty<Claim>();
 
-        return new EntryController(_db)
+        return new EntryController(_db, NullLogger<EntryController>.Instance)
         {
             ControllerContext = new ControllerContext
             {

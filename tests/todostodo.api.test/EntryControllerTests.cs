@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using todostodo.api.Controllers;
 using todostodo.api.Data;
 using todostodo.api.Models;
@@ -41,7 +42,7 @@ public class EntryControllerTests : IDisposable
         _db.Users.Add(_testUser);
         _db.SaveChanges();
 
-        _controller = new EntryController(_db)
+        _controller = new EntryController(_db, NullLogger<EntryController>.Instance)
         {
             ControllerContext = new ControllerContext
             {
