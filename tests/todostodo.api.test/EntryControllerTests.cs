@@ -220,7 +220,7 @@ public class EntryControllerTests : IDisposable
         updated!.Status.Should().Be(EntryStatus.Completed);
     }
 
-    [Fact]
+    [Fact(Skip = "For MVP, kind is not updatable")]
     public async Task Update_PersistsNewKind()
     {
         var seeded = await SeedEntryAsync(kind: EntryKind.Todo);

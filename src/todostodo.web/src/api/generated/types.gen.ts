@@ -33,7 +33,7 @@ export type Entry = {
     assignedTime?: string | null;
 };
 
-export type EntryKind = 'Todo' | 'Note' | 'Event' | 'Log';
+export type EntryKind = 'Todo' | 'Note' | 'Event';
 
 export type EntryStatus = 'Active' | 'InProgress' | 'Completed' | 'Archived' | 'Inactive';
 
