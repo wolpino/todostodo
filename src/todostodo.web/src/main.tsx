@@ -10,8 +10,9 @@ import { routeTree } from './routeTree.gen'
 import { client } from './api/generated/client.gen'
 import { queryClient } from './lib/queryClient'
 
-// Route all API calls through the Vite dev proxy (/api/* → localhost:5162)
-client.setConfig({ baseUrl: '' })
+// Route all API calls through the Vite dev proxy (/api/* → localhost:5162).
+// credentials: 'include' ensures auth cookies are sent on every request.
+client.setConfig({ baseUrl: '', credentials: 'include' })
 
 const router = createRouter({
   routeTree,

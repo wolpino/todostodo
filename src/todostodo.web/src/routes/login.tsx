@@ -12,7 +12,7 @@ import { authErrorMessage, PASSWORD_REQUIREMENTS_HINT } from '@/lib/authErrors'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async ({ context }) => {
-    const user = await context.queryClient.ensureQueryData(authQueryOptions)
+    const user = await context.queryClient.fetchQuery(authQueryOptions)
     if (user) throw redirect({ to: '/' })
   },
   component: LoginPage,

@@ -1,0 +1,6 @@
+packages:
+  - '.'
+
+# msw is dev-only (tests); its postinstall is not needed for production vite build.
+allowBuilds:
+  msw: false
