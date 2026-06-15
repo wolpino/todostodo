@@ -1,11 +1,12 @@
 import { memo, useRef, useState } from 'react'
 import { Input, Text } from '@chakra-ui/react'
+import { useQueryClient } from '@tanstack/react-query'
 import { EntryRow } from './EntryRow'
 import { StatusButton } from './StatusButton'
 import { DeleteButton } from './DeleteButton'
-import { useUpdateEntry, useDeleteEntry } from '@/hooks/useEntries'
+import { ENTRIES_QUERY_KEY, useUpdateEntry, useDeleteEntry } from '@/hooks/useEntries'
 import { nextStatus } from '@/types/entries'
-import type { TodoEntry } from '@/types/entries'
+import type { AnyEntry, TodoEntry } from '@/types/entries'
 
 type TodoItemProps = {
   entry: TodoEntry
@@ -15,11 +16,17 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
   const [isEditing, setIsEditing] = useState(false)
   const [draft, setDraft] = useState(entry.title ?? '')
   const inputRef = useRef<HTMLInputElement>(null)
+  const queryClient = useQueryClient()
 
   const updateMutation = useUpdateEntry()
   const deleteMutation = useDeleteEntry()
 
   const id = entry.id!
+
+  const isStatusUpdating =
+    updateMutation.isPending &&
+    updateMutation.variables?.id === id &&
+    updateMutation.variables.status !== undefined
 
   const handleTextClick = () => {
     setDraft(entry.title ?? '')
@@ -45,8 +52,11 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
   }
 
   const handleCycleStatus = () => {
-    if (!entry.status) return
-    updateMutation.mutate({ id, status: nextStatus(entry.status) })
+    const entries = queryClient.getQueryData<AnyEntry[]>(ENTRIES_QUERY_KEY)
+    const current = entries?.find((e) => e.id === id)?.status ?? entry.status ?? 'Active'
+    const next = nextStatus(current)
+    if (next === current) return
+    updateMutation.mutate({ id, status: next })
   }
 
   return (
@@ -55,7 +65,7 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
         <StatusButton
           status={entry.status ?? 'Active'}
           onCycle={handleCycleStatus}
-          isLoading={updateMutation.isPending}
+          isLoading={isStatusUpdating}
         />
       }
       deleteSlot={
@@ -88,12 +98,16 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
           px={1}
           py="2px"
           fontSize="inherit"
-          // <TODO> add more styling for different statuses
-          color={entry.status === 'Completed' ? 'gray.400' : 'inherit'}
-          textDecoration={entry.status === 'Completed' ? 'line-through' : 'none'}
-          cursor="text"
+          opacity={entry.status === 'Archived' ? 0.4 : 1}
+          fontStyle={entry.status === 'Archived' ? 'italic' : 'normal'}
+          textDecoration={
+            entry.status === 'Completed' || entry.status === 'Archived'
+              ? 'line-through'
+              : 'none'
+          }
+          cursor={entry.status === 'Archived' ? 'default' : 'text'}
           userSelect="none"
-          onClick={handleTextClick}
+          onClick={entry.status === 'Archived' ? undefined : handleTextClick}
           fontWeight="bold"
         >
           {entry.title ?? (

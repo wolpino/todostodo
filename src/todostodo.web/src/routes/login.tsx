@@ -8,6 +8,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { authQueryOptions, useLogin, useRegister } from '@/hooks/useAuth'
+import { authErrorMessage, PASSWORD_REQUIREMENTS_HINT } from '@/lib/authErrors'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async ({ context }) => {
@@ -42,26 +43,24 @@ function LoginPage() {
     if (mode === 'register') {
       try {
         await registerMutation.mutateAsync({ email, password })
-      } catch {
-        setErrorMessage('Registration failed. Password must be 6+ characters with a digit and uppercase letter.')
+      } catch (err) {
+        setErrorMessage(authErrorMessage(err, 'Registration failed. Please try again.'))
         return
       }
       try {
         await loginMutation.mutateAsync({ email, password })
         navigate({ to: '/' })
-      } catch {
-        setErrorMessage('Account created but sign-in failed. Please try signing in.')
+      } catch (err) {
+        setErrorMessage(authErrorMessage(err, 'Account created but sign-in failed. Please try signing in.'))
       }
       return
     }
 
-    // Login mode: try login, prompt to register if it fails
     try {
       await loginMutation.mutateAsync({ email, password })
       navigate({ to: '/' })
-    } catch {
-      setMode('register')
-      setErrorMessage("No account found. Create one below.")
+    } catch (err) {
+      setErrorMessage(authErrorMessage(err, 'Incorrect email or password.'))
     }
   }
 
@@ -97,6 +96,12 @@ function LoginPage() {
             autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
             size="md"
           />
+
+          {mode === 'register' && (
+            <Text fontSize="xs" color="gray.500">
+              {PASSWORD_REQUIREMENTS_HINT}
+            </Text>
+          )}
 
           {errorMessage && (
             <Text color="red.500" fontSize="sm">

@@ -1,0 +1,21 @@
+.git
+.github
+.cursor
+.vscode
+.notes
+notes
+tests
+**/.DS_Store
+
+**/bin
+**/obj
+**/node_modules
+**/.vite
+**/coverage
+**/*.user
+**/*.suo
+.vs
+
+# Keep Docker context small — frontend is rebuilt inside the image.
+src/todostodo.web/dist
+src/todostodo.api/wwwroot

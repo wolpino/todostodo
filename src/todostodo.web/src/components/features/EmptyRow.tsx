@@ -67,12 +67,13 @@ export function EmptyRow() {
         aria-hidden="true"
       >
         <Box
-          w="8px"
-          h="8px"
+          w="10px"
+          h="10px"
           borderRadius="full"
-          border="1.5px dashed"
+          border="1.5px solid"
           borderColor="gray.300"
-          _dark={{ borderColor: 'gray.600' }}
+          opacity={0.5}
+          _dark={{ borderColor: 'gray.500' }}
         />
       </Box>
 

@@ -1,6 +1,63 @@
 Ari's Work Log
 chronological bottom to top
 
+# 6/14
+EXPLAIN:
+- thought process
+- trade-offs and assumptions
+- how would it scale?
+
+README.md
+- setup steps
+- explanation notes
+
+BIG PROD STUFF
+- one command setup > containerize
+- ci/cd for automatic testing
+- performance testing > no lagging, flashing renders, unnecessary renders
+~~logging >> Serilog~~
+- retries
+
+SEEING
+~~user can only view their lists (unless shared)~~
+
+ADDING ENTRIES
+> There's an extra click with my empty row approach. Should the click create a new empty row below, and that's the input in focus? So the user can at least click the new row button if I can't get the enter to work.
+> emptyrow icon should be grey circle no fill
+
+DELETING ENTRIES
+-   "delete" removed from list (don't need to expose trash now, but could be a future feature to restore tasks)
+- Delete button marks task as Inactive
+- smaller button only on hover. 
+
+> STATUS
+- status currently loops through, inactive to active and back through. This isn't quite right. 
+so it stops at inactive, but what if a user needs to go to a previous status?
+Active: 'Active', > unfilled black circle
+  InProgress: 'In Progress', > half filled black circle >> move to the top?
+  Completed: 'Completed', > filled black circle plus cross off item >> stays in order
+  confetti
+  Archived: 'Archived', grey circle and line through todo + italics >> drops to the end of the list, but still visable
+  
+
+> SETTINGS
+menu - signout button in settings menu
+--  fonts and colors >> add settings api > gear, drop down, three choices for each setting (does the menu come from the bottom so you can see how the changes look)
+
+LOGIN SIGN UP
+- add hint for password requirements
+- use specific error messages?
+
+> MODEL
+- add completed_date
+- Events?
+- description, 
+- date
+- Created date datetime, if no assigned_date, created date is use 
+- time.
+
+> EXTRAS
+- completed celebration - confetti? canvas-confetti
 
 # 6/12
 
@@ -64,7 +121,6 @@ delete button
 - visually it hasn't been looking finished to me >> so that is an aim
 > added border and extended the lines to the edge but still not right
 > how to make it more of a management system > dates, today is the list. arrow to go yesterday and see what was completed
-
 
 
 

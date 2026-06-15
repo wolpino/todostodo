@@ -13,18 +13,22 @@ export type AccessTokenResponse = {
 
 export type CreateEntryRequest = {
     title?: string | null;
-    description?: string | null;
     status?: EntryStatus;
+    assignedDate?: string | null;
+    assignedTime?: string | null;
 };
 
 export type Entry = {
     id?: number;
     title: string | null;
-    description?: string | null;
     status?: EntryStatus;
-    userId?: number;
-    user: User;
+    userId?: string | null;
+    user?: User;
     createdAt?: string;
+    modifiedAt?: string | null;
+    completedAt?: string | null;
+    assignedDate?: string | null;
+    assignedTime?: string | null;
 };
 
 export type EntryStatus = 'Active' | 'InProgress' | 'Completed' | 'Archived' | 'Inactive';
@@ -91,6 +95,13 @@ export type ResetPasswordRequest = {
     newPassword: string | null;
 };
 
+export type Settings = {
+    id?: number;
+    font: string | null;
+    userId?: string | null;
+    user?: User;
+};
+
 export type TwoFactorRequest = {
     enable?: boolean | null;
     twoFactorCode?: string | null;
@@ -111,6 +122,12 @@ export type UpdateEntryRequest = {
     id?: number;
     title?: string | null;
     status?: EntryStatus;
+    assignedDate?: string | null;
+    assignedTime?: string | null;
+};
+
+export type UpdateSettingsRequest = {
+    font?: string | null;
 };
 
 export type User = {
@@ -162,9 +179,9 @@ export type PostApiEntryData = {
 
 export type PostApiEntryErrors = {
     /**
-     * Bad Request
+     * Unauthorized
      */
-    400: ProblemDetails;
+    401: ProblemDetails;
 };
 
 export type PostApiEntryError = PostApiEntryErrors[keyof PostApiEntryErrors];
@@ -262,6 +279,60 @@ export type PutApiEntryByIdResponses = {
 };
 
 export type PutApiEntryByIdResponse = PutApiEntryByIdResponses[keyof PutApiEntryByIdResponses];
+
+export type GetApiSettingsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/Settings';
+};
+
+export type GetApiSettingsErrors = {
+    /**
+     * Unauthorized
+     */
+    401: ProblemDetails;
+};
+
+export type GetApiSettingsError = GetApiSettingsErrors[keyof GetApiSettingsErrors];
+
+export type GetApiSettingsResponses = {
+    /**
+     * OK
+     */
+    200: Settings;
+};
+
+export type GetApiSettingsResponse = GetApiSettingsResponses[keyof GetApiSettingsResponses];
+
+export type PutApiSettingsData = {
+    body?: UpdateSettingsRequest;
+    path?: never;
+    query?: never;
+    url: '/api/Settings';
+};
+
+export type PutApiSettingsErrors = {
+    /**
+     * Bad Request
+     */
+    400: ProblemDetails;
+    /**
+     * Unauthorized
+     */
+    401: ProblemDetails;
+};
+
+export type PutApiSettingsError = PutApiSettingsErrors[keyof PutApiSettingsErrors];
+
+export type PutApiSettingsResponses = {
+    /**
+     * No Content
+     */
+    204: void;
+};
+
+export type PutApiSettingsResponse = PutApiSettingsResponses[keyof PutApiSettingsResponses];
 
 export type PostRegisterData = {
     body: RegisterRequest;
@@ -485,3 +556,17 @@ export type PostManageInfoResponses = {
 };
 
 export type PostManageInfoResponse = PostManageInfoResponses[keyof PostManageInfoResponses];
+
+export type PostLogoutData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/logout';
+};
+
+export type PostLogoutResponses = {
+    /**
+     * OK
+     */
+    200: unknown;
+};

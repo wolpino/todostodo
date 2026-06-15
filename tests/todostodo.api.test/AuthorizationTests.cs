@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using todostodo.api.Controllers;
 using todostodo.api.Data;
 using todostodo.api.Models;
@@ -65,7 +66,7 @@ public class AuthorizationTests : IDisposable
         // auth schemes that don't set standard claims. The explicit null-check inside the
         // action prevents a NullReferenceException and returns a clean 401 instead.
         var controller = ControllerFor(userId: null);
-        var req = new CreateEntryRequest("Test", null, EntryStatus.Active);
+        var req = new CreateEntryRequest("Test", EntryStatus.Active);
 
         var result = await controller.Create(req);
 
@@ -79,7 +80,7 @@ public class AuthorizationTests : IDisposable
         // never from the request body. This ensures one user cannot create entries on behalf
         // of another by crafting a custom payload.
         var controller = ControllerFor(_ownerUser.Id);
-        var req = new CreateEntryRequest("My Entry", null, EntryStatus.Active);
+        var req = new CreateEntryRequest("My Entry", EntryStatus.Active);
 
         var result = await controller.Create(req);
         var created = ((CreatedAtActionResult)result.Result!).Value as Entry;
@@ -93,7 +94,7 @@ public class AuthorizationTests : IDisposable
         // Complementary to the test above: verify the stamp is exclusively the caller's id,
         // not any other user's id that happens to exist in the database.
         var controller = ControllerFor(_ownerUser.Id);
-        var req = new CreateEntryRequest("Entry", null, EntryStatus.Active);
+        var req = new CreateEntryRequest("Entry", EntryStatus.Active);
 
         var result = await controller.Create(req);
         var created = ((CreatedAtActionResult)result.Result!).Value as Entry;
@@ -210,7 +211,7 @@ public class AuthorizationTests : IDisposable
             ? [new Claim(ClaimTypes.NameIdentifier, userId)]
             : Array.Empty<Claim>();
 
-        return new EntryController(_db)
+        return new EntryController(_db, NullLogger<EntryController>.Instance)
         {
             ControllerContext = new ControllerContext
             {

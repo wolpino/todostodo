@@ -6,6 +6,7 @@ import {
   putApiEntryById,
 } from '@/api/generated'
 import type { CreateEntryRequest, UpdateEntryRequest } from '@/api/generated'
+import { HttpError } from '@/lib/httpError'
 import { toAnyEntry } from '@/types/entries'
 import type { AnyEntry } from '@/types/entries'
 
@@ -16,7 +17,7 @@ export const useEntries = () =>
     queryKey: ENTRIES_QUERY_KEY,
     queryFn: async () => {
       const { data, response } = await getApiEntry()
-      if (!response?.ok) throw new Error('Failed to fetch entries')
+      if (!response?.ok) throw new HttpError(response?.status ?? 500, 'Failed to fetch entries')
       return (data ?? []).map(toAnyEntry)
     },
   })
@@ -65,9 +66,6 @@ export const useUpdateEntry = () => {
       if (ctx?.previous) {
         queryClient.setQueryData(ENTRIES_QUERY_KEY, ctx.previous)
       }
-    },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ENTRIES_QUERY_KEY })
     },
   })
 }

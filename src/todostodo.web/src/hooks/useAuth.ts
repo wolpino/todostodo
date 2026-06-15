@@ -1,8 +1,19 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import type { QueryClient } from '@tanstack/react-query'
 import { getManageInfo, postLogin, postRegister } from '@/api/generated'
 import type { LoginRequest, RegisterRequest } from '@/api/generated'
+import { ENTRIES_QUERY_KEY } from '@/hooks/useEntries'
+import { SETTINGS_QUERY_KEY } from '@/hooks/useSettings'
+import { getLoginErrorMessage, getRegisterErrorMessage } from '@/lib/authErrors'
+import { HttpError } from '@/lib/httpError'
 
 export const AUTH_QUERY_KEY = ['auth'] as const
+
+/** Entries and settings are per-user — drop them whenever auth identity changes. */
+const clearUserScopedQueries = (queryClient: QueryClient) => {
+  queryClient.removeQueries({ queryKey: ENTRIES_QUERY_KEY })
+  queryClient.removeQueries({ queryKey: SETTINGS_QUERY_KEY })
+}
 
 /**
  * Shared query options — used by both `useAuth()` and TanStack Router
@@ -28,9 +39,14 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: async (body: LoginRequest) => {
       const { response } = await postLogin({ query: { useCookies: true }, body })
-      if (!response?.ok) throw new Error('Login failed')
+      if (!response?.ok) {
+        throw new HttpError(response?.status ?? 500, getLoginErrorMessage(response?.status ?? 500))
+      }
     },
-    onSuccess: () => queryClient.refetchQueries({ queryKey: AUTH_QUERY_KEY }),
+    onSuccess: () => {
+      clearUserScopedQueries(queryClient)
+      queryClient.refetchQueries({ queryKey: AUTH_QUERY_KEY })
+    },
   })
 }
 
@@ -38,10 +54,15 @@ export const useRegister = () => {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (body: RegisterRequest) => {
-      const { response } = await postRegister({ body })
-      if (!response?.ok) throw new Error('Registration failed')
+      const { error, response } = await postRegister({ body })
+      if (!response?.ok) {
+        throw new HttpError(response?.status ?? 400, getRegisterErrorMessage(error))
+      }
     },
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY }),
+    onSuccess: () => {
+      clearUserScopedQueries(queryClient)
+      queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY })
+    },
   })
 }
 
@@ -56,6 +77,9 @@ export const useLogout = () => {
       })
       if (!response.ok) throw new Error('Logout failed')
     },
-    onSuccess: () => queryClient.setQueryData(AUTH_QUERY_KEY, null),
+    onSuccess: () => {
+      queryClient.setQueryData(AUTH_QUERY_KEY, null)
+      clearUserScopedQueries(queryClient)
+    },
   })
 }

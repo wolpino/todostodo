@@ -23,9 +23,9 @@ const systemComicShanns = createSystem(defaultConfig, {
   theme: {
     tokens: {
       fonts: {
-        body: { value: "'Comic Shanns', system-ui, sans-serif" },
-        heading: { value: "'Comic Shanns', system-ui, sans-serif" },
-        mono: { value: "'Comic Shanns', ui-monospace, monospace" },
+        body: { value: "var(--app-font, 'Comic Shanns', system-ui, sans-serif)" },
+        heading: { value: "var(--app-font, 'Comic Shanns', system-ui, sans-serif)" },
+        mono: { value: "var(--app-font, 'Comic Shanns', ui-monospace, monospace)" },
       },
     },
   },

@@ -52,25 +52,6 @@ public class ValidationTests
     }
 
     [Fact]
-    public void CreateEntryRequest_Description_HasMaxLength1000()
-    {
-        // Description is optional but bounded to prevent unbounded storage growth.
-        GetConstructorParam<CreateEntryRequest>("Description")
-            .GetCustomAttribute<MaxLengthAttribute>()!
-            .Length.Should().Be(1000);
-    }
-
-    [Fact]
-    public void CreateEntryRequest_Description_HasNoRequiredAttribute()
-    {
-        // Description is intentionally optional — omitting it is a valid use case
-        // for quick entries. This test documents that omission is deliberate.
-        GetConstructorParam<CreateEntryRequest>("Description")
-            .GetCustomAttribute<RequiredAttribute>()
-            .Should().BeNull("Description is an optional field");
-    }
-
-    [Fact]
     public void CreateEntryRequest_Status_DefaultsToActive()
     {
         // New entries default to Active so callers don't have to specify status.

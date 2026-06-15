@@ -1,9 +1,25 @@
 import { Box, Spinner, Text } from '@chakra-ui/react'
 import { useEntries } from '@/hooks/useEntries'
 import { isTodoEntry } from '@/types/entries'
-import type { AnyEntry } from '@/types/entries'
+import type { AnyEntry, EntryStatus } from '@/types/entries'
 import { TodoItem } from './TodoItem'
 import { EmptyRow } from './EmptyRow'
+
+/** InProgress floats to the top; Archived sinks to the bottom. Everything else keeps insertion order. */
+const STATUS_SORT_ORDER: Record<EntryStatus, number> = {
+  InProgress: 0,
+  Active: 1,
+  Completed: 2,
+  Archived: 3,
+  Inactive: 4,
+}
+
+const sortEntries = (entries: AnyEntry[]): AnyEntry[] =>
+  [...entries].sort(
+    (a, b) =>
+      (STATUS_SORT_ORDER[a.status ?? 'Active'] ?? 1) -
+      (STATUS_SORT_ORDER[b.status ?? 'Active'] ?? 1),
+  )
 
 function EntryDispatcher({ entry }: { entry: AnyEntry }) {
   if (isTodoEntry(entry)) return <TodoItem entry={entry} />
@@ -30,12 +46,14 @@ export function EntryList() {
     )
   }
 
+  const sorted = sortEntries(entries ?? [])
+
   return (
     <Box role="list" aria-label="Todo entries">
       <Box role="listitem">
         <EmptyRow />
       </Box>
-      {entries?.map((entry) => (
+      {sorted.map((entry) => (
         <Box key={entry.id} role="listitem">
           <EntryDispatcher entry={entry} />
         </Box>

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using todostodo.api.Controllers;
 using todostodo.api.Data;
 using todostodo.api.Models;
@@ -41,7 +42,7 @@ public class EntryControllerTests : IDisposable
         _db.Users.Add(_testUser);
         _db.SaveChanges();
 
-        _controller = new EntryController(_db)
+        _controller = new EntryController(_db, NullLogger<EntryController>.Instance)
         {
             ControllerContext = new ControllerContext
             {
@@ -63,13 +64,11 @@ public class EntryControllerTests : IDisposable
 
     private async Task<Entry> SeedEntryAsync(
         string title = "Test Entry",
-        EntryStatus status = EntryStatus.Active,
-        string? description = null)
+        EntryStatus status = EntryStatus.Active)
     {
         var entry = new Entry
         {
             Title = title,
-            Description = description,
             Status = status,
             UserId = _testUser.Id
         };
@@ -153,7 +152,7 @@ public class EntryControllerTests : IDisposable
     [Fact]
     public async Task Create_ReturnsCreatedResult_WithEntry()
     {
-        var req = new CreateEntryRequest("New Entry", "desc", EntryStatus.Active);
+        var req = new CreateEntryRequest("New Entry", EntryStatus.Active);
 
         var result = await _controller.Create(req);
 
@@ -166,7 +165,7 @@ public class EntryControllerTests : IDisposable
     [Fact]
     public async Task Create_PersistsEntry()
     {
-        var req = new CreateEntryRequest("Persisted Entry", null, EntryStatus.InProgress);
+        var req = new CreateEntryRequest("Persisted Entry", EntryStatus.InProgress);
 
         var result = await _controller.Create(req);
         var created = ((CreatedAtActionResult)result.Result!).Value as Entry;
@@ -231,6 +230,32 @@ public class EntryControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Update_SetsCompletedAt_WhenStatusChangesToCompleted()
+    {
+        var seeded = await SeedEntryAsync(status: EntryStatus.Active);
+        var req = new UpdateEntryRequest(seeded.Id, null, EntryStatus.Completed);
+
+        await _controller.Update(seeded.Id, req);
+
+        _db.ChangeTracker.Clear();
+        var updated = await _db.Entries.FindAsync(seeded.Id);
+        updated!.CompletedAt.Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task Update_SetsModifiedAt_OnAnyUpdate()
+    {
+        var seeded = await SeedEntryAsync("Original");
+        var req = new UpdateEntryRequest(seeded.Id, "Updated", null);
+
+        await _controller.Update(seeded.Id, req);
+
+        _db.ChangeTracker.Clear();
+        var updated = await _db.Entries.FindAsync(seeded.Id);
+        updated!.ModifiedAt.Should().NotBeNull();
+    }
+
+    [Fact]
     public async Task Update_ReturnsBadRequest_WhenIdMismatch()
     {
         var req = new UpdateEntryRequest(99, "Title", null);
@@ -263,15 +288,28 @@ public class EntryControllerTests : IDisposable
     }
 
     [Fact]
-    public async Task Delete_RemovesEntry_FromDatabase()
+    public async Task Delete_SetsEntryToInactive_NotRemovedFromDatabase()
     {
         var seeded = await SeedEntryAsync();
 
         await _controller.Delete(seeded.Id);
 
         _db.ChangeTracker.Clear();
-        var deleted = await _db.Entries.FindAsync(seeded.Id);
-        deleted.Should().BeNull();
+        var entry = await _db.Entries.FindAsync(seeded.Id);
+        entry.Should().NotBeNull();
+        entry!.Status.Should().Be(EntryStatus.Inactive);
+    }
+
+    [Fact]
+    public async Task Get_DoesNotReturnInactiveEntries()
+    {
+        await SeedEntryAsync("Active Entry", EntryStatus.Active);
+        await SeedEntryAsync("Inactive Entry", EntryStatus.Inactive);
+
+        var result = await _controller.Get();
+
+        result.Should().HaveCount(1);
+        result.Single().Title.Should().Be("Active Entry");
     }
 
     [Fact]

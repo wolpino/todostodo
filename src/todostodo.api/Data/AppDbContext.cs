@@ -11,4 +11,14 @@ public class AppDbContext : IdentityDbContext<User>
     }
 
     public DbSet<Entry> Entries => Set<Entry>();
+    public DbSet<Settings> Settings => Set<Settings>();
+
+    protected override void OnModelCreating(ModelBuilder builder)
+    {
+        base.OnModelCreating(builder);
+
+        builder.Entity<Settings>()
+            .HasIndex(s => s.UserId)
+            .IsUnique();
+    }
 }

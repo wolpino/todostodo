@@ -15,15 +15,8 @@ namespace todostodo.api.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
-public class EntryController : ControllerBase
+public class EntryController(AppDbContext db, ILogger<EntryController> logger) : ControllerBase
 {
-    private readonly AppDbContext _db;
-
-    public EntryController(AppDbContext db)
-    {
-        _db = db;
-    }
-
     // Extracted once per action rather than inline to keep action bodies readable.
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -35,8 +28,8 @@ public class EntryController : ControllerBase
         // rather than a 401 inside the action — the [Authorize] attribute already
         // handles the unauthenticated case before this code runs.
         var userId = CurrentUserId ?? string.Empty;
-        return await _db.Entries
-            .Where(e => e.UserId == userId)
+        return await db.Entries
+            .Where(e => e.UserId == userId && e.Status != EntryStatus.Inactive)
             .ToListAsync();
     }
 
@@ -51,10 +44,19 @@ public class EntryController : ControllerBase
         // Combining the id and userId filters in a single query is both efficient
         // and intentionally returns 404 (not 403) when the entry belongs to another
         // user — returning 404 avoids confirming that the entry exists at all.
-        var entry = await _db.Entries
+        var entry = await db.Entries
             .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
-        return entry is null ? NotFound() : Ok(entry);
+        if (entry is null)
+        {
+            // Could be a missing entry or another user's entry — logged at Debug
+            // because a user requesting a recently-deleted entry is normal and
+            // would make this noisy at Warning in production.
+            logger.LogDebug("Entry {EntryId} not found for user {UserId}", id, userId);
+            return NotFound();
+        }
+
+        return Ok(entry);
     }
 
     [HttpPost]
@@ -69,14 +71,18 @@ public class EntryController : ControllerBase
         var entry = new Entry
         {
             Title = req.Title,
-            Description = req.Description,
             Status = req.Status,
-            UserId = userId
+            UserId = userId,
+            AssignedDate = req.AssignedDate,
+            AssignedTime = req.AssignedTime,
         };
 
-        _db.Entries.Add(entry);
+        db.Entries.Add(entry);
+        await db.SaveChangesAsync();
 
-        await _db.SaveChangesAsync();
+        // Information-level: creates are the primary write event and form the
+        // audit trail if we ever need to reconstruct what a user did.
+        logger.LogInformation("Entry {EntryId} created by user {UserId}", entry.Id, userId);
 
         return CreatedAtAction(nameof(Get), new { id = entry.Id }, entry);
     }
@@ -95,19 +101,39 @@ public class EntryController : ControllerBase
 
         // Same single-query ownership pattern as GET /{id}: 404 for both
         // "not found" and "found but owned by someone else".
-        var entry = await _db.Entries
+        var entry = await db.Entries
             .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
         if (entry is null)
+        {
+            // Warning-level: a PUT to an entry that doesn't exist or belongs to
+            // someone else is more suspicious than a stale GET — worth surfacing
+            // in log monitoring as a possible probing attempt.
+            logger.LogWarning("Update rejected — entry {EntryId} not found or not owned by user {UserId}", id, userId);
             return NotFound();
+        }
 
         if (!string.IsNullOrEmpty(req.Title) && entry.Title != req.Title)
             entry.Title = req.Title;
 
         if (req.Status.HasValue && entry.Status != req.Status.Value)
+        {
             entry.Status = req.Status.Value;
+            if (req.Status.Value == EntryStatus.Completed)
+                entry.CompletedAt = DateTime.UtcNow;
+        }
 
-        await _db.SaveChangesAsync();
+        if (req.AssignedDate.HasValue)
+            entry.AssignedDate = req.AssignedDate;
+
+        if (req.AssignedTime.HasValue)
+            entry.AssignedTime = req.AssignedTime;
+
+        entry.ModifiedAt = DateTime.UtcNow;
+
+        await db.SaveChangesAsync();
+
+        logger.LogInformation("Entry {EntryId} updated by user {UserId}", id, userId);
 
         return NoContent();
     }
@@ -120,16 +146,24 @@ public class EntryController : ControllerBase
         var userId = CurrentUserId;
         if (userId is null) return Unauthorized();
 
-        var entry = await _db.Entries
+        var entry = await db.Entries
             .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
         if (entry is null)
+        {
+            // Warning-level for the same reason as Update: a DELETE to an unknown
+            // or unowned entry is worth monitoring.
+            logger.LogWarning("Delete rejected — entry {EntryId} not found or not owned by user {UserId}", id, userId);
             return NotFound();
+        }
 
-        _db.Entries.Remove(entry);
+        entry.Status = EntryStatus.Inactive;
+        entry.ModifiedAt = DateTime.UtcNow;
+        await db.SaveChangesAsync();
 
-        await _db.SaveChangesAsync();
+        logger.LogInformation("Entry {EntryId} set Inactive by user {UserId}", id, userId);
 
         return NoContent();
     }
 }
+
