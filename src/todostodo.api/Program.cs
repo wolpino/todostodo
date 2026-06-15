@@ -17,15 +17,20 @@ builder.Host.UseSerilog((ctx, config) =>
         .Enrich.FromLogContext()
         .WriteTo.Console());
 
-// :memory: is what makes it in-memory
-var connection = new SqliteConnection("Data Source=:memory:");
-
+// SQLite in-memory per project requirements. Connection must stay open for DB lifetime.
+var connectionString = builder.Configuration.GetConnectionString("Default") ?? "Data Source=:memory:";
+var connection = new SqliteConnection(connectionString);
 connection.Open();
 
-// add db context with the in-memory connection
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlite(connection)
 );
+
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+});
 
 // adds Identity services to the dependency injection container
 builder.Services.AddAuthorization();
@@ -49,11 +54,17 @@ builder.Services.AddValidation();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
+var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+    ?? ["http://localhost:5173"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "todostodo.web", policy =>
     {
-        policy.WithOrigins("http://localhost:5173").AllowAnyHeader().AllowAnyMethod();
+        policy.WithOrigins(corsOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -101,7 +112,18 @@ app.UseSerilogRequestLogging(options =>
 
 app.UseCors("todostodo.web");
 
+if (app.Environment.IsProduction())
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+
 app.MapControllers();
+
+if (app.Environment.IsProduction())
+{
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
 

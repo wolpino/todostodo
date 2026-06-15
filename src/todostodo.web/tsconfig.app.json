@@ -15,7 +15,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Path aliases */
+    // TODO: remove when migrating @/* path aliases off deprecated baseUrl (TS5101; breaks in TS 7).
+    "ignoreDeprecations": "6.0",
+
+    /* Path aliases — baseUrl is deprecated in TS 6; kept until path mapping is updated. */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
