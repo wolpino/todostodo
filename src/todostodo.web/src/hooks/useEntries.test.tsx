@@ -30,7 +30,7 @@ import type { AnyEntry } from '@/types/entries'
 // ---------------------------------------------------------------------------
 
 function makeEntry(id: number, title: string): AnyEntry {
-  return { entryType: 'Todo', id, title, status: 'Active', user: {} }
+  return { kind: 'Todo', id, title, status: 'Active', user: {} }
 }
 
 function makeWrapper(queryClient: QueryClient) {
@@ -66,7 +66,7 @@ describe('useEntries', () => {
     const { result } = renderHook(() => useEntries(), { wrapper: makeWrapper(queryClient) })
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true))
-    expect(result.current.data?.[0]).toMatchObject({ id: 1, title: 'Hello', entryType: 'Todo' })
+    expect(result.current.data?.[0]).toMatchObject({ id: 1, title: 'Hello', kind: 'Todo' })
   })
 
   it('surfaces an error on non-ok response', async () => {
@@ -109,7 +109,7 @@ describe('useCreateEntry', () => {
 
     const entries = queryClient.getQueryData<AnyEntry[]>(ENTRIES_QUERY_KEY)
     expect(entries).toHaveLength(2)
-    expect(entries?.[0]).toMatchObject({ id: 2, title: 'New', entryType: 'Todo' })
+    expect(entries?.[0]).toMatchObject({ id: 2, title: 'New', kind: 'Todo' })
   })
 })
 

@@ -1,11 +1,11 @@
 import type { Entry, EntryStatus } from '@/api/generated'
 
 /**
- * The generated `Entry` type reflects what the API sends today — no `entryType`
+ * The generated `Entry` type reflects what the API sends today — no `kind`
  * discriminator yet. This file extends it manually so the rest of the frontend
  * can be written against the polymorphic shape now.
  *
- * When the backend adds `entryType` to the Swagger spec, re-run
+ * When the backend adds `kind` to the Swagger spec, re-run
  * `pnpm generate-api` and update `BaseEntry` to derive the field from the
  * generated type rather than declaring it here.
  */
@@ -13,22 +13,21 @@ import type { Entry, EntryStatus } from '@/api/generated'
 export type { EntryStatus }
 
 type BaseEntry = Entry & {
-  /** TPH discriminator — matches the EF Core `EntryType` column. */
-  entryType: string
+  kind: string
 }
 
 export type TodoEntry = BaseEntry & {
-  entryType: 'Todo'
+  kind: 'Todo'
   dueDate?: string
   dueTime?: string
 }
 
 export type EventEntry = BaseEntry & {
-  entryType: 'Event'
+  kind: 'Event'
 }
 
 export type NoteEntry = BaseEntry & {
-  entryType: 'Note'
+  kind: 'Note'
 }
 
 export type AnyEntry = TodoEntry | EventEntry | NoteEntry
@@ -38,13 +37,13 @@ export type AnyEntry = TodoEntry | EventEntry | NoteEntry
 // ---------------------------------------------------------------------------
 
 export const isTodoEntry = (entry: AnyEntry): entry is TodoEntry =>
-  entry.entryType === 'Todo'
+  entry.kind === 'Todo'
 
 export const isEventEntry = (entry: AnyEntry): entry is EventEntry =>
-  entry.entryType === 'Event'
+  entry.kind === 'Event'
 
 export const isNoteEntry = (entry: AnyEntry): entry is NoteEntry =>
-  entry.entryType === 'Note'
+  entry.kind === 'Note'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -71,7 +70,7 @@ export const nextStatus = (current: EntryStatus): EntryStatus => {
 
 /**
  * Casts a raw API `Entry` to `AnyEntry`.
- * Defaults to `'Todo'` until the backend exposes `entryType` in the response.
+ * Defaults to `'Todo'` .
  */
 export const toAnyEntry = (raw: Entry): AnyEntry =>
-  ({ entryType: 'Todo', ...raw }) as TodoEntry
+  ({ ...raw, kind: raw.kind ?? 'Todo' }) as TodoEntry

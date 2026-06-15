@@ -64,13 +64,15 @@ public class EntryControllerTests : IDisposable
 
     private async Task<Entry> SeedEntryAsync(
         string title = "Test Entry",
-        EntryStatus status = EntryStatus.Active)
+        EntryStatus status = EntryStatus.Active,
+        EntryKind kind = EntryKind.Todo)
     {
         var entry = new Entry
         {
             Title = title,
             Status = status,
-            UserId = _testUser.Id
+            UserId = _testUser.Id,
+            Kind = kind
         };
         _db.Entries.Add(entry);
         await _db.SaveChangesAsync();
@@ -160,6 +162,7 @@ public class EntryControllerTests : IDisposable
         var created = ((CreatedAtActionResult)result.Result!).Value as Entry;
         created!.Title.Should().Be("New Entry");
         created.Status.Should().Be(EntryStatus.Active);
+        created.Kind.Should().Be(EntryKind.Todo);
     }
 
     [Fact]
@@ -175,6 +178,7 @@ public class EntryControllerTests : IDisposable
         fromDb.Should().NotBeNull();
         fromDb!.Title.Should().Be("Persisted Entry");
         fromDb.Status.Should().Be(EntryStatus.InProgress);
+        fromDb.Kind.Should().Be(EntryKind.Todo);
     }
 
     // ── UPDATE ────────────────────────────────────────────────────────────────
@@ -183,7 +187,7 @@ public class EntryControllerTests : IDisposable
     public async Task Update_ReturnsNoContent_WhenSuccessful()
     {
         var seeded = await SeedEntryAsync("Original");
-        var req = new UpdateEntryRequest(seeded.Id, "Updated", null);
+        var req = new UpdateEntryRequest(seeded.Id, "Updated", null, null);
 
         var result = await _controller.Update(seeded.Id, req);
 
@@ -194,7 +198,7 @@ public class EntryControllerTests : IDisposable
     public async Task Update_PersistsNewTitle()
     {
         var seeded = await SeedEntryAsync("Original");
-        var req = new UpdateEntryRequest(seeded.Id, "Updated", null);
+        var req = new UpdateEntryRequest(seeded.Id, "Updated", null, null);
 
         await _controller.Update(seeded.Id, req);
 
@@ -207,7 +211,7 @@ public class EntryControllerTests : IDisposable
     public async Task Update_PersistsNewStatus()
     {
         var seeded = await SeedEntryAsync(status: EntryStatus.Active);
-        var req = new UpdateEntryRequest(seeded.Id, null, EntryStatus.Completed);
+        var req = new UpdateEntryRequest(seeded.Id, null, EntryStatus.Completed, null);
 
         await _controller.Update(seeded.Id, req);
 
@@ -217,10 +221,23 @@ public class EntryControllerTests : IDisposable
     }
 
     [Fact]
+    public async Task Update_PersistsNewKind()
+    {
+        var seeded = await SeedEntryAsync(kind: EntryKind.Todo);
+        var req = new UpdateEntryRequest(seeded.Id, null, null, EntryKind.Note);
+
+        await _controller.Update(seeded.Id, req);
+
+        _db.ChangeTracker.Clear();
+        var updated = await _db.Entries.FindAsync(seeded.Id);
+        updated!.Kind.Should().Be(EntryKind.Note);
+    }
+
+    [Fact]
     public async Task Update_DoesNotChangeTitle_WhenTitleIsEmpty()
     {
         var seeded = await SeedEntryAsync("Unchanged");
-        var req = new UpdateEntryRequest(seeded.Id, "", null);
+        var req = new UpdateEntryRequest(seeded.Id, "", null, null);
 
         await _controller.Update(seeded.Id, req);
 
@@ -233,7 +250,7 @@ public class EntryControllerTests : IDisposable
     public async Task Update_SetsCompletedAt_WhenStatusChangesToCompleted()
     {
         var seeded = await SeedEntryAsync(status: EntryStatus.Active);
-        var req = new UpdateEntryRequest(seeded.Id, null, EntryStatus.Completed);
+        var req = new UpdateEntryRequest(seeded.Id, null, EntryStatus.Completed, null);
 
         await _controller.Update(seeded.Id, req);
 
@@ -246,7 +263,7 @@ public class EntryControllerTests : IDisposable
     public async Task Update_SetsModifiedAt_OnAnyUpdate()
     {
         var seeded = await SeedEntryAsync("Original");
-        var req = new UpdateEntryRequest(seeded.Id, "Updated", null);
+        var req = new UpdateEntryRequest(seeded.Id, "Updated", null, null);
 
         await _controller.Update(seeded.Id, req);
 
@@ -258,7 +275,7 @@ public class EntryControllerTests : IDisposable
     [Fact]
     public async Task Update_ReturnsBadRequest_WhenIdMismatch()
     {
-        var req = new UpdateEntryRequest(99, "Title", null);
+        var req = new UpdateEntryRequest(99, "Title", null, null);
 
         var result = await _controller.Update(1, req);
 
@@ -268,7 +285,7 @@ public class EntryControllerTests : IDisposable
     [Fact]
     public async Task Update_ReturnsNotFound_WhenEntryDoesNotExist()
     {
-        var req = new UpdateEntryRequest(999, "Title", null);
+        var req = new UpdateEntryRequest(999, "Title", null, null);
 
         var result = await _controller.Update(999, req);
 

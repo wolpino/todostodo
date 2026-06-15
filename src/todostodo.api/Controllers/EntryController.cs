@@ -72,6 +72,7 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
         {
             Title = req.Title,
             Status = req.Status,
+            Kind = req.Kind,
             UserId = userId,
             AssignedDate = req.AssignedDate,
             AssignedTime = req.AssignedTime,
@@ -113,6 +114,7 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             return NotFound();
         }
 
+        // TODO?: separate validation to a separate method
         if (!string.IsNullOrEmpty(req.Title) && entry.Title != req.Title)
             entry.Title = req.Title;
 
@@ -122,13 +124,16 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             if (req.Status.Value == EntryStatus.Completed)
                 entry.CompletedAt = DateTime.UtcNow;
         }
+        // for MVP, kind is not updatable
+        // if (req.Kind.HasValue && entry.Kind != req.Kind.Value)
+        //     entry.Kind = req.Kind.Value;
 
         if (req.AssignedDate.HasValue)
             entry.AssignedDate = req.AssignedDate;
 
         if (req.AssignedTime.HasValue)
             entry.AssignedTime = req.AssignedTime;
-
+        
         entry.ModifiedAt = DateTime.UtcNow;
 
         await db.SaveChangesAsync();
