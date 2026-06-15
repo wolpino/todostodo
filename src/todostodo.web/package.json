@@ -11,6 +11,7 @@
     "preview": "vite preview",
     "generate-api": "openapi-ts",
     "test": "vitest",
+    "test:ci": "vitest run",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {

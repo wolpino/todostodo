@@ -16,7 +16,7 @@ BIG PROD STUFF
 - ci/cd for automatic testing
 - performance testing > no lagging, flashing renders, unnecessary renders
 ~~logging >> Serilog~~
-- retries
+~~- retries~~
 
 SEEING
 ~~user can only view their lists (unless shared)~~
