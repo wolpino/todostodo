@@ -1,7 +1,7 @@
 import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import type { QueryClient } from '@tanstack/react-query'
 import { getManageInfo, postLogin, postRegister } from '@/api/generated'
-import type { LoginRequest, RegisterRequest } from '@/api/generated'
+import type { InfoResponse, LoginRequest, RegisterRequest } from '@/api/generated'
 import { ENTRIES_QUERY_KEY } from '@/hooks/useEntries'
 import { SETTINGS_QUERY_KEY } from '@/hooks/useSettings'
 import { getLoginErrorMessage, getRegisterErrorMessage } from '@/lib/authErrors'
@@ -16,10 +16,25 @@ const clearUserScopedQueries = (queryClient: QueryClient) => {
 }
 
 /**
+ * Hit /manage/info and write the result into the auth cache.
+ * Clears any cached pre-login null first — with staleTime: Infinity,
+ * fetchQuery would otherwise return that stale value without refetching.
+ */
+export const syncAuthSession = async (queryClient: QueryClient): Promise<InfoResponse> => {
+  queryClient.removeQueries({ queryKey: AUTH_QUERY_KEY })
+  const { data, response } = await getManageInfo()
+  if (!response?.ok || !data) {
+    throw new HttpError(500, 'Sign in failed. Please try again.')
+  }
+  queryClient.setQueryData(AUTH_QUERY_KEY, data)
+  return data
+}
+
+/**
  * Shared query options — used by both `useAuth()` and TanStack Router
  * route loaders (`context.queryClient.ensureQueryData(authQueryOptions)`).
  * `staleTime: Infinity` — auth only updates when login/logout mutations
- * explicitly invalidate the key.
+ * explicitly update the cache.
  */
 export const authQueryOptions = queryOptions({
   queryKey: AUTH_QUERY_KEY,
@@ -42,26 +57,19 @@ export const useLogin = () => {
       if (!response?.ok) {
         throw new HttpError(response?.status ?? 500, getLoginErrorMessage(response?.status ?? 500))
       }
-    },
-    onSuccess: () => {
       clearUserScopedQueries(queryClient)
-      queryClient.refetchQueries({ queryKey: AUTH_QUERY_KEY })
+      await syncAuthSession(queryClient)
     },
   })
 }
 
 export const useRegister = () => {
-  const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async (body: RegisterRequest) => {
       const { error, response } = await postRegister({ body })
       if (!response?.ok) {
         throw new HttpError(response?.status ?? 400, getRegisterErrorMessage(error))
       }
-    },
-    onSuccess: () => {
-      clearUserScopedQueries(queryClient)
-      queryClient.invalidateQueries({ queryKey: AUTH_QUERY_KEY })
     },
   })
 }
