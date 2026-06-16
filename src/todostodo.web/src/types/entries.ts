@@ -1,30 +1,16 @@
-import type { Entry as RawEntry, EntryStatus } from '@/api/generated'
+import type { Entry as ApiEntry, EntryKind, EntryStatus } from '@/api/generated'
 
-export type { EntryStatus }
+export type { EntryKind, EntryStatus }
 
-type Entry = RawEntry & {
-  kind: string
-}
-
-export type TodoEntry = Entry & {
-  kind: 'Todo'
-  dueDate?: string
-  dueTime?: string
-}
-
-export type EventEntry = Entry & {
-  kind: 'Event'
-}
-
-export type NoteEntry = Entry & {
-  kind: 'Note'
-}
-
+/**
+ * Polymorphic entry shapes for the frontend. The API returns a flat `Entry`
+ * with a `kind` field (Todo | Note | Event). MVP only renders Todo; other kinds
+ * are typed here for future row components.
+ */
+export type TodoEntry = ApiEntry & { kind: 'Todo' }
+export type EventEntry = ApiEntry & { kind: 'Event' }
+export type NoteEntry = ApiEntry & { kind: 'Note' }
 export type AnyEntry = TodoEntry | EventEntry | NoteEntry
-
-// ---------------------------------------------------------------------------
-// Type guards
-// ---------------------------------------------------------------------------
 
 export const isTodoEntry = (entry: AnyEntry): entry is TodoEntry =>
   entry.kind === 'Todo'
@@ -34,10 +20,6 @@ export const isEventEntry = (entry: AnyEntry): entry is EventEntry =>
 
 export const isNoteEntry = (entry: AnyEntry): entry is NoteEntry =>
   entry.kind === 'Note'
-
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
 /** The ordered status cycle used by the status toggle button. Stops at Archived. */
 export const STATUS_CYCLE = [
@@ -58,9 +40,6 @@ export const nextStatus = (current: EntryStatus): EntryStatus => {
   return STATUS_CYCLE[idx + 1]
 }
 
-/**
- * Casts a raw API `Entry` to `AnyEntry`.
- * Defaults to `'Todo'` .
- */
-export const toAnyEntry = (raw: RawEntry): AnyEntry =>
+/** Normalize API entries for components; defaults missing kind to Todo. */
+export const toAnyEntry = (raw: ApiEntry): AnyEntry =>
   ({ ...raw, kind: raw.kind ?? 'Todo' }) as TodoEntry
