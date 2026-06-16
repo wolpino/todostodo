@@ -1,32 +1,22 @@
-import type { Entry, EntryStatus } from '@/api/generated'
-
-/**
- * The generated `Entry` type reflects what the API sends today — no `kind`
- * discriminator yet. This file extends it manually so the rest of the frontend
- * can be written against the polymorphic shape now.
- *
- * When the backend adds `kind` to the Swagger spec, re-run
- * `pnpm generate-api` and update `BaseEntry` to derive the field from the
- * generated type rather than declaring it here.
- */
+import type { Entry as RawEntry, EntryStatus } from '@/api/generated'
 
 export type { EntryStatus }
 
-type BaseEntry = Entry & {
+type Entry = RawEntry & {
   kind: string
 }
 
-export type TodoEntry = BaseEntry & {
+export type TodoEntry = Entry & {
   kind: 'Todo'
   dueDate?: string
   dueTime?: string
 }
 
-export type EventEntry = BaseEntry & {
+export type EventEntry = Entry & {
   kind: 'Event'
 }
 
-export type NoteEntry = BaseEntry & {
+export type NoteEntry = Entry & {
   kind: 'Note'
 }
 
@@ -72,5 +62,5 @@ export const nextStatus = (current: EntryStatus): EntryStatus => {
  * Casts a raw API `Entry` to `AnyEntry`.
  * Defaults to `'Todo'` .
  */
-export const toAnyEntry = (raw: Entry): AnyEntry =>
+export const toAnyEntry = (raw: RawEntry): AnyEntry =>
   ({ ...raw, kind: raw.kind ?? 'Todo' }) as TodoEntry
