@@ -20,7 +20,7 @@ export function EntryRow({ statusSlot, deleteSlot, children }: EntryRowProps) {
       borderBottom="1px solid"
       borderColor="gray.200"
       _dark={{ borderColor: 'gray.700' }}
-      data-group
+      className="group"
       _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
       transition="background-color 0.1s"
     >
