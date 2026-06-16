@@ -40,7 +40,7 @@ export function EntryList() {
 
   if (isError) {
     return (
-      <Text color="red.500" px={2} py={4} fontSize="sm">
+      <Text color="red.500" px={4} py={4} fontSize="sm">
         Failed to load entries. Please refresh.
       </Text>
     )

@@ -73,71 +73,76 @@ function LoginPage() {
 
   return (
     <AppShell>
-      <Box w="full" maxW="360px" mx="auto" px={4} pt="20vh">
-        <Text fontSize="2xl" fontWeight="600" letterSpacing="-0.03em" mb={8}>
+      <Box w="full" px={4} pt="18vh" pb={8}>
+        <Text
+          textAlign="center"
+          fontWeight="600"
+          letterSpacing="-0.02em"
+          mb={8}
+        >
           TodosToDo
         </Text>
 
         <Box as="form" onSubmit={handleSubmit}>
-        <Stack gap={3}>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoComplete="email"
-            size="md"
-          />
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-            size="md"
-          />
+          <Stack gap={3}>
+            <Input
+              type="email"
+              placeholder="Email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+              size="md"
+            />
+            <Input
+              type="password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              size="md"
+            />
 
-          {mode === 'register' && (
-            <Text fontSize="xs" color="gray.500">
-              {PASSWORD_REQUIREMENTS_HINT}
-            </Text>
-          )}
+            {mode === 'register' && (
+              <Text fontSize="xs" color="gray.500">
+                {PASSWORD_REQUIREMENTS_HINT}
+              </Text>
+            )}
 
-          {errorMessage && (
-            <Text color="red.500" fontSize="sm">
-              {errorMessage}
-            </Text>
-          )}
+            {errorMessage && (
+              <Text color="red.500" fontSize="sm">
+                {errorMessage}
+              </Text>
+            )}
 
+            <Button
+              type="submit"
+              colorPalette="green"
+              loading={isPending}
+              loadingText={mode === 'login' ? 'Signing in…' : 'Creating account…'}
+              w="full"
+            >
+              {mode === 'login' ? 'Sign in' : 'Create account'}
+            </Button>
+          </Stack>
+        </Box>
+
+        <Text mt={5} fontSize="sm" color="gray.500" textAlign="center">
+          {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
           <Button
-            type="submit"
-            colorPalette="green"
-            loading={isPending}
-            loadingText={mode === 'login' ? 'Signing in…' : 'Creating account…'}
-            w="full"
+            variant="plain"
+            size="xs"
+            color="purple.500"
+            onClick={toggleMode}
+            p={0}
+            h="auto"
+            fontWeight="normal"
+            textDecoration="underline"
           >
-            {mode === 'login' ? 'Sign in' : 'Create account'}
+            {mode === 'login' ? 'Sign up' : 'Sign in'}
           </Button>
-        </Stack>
-      </Box>
-
-      <Text mt={5} fontSize="sm" color="gray.500" textAlign="center">
-        {mode === 'login' ? "Don't have an account? " : 'Already have an account? '}
-        <Button
-          variant="plain"
-          size="xs"
-          color="purple.500"
-          onClick={toggleMode}
-          p={0}
-          h="auto"
-          fontWeight="normal"
-          textDecoration="underline"
-        >
-          {mode === 'login' ? 'Sign up' : 'Sign in'}
-        </Button>
-      </Text>
+        </Text>
       </Box>
     </AppShell>
   )
