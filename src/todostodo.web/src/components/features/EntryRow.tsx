@@ -2,43 +2,48 @@ import type { ReactNode } from 'react'
 import { Box, Flex } from '@chakra-ui/react'
 
 type EntryRowProps = {
-  /** Left slot — StatusButton for real entries */
+  /** Left slot — StatusButton or StatusBullet */
   statusSlot: ReactNode
-  /** Right slot — DeleteButton for real entries */
+  /** Right slot — DeleteButton; pass a spacer to preserve layout */
   deleteSlot: ReactNode
   children: ReactNode
+  onClick?: () => void
+  cursor?: string
 }
 
-/**
- * Shared layout shell for all entry types.
- * Delete button is hidden until the row is hovered.
- */
-export function EntryRow({ statusSlot, deleteSlot, children }: EntryRowProps) {
+/** Shared layout shell for composer and entry rows. */
+export function EntryRow({ statusSlot, deleteSlot, children, onClick, cursor }: EntryRowProps) {
   return (
     <Flex
       align="center"
       minH="44px"
       px={4}
       gap={1}
-      border="1px solid"
-      borderColor="black.200"
+      borderBottom="1px solid"
+      borderColor="gray.200"
       _dark={{ borderColor: 'gray.700' }}
       data-group
+      cursor={cursor}
+      onClick={onClick}
       _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
       transition="background-color 0.1s"
     >
       {statusSlot}
 
-      <Box flex={1} minW={0} py={1} fontWeight="bold"
-      >
+      <Box flex={1} minW={0} py={1}>
         {children}
       </Box>
 
-      {/* Show faded delete button by default, on hover it becomes black with thicker lines */}
-      <Box>
+      <Box
+        w="32px"
+        h="32px"
+        flexShrink={0}
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+      >
         {deleteSlot}
       </Box>
- 
     </Flex>
   )
 }
