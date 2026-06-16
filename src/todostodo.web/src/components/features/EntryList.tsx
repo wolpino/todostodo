@@ -24,7 +24,7 @@ const sortEntries = (entries: AnyEntry[]): AnyEntry[] =>
 function EntryDispatcher({ entry }: { entry: AnyEntry }) {
   if (isTodoEntry(entry)) return <TodoItem entry={entry} />
   // EventItem and NoteItem are post-MVP — fall back to TodoItem for unknown types
-  return <TodoItem entry={{ ...entry, entryType: 'Todo' }} />
+  return <TodoItem entry={{ ...entry, kind: 'Todo' }} />
 }
 
 export function EntryList() {

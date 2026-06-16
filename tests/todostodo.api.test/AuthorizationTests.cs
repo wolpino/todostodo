@@ -144,7 +144,7 @@ public class AuthorizationTests : IDisposable
         var entry = await SeedEntryAsync(_ownerUser.Id, "Owner's Entry");
         var otherController = ControllerFor(_otherUser.Id);
 
-        var req = new UpdateEntryRequest(entry.Id, "Tampered", null);
+        var req = new UpdateEntryRequest(entry.Id, "Tampered", null, null);
         var result = await otherController.Update(entry.Id, req);
 
         result.Should().BeOfType<NotFoundResult>();
@@ -159,7 +159,7 @@ public class AuthorizationTests : IDisposable
         var entry = await SeedEntryAsync(_ownerUser.Id, "Original Title");
         var otherController = ControllerFor(_otherUser.Id);
 
-        await otherController.Update(entry.Id, new UpdateEntryRequest(entry.Id, "Tampered", null));
+        await otherController.Update(entry.Id, new UpdateEntryRequest(entry.Id, "Tampered", null, null));
 
         _db.ChangeTracker.Clear();
         var unchanged = await _db.Entries.FindAsync(entry.Id);

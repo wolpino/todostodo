@@ -14,12 +14,14 @@ export type AccessTokenResponse = {
 export type CreateEntryRequest = {
     title?: string | null;
     status?: EntryStatus;
+    kind?: EntryKind;
     assignedDate?: string | null;
     assignedTime?: string | null;
 };
 
 export type Entry = {
     id?: number;
+    kind?: EntryKind;
     title: string | null;
     status?: EntryStatus;
     userId?: string | null;
@@ -30,6 +32,8 @@ export type Entry = {
     assignedDate?: string | null;
     assignedTime?: string | null;
 };
+
+export type EntryKind = 'Todo' | 'Note' | 'Event';
 
 export type EntryStatus = 'Active' | 'InProgress' | 'Completed' | 'Archived' | 'Inactive';
 
@@ -122,6 +126,7 @@ export type UpdateEntryRequest = {
     id?: number;
     title?: string | null;
     status?: EntryStatus;
+    kind?: EntryKind;
     assignedDate?: string | null;
     assignedTime?: string | null;
 };
