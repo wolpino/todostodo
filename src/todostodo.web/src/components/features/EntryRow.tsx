@@ -7,12 +7,10 @@ type EntryRowProps = {
   /** Right slot — DeleteButton; pass a spacer to preserve layout */
   deleteSlot: ReactNode
   children: ReactNode
-  onClick?: () => void
-  cursor?: string
 }
 
 /** Shared layout shell for composer and entry rows. */
-export function EntryRow({ statusSlot, deleteSlot, children, onClick, cursor }: EntryRowProps) {
+export function EntryRow({ statusSlot, deleteSlot, children }: EntryRowProps) {
   return (
     <Flex
       align="center"
@@ -23,8 +21,6 @@ export function EntryRow({ statusSlot, deleteSlot, children, onClick, cursor }: 
       borderColor="gray.200"
       _dark={{ borderColor: 'gray.700' }}
       data-group
-      cursor={cursor}
-      onClick={onClick}
       _hover={{ bg: 'gray.50', _dark: { bg: 'gray.800' } }}
       transition="background-color 0.1s"
     >

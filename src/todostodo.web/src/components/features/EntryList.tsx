@@ -3,7 +3,7 @@ import { useEntries } from '@/hooks/useEntries'
 import { isTodoEntry } from '@/types/entries'
 import type { AnyEntry, EntryStatus } from '@/types/entries'
 import { TodoItem } from './TodoItem'
-import { EmptyRow } from './EmptyRow'
+import { ComposerRow } from './ComposerRow'
 
 /** InProgress floats to the top; Archived sinks to the bottom. Everything else keeps insertion order. */
 const STATUS_SORT_ORDER: Record<EntryStatus, number> = {
@@ -51,7 +51,7 @@ export function EntryList() {
   return (
     <Box role="list" aria-label="Todo entries">
       <Box role="listitem">
-        <EmptyRow />
+        <ComposerRow />
       </Box>
       {sorted.map((entry) => (
         <Box key={entry.id} role="listitem">
