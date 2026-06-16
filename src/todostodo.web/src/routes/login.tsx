@@ -9,6 +9,7 @@ import {
 } from '@chakra-ui/react'
 import { authQueryOptions, useLogin, useRegister } from '@/hooks/useAuth'
 import { authErrorMessage, PASSWORD_REQUIREMENTS_HINT } from '@/lib/authErrors'
+import { AppShell } from '@/components/layout/AppShell'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async ({ context }) => {
@@ -71,12 +72,13 @@ function LoginPage() {
   }
 
   return (
-    <Box maxW="360px" mx="auto" px={4} pt="20vh">
-      <Text fontSize="2xl" fontWeight="600" letterSpacing="-0.03em" mb={8}>
-        TodosToDo
-      </Text>
+    <AppShell>
+      <Box w="full" maxW="360px" mx="auto" px={4} pt="20vh">
+        <Text fontSize="2xl" fontWeight="600" letterSpacing="-0.03em" mb={8}>
+          TodosToDo
+        </Text>
 
-      <Box as="form" onSubmit={handleSubmit}>
+        <Box as="form" onSubmit={handleSubmit}>
         <Stack gap={3}>
           <Input
             type="email"
@@ -136,6 +138,7 @@ function LoginPage() {
           {mode === 'login' ? 'Sign up' : 'Sign in'}
         </Button>
       </Text>
-    </Box>
+      </Box>
+    </AppShell>
   )
 }
