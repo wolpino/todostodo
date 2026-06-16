@@ -28,6 +28,10 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
     updateMutation.variables?.id === id &&
     updateMutation.variables.status !== undefined
 
+  const status = entry.status ?? 'Active'
+  const isDone = status === 'Completed' || status === 'Archived'
+  const isOpen = status === 'Active' || status === 'InProgress'
+
   const handleTextClick = () => {
     setDraft(entry.title ?? '')
     setIsEditing(true)
@@ -63,7 +67,7 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
     <EntryRow
       statusSlot={
         <StatusButton
-          status={entry.status ?? 'Active'}
+          status={status}
           onCycle={handleCycleStatus}
           isLoading={isStatusUpdating}
         />
@@ -98,17 +102,13 @@ export const TodoItem = memo(function TodoItem({ entry }: TodoItemProps) {
           px={1}
           py="2px"
           fontSize="inherit"
-          opacity={entry.status === 'Archived' ? 0.4 : 1}
-          fontStyle={entry.status === 'Archived' ? 'italic' : 'normal'}
-          textDecoration={
-            entry.status === 'Completed' || entry.status === 'Archived'
-              ? 'line-through'
-              : 'none'
-          }
-          cursor={entry.status === 'Archived' ? 'default' : 'text'}
+          opacity={status === 'Archived' ? 0.4 : status === 'Completed' ? 0.65 : 1}
+          fontStyle={status === 'Archived' ? 'italic' : 'normal'}
+          textDecoration={isDone ? 'line-through' : 'none'}
+          cursor={status === 'Archived' ? 'default' : 'text'}
           userSelect="none"
-          onClick={entry.status === 'Archived' ? undefined : handleTextClick}
-          fontWeight="bold"
+          onClick={status === 'Archived' ? undefined : handleTextClick}
+          fontWeight={isOpen ? 'bold' : 'normal'}
         >
           {entry.title ?? (
             <Text as="span" color="gray.400" fontStyle="italic">

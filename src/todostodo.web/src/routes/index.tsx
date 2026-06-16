@@ -25,7 +25,7 @@ function HomePage() {
   return (
     <AppShell fontFamily={fontFamily}>
       <FontApplier />
-      <Flex as="header" align="center" py={5} px={4}>
+      <Flex as="header" align="center" py={4} px={4}>
         <Box w="32px" flexShrink={0}>
           <SettingsMenu />
         </Box>
