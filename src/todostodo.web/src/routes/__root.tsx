@@ -10,6 +10,7 @@ export type RouterContext = {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <>
+      {/* Sync React Query cache across tabs / pop-out windows — see lib/crossTabSync.ts */}
       <CrossTabSync />
       <Outlet />
     </>

@@ -42,7 +42,7 @@ export const useUpdateSettings = () => {
       }
     },
     onSettled: () => {
-      broadcastSync({ type: 'settings-changed' })
+      broadcastSync({ type: 'settings-changed' }) // tell other tabs/windows to refetch
     },
   })
 }

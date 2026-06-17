@@ -40,7 +40,7 @@ export const useCreateEntry = () => {
         newEntry,
         ...old,
       ])
-      broadcastSync({ type: 'entries-changed' })
+      broadcastSync({ type: 'entries-changed' }) // tell other tabs/windows to refetch
     },
   })
 }
@@ -71,7 +71,7 @@ export const useUpdateEntry = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ENTRIES_QUERY_KEY })
-      broadcastSync({ type: 'entries-changed' })
+      broadcastSync({ type: 'entries-changed' }) // tell other tabs/windows to refetch
     },
   })
 }
@@ -102,7 +102,7 @@ export const useDeleteEntry = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ENTRIES_QUERY_KEY })
-      broadcastSync({ type: 'entries-changed' })
+      broadcastSync({ type: 'entries-changed' }) // tell other tabs/windows to refetch
     },
   })
 }
