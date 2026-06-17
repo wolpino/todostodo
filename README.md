@@ -95,7 +95,7 @@ notes/                 Product notes, design decisions, session logs
 ```
 
 ## Notes worth knowing
-
+Full explanations in [`notes/DESIGN.md`](notes/DESIGN.md)
 ### Database
 
 The app uses **SQLite in-memory** (`Data Source=:memory:`). Schema is created at startup via `EnsureCreated()` — there are no EF migrations.
@@ -118,28 +118,6 @@ Entries are stored in a **single flat table** with an `EntryKind` enum (`Todo`, 
 - Settings: font choice (persisted per user), sign out. Desktop uses a popover; mobile uses a bottom drawer.
 - Composer row at the top: type and press Enter to add todos without extra clicks.
 
-## Design decisions (summary)
-
-- **Flat `Entry` + `EntryKind`**, not table-per-hierarchy — one list for MVP; less EF/API complexity than inheritance for now.
-- **Cookie auth** (ASP.NET Identity), not JWT — I wanted real server-side logout; cookies came with Identity.
-- **REST + OpenAPI → generated TS client** — typed and simple for CRUD; GraphQL felt like too much here.
-- **TanStack Query** on top of the generated client — caching, loading state, optimistic updates.
-- **SQLite in-memory** — assignment fit; schema via `EnsureCreated()`, no migrations yet.
-- **Soft delete** (`Inactive`) — items leave the list without a trash/restore flow for now.
-- **Dedicated settings endpoint** — room to grow (timezone, notifications) without overloading auth routes.
-- **Decoupled SPA + API** — Vite proxy in dev; frontend bundled into the API image for Docker.
-
-Full rationale and alternatives considered: [`notes/DESIGN.md`](notes/DESIGN.md).
-
-## Assumptions
-
-- Single-user, first-party web app — no sharing between accounts yet.
-- In-memory DB is fine for demo; restart or `docker compose down` wipes data.
-- Dev and Docker each have their own in-memory database (data does not carry over).
-- One notebook-style list per user; only `Todo` kind is wired in the UI today (`Note` / `Event` reserved).
-- Small list size — no pagination or virtualization yet.
-- Narrow side-window use case; mobile works but desktop layout is the main target.
-
 ## Scaling & next steps
 
 Not built for huge scale yet. Obvious next steps:
@@ -157,7 +135,7 @@ See [`notes/DESIGN.md`](notes/DESIGN.md) §5–7 for the longer version.
 | Doc | What's in it |
 |---|---|
 | [`notes/DESIGN.md`](notes/DESIGN.md) | Trade-offs, thought process, scalability, future work — **start here for explanation notes** |
-| [`notes/PRD.md`](notes/PRD.md) | Product requirements |
+| [`notes/PRD.md`](notes/PRD.md) | Initial product requirements |
 | [`notes/Log.md`](notes/Log.md) | Day-by-day work log (chronological, unpolished) |
 | [`notes/chats/`](notes/chats/) | Research rabbit holes (DB, auth, UI libs, etc.) |
 
