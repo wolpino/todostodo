@@ -102,12 +102,12 @@ public class SettingsControllerTests : IDisposable
     [Fact]
     public async Task Put_CreatesSettings_WhenNoneExist()
     {
-        var result = await _controller.Put(new UpdateSettingsRequest("caveat"));
+        var result = await _controller.Put(new UpdateSettingsRequest("patrick-hand"));
 
         result.Should().BeOfType<NoContentResult>();
         _db.ChangeTracker.Clear();
         var created = await _db.Settings.SingleAsync(s => s.UserId == _testUser.Id);
-        created.Font.Should().Be("caveat");
+        created.Font.Should().Be("patrick-hand");
     }
 
     [Fact]
