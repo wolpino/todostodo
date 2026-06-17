@@ -2,6 +2,7 @@ import { queryOptions, useMutation, useQuery, useQueryClient } from '@tanstack/r
 import { getApiSettings, putApiSettings } from '@/api/generated'
 import type { Settings, UpdateSettingsRequest } from '@/api/generated'
 import { HttpError } from '@/lib/httpError'
+import { broadcastSync } from '@/lib/crossTabSync'
 
 export const SETTINGS_QUERY_KEY = ['settings'] as const
 
@@ -39,6 +40,9 @@ export const useUpdateSettings = () => {
       if (ctx?.previous) {
         queryClient.setQueryData(SETTINGS_QUERY_KEY, ctx.previous)
       }
+    },
+    onSettled: () => {
+      broadcastSync({ type: 'settings-changed' })
     },
   })
 }
