@@ -1,5 +1,7 @@
 # Product Requirements Document — todostodo
 
+Out of date — see DESIGN.md and code
+
 ---
 ## 1. Project Purpose
 
