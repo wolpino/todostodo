@@ -15,7 +15,7 @@ public class SettingsController(AppDbContext db, ILogger<SettingsController> log
     public const string DefaultFont = "comic-shanns";
 
     private static readonly HashSet<string> AllowedFonts =
-        [DefaultFont, "courier-prime", "caveat"];
+        [DefaultFont, "courier-prime", "patrick-hand", "caveat"];
 
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
