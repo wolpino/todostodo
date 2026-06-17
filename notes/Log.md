@@ -1,7 +1,171 @@
 Ari's Work Log
 chronological bottom to top
 
+> Polished design notes (trade-offs, scaling, future work) → [`DESIGN.md`](DESIGN.md). This file is the messy real log.
+
+
+# 6/17
+Yesterday...
+
+- fix visual of app... I had thrown it in a rectangle thinking it could be like a notepad, or something easy to have on your desktop with other windows. adjusting a users browser window was more dificult and ultinately less undreliable than opening in a new window.
+- the status button and status icon on the empty row were not lining up. 
+
+- get my enter and input focus working
+
+- delete button not the right size or viz
+
+- settings menu was coming up from the bottom which I wanted because you could see how the list looked in a font, but for now it was moved to the top for desktop and bottom for mobile... 
+
+- lots of visual finishing to do
+
+Today...
+
+today is
+*final review*, I already have some things I don't like and want to change, or just need to finish, but I'm sure I can find more >> there is at least an initial visual I'm going for so trying to chase that down.
+
+- one of the fonts is really not as legible as I expected, so that needs to change and maybe I can add a fourth
+-- it would have been great if I'd thought to allow changing font size too, but that will have to be a future improvement.
+# change out caveat font
+
+# read me plus explain explain explain. 
+
+- REMOVE BORDER on login/sign up page
+ the border around the login/sign up looks bad without the ability to open in a new window. 
+ - I don't love the border before the small window size, and by don't love I mean it's bad. it needs padding and maybe it could be less boring?
+# changing the border color and texture helped. will commit to the green as it will show future support for color choice
+ # BUT I think the issue is the fixed height, it makes it too long 
+
+- still issues with clicking completed tasks to make them archived. this is a regression and something that was already wrong (once clicking completed, it doesn't allow the user to make it archived
+> i think this might have to do with the open new window
+
+- settings menu is unpolished, but that can be a later improvement. 
+but when it's open from the top, user has to click x to close, it won't autoclose when the main page is clicked
+
+- the new window leaves the previous tab open, and while it does update both if you reload, it will be able to get into a werid state if user makes changes to both before reloading. 
+not sure how I want to handle that.
+
+- could I add a quick on-first login guide? and then save it in the settings? yes, but probably not needed now
+
+# 6/15
+going to get through the list from 6/14
+I'm trying to get all the things done before I let myself really mess around with the UI
+
+but after this list I'll do another bug bash/make the decisions I need to for funtionality
+
+> UI bug bash
+-- There's still an extra click with my empty row approach. Should the click create a new empty row below, and that's the input in focus? So the user can at least click the new row button if I can't get the enter to work.
+-- emptyrow icon should be grey circle no fill >> this should match the other status circle
+
+> backend review
+- README.md - setup steps
+--  I don't need the TPH and it's possible pushing inheritance when it's not really needed. `>> TPH is reasonable for your one-list / multi-view future, but not the best MVP move. A single Entries table with EntryKind + nullable subtype columns + separate tags matches your goals with less complexity and the same scaling story. TPH becomes attractive if you prefer inheritance in C# and OfType<>() queries over a single DTO with validation.`
+
+
+
+
+thoughts for now to focus on
+- simple. the point is something helpful, clear > so then is everything an Entry? what's the differenet between the entries. Do they provide anything beside sorted lists? views >> views are a big thing in planner life too. should that be in settings?
+
+
+
+MAYBE STUFF
+- As a user, when I click on a saved item the input field reappears pre-filled with the existing description so I can edit it.
+>> can you edit it until it's completed? accidental delete? can't save with null, have to delete (pop up that says that?)
+
+> completed/archive? completed in the same day, then auto archive... the next day they show up bottom of active todo list, top of completed list which is  greyed out or strikethrough something > or just always hide/archive. 
+
+- previous day snapshot
+
+- **Complete animation** — clicking the bullet marks the item complete with a green checkmark; optional confetti on completion.
+- **Smart sorting** — items are sorted automatically into relevant groups (groceries, books, reminders, etc.) based on content.
+- **Filtered views** — pre-built queries: *Due today*, *Due this week*, *Past due*.
+
+earlier iteration ideas to consider (ie bullet journal inspiration? is that straying too far from the assignment?)
+
+>> the point is really one list, later features could be the smart sorting into things like groceries to get, books to read >> books to order, grocery list
+- *groceries to get — apples, dishwasher liquid*
+- *books to read — Judy said to read The Emerald by? Or a link*
+
+Entry is the base
+- title, status, created date, modified date, user id
+- assigned date and time > not on Entry? 
+
+
+Todo/task
+any kind of actionable items like “Pick up dry cleaning”.
+ *Nicky: call re tomorrow*
+- time?
+- date (by default due the next day?)
+
+Events 
+noteworthy mentions in time/date-related entries that can either be scheduled (e.g. “Charlie’s birthday”) or logged after they occur (e.g. “signed the lease”)
+short objective, date related entries that can be 1. scheduled or 2. logged after they occur.
+- datetime - startTime
+- location
+- details
+- **Events** — an `Event` entry type with `Date`, `Time`, and `Location`; events allow past dates in the date picker.
+
+Notes - things you don't want to forget
+facts, ideas, thoughts, and observations. Notes are entries that you want to remember but aren’t immediately or necessarily actionableNotes include: facts, ideas, thoughts, and observations. Notes are entries that you want to remember but aren’t immediately or necessarily actionable
+- *Susan is lactose intolarent*
+- *wombats have square poop*
+- **Notes** — a `Note` entry type with a `Type` field (e.g. `grocery`, `media`) for richer list management.
+
+
+
+Date and time fields
+- **Time input** — clicking the clock icon reveals a time input; selected time is displayed next to the icon.
+>>> initial thought was display in place of the icon
+- **Date input**  
+- Clicking the calendar icon opens a date picker inline.
+- Past dates are disabled by default (a future Event entry type will re-enable them — see Post-MVP).
+- Once a date is selected it is displayed next to the icon; clicking it again re-opens the picker.
+
+
+
+
+
+NOT NOW
+- custom tagging?
+- performance testing > no lagging, flashing renders, unnecessary renders (too big for this stage of this app)
+- expose trash/deleted todos > why? for duplication purposes? 
+- change color theme
+~~- Sharing todos between users >> maybe it's not that kind of app~~
+- Push notifications or email reminders
+- notifications - in application? emails, email weekly summery, ability to set regular/recurring todos
+- **Timezone support** — timezone saved on account creation; times stored in UTC and displayed in the user's local timezone.
+- **Swipe to complete** — swipe gesture on mobile to cross off an item.
+*(direct interpretion)*
+
+> future growth, add personas, specific features more helpful to: college students, engineers, high school student, family, etc, start basic, then inherit basic class/application to extend toward specilties
+
+
+> EXPLAIN
+> (what a todo task management application is)
+
+ > thought process, trade off, assumptions, scaling plan
+why a settings class: >> I want to have a distinction between in app settings and user specific permissions, 
+* Settings will grow (timezone, notification prefs, etc.). A dedicated `GET /api/settings` + `PUT /api/settings` endpoint keeps auth clean and makes settings independently cacheable on the frontend.
+
+
+general learnings
+- wouldn't have hurt to review how usage works with cursor.. I used by my api limit and looking at the usage page... haha I just need to figure out the right flow
+
+ any time somethign seems like magic or a black box, that's a thing to dig into
+
+## Component Library 
+Material UI comes to mind but I think there have to be better options > asked the agent chat and reddit
+https://www.reddit.com/r/reactjs/comments/1cr53f0/chakra_ui_vs_material_ui/
+/todostodo/chats/reactcomponentlibs.md
+>> I'm going to add the Chakra Builder skill for speed.
+`npx skills add https://github.com/chakra-ui/chakra-ui/tree/main/skills/chakra-ui-builder`
+
+
+
+
+
 # 6/14
+
 EXPLAIN:
 - thought process
 - trade-offs and assumptions
@@ -12,8 +176,8 @@ README.md
 - explanation notes
 
 BIG PROD STUFF
-- one command setup > containerize
-- ci/cd for automatic testing
+~~- one command setup > containerize~~
+~~- ci/cd for automatic testing~~
 - performance testing > no lagging, flashing renders, unnecessary renders
 ~~logging >> Serilog~~
 ~~- retries~~
@@ -23,41 +187,43 @@ SEEING
 
 ADDING ENTRIES
 > There's an extra click with my empty row approach. Should the click create a new empty row below, and that's the input in focus? So the user can at least click the new row button if I can't get the enter to work.
-> emptyrow icon should be grey circle no fill
+> emptyrow icon should be grey circle no fill >> this should match the other status circle
 
 DELETING ENTRIES
--   "delete" removed from list (don't need to expose trash now, but could be a future feature to restore tasks)
-- Delete button marks task as Inactive
+~~-   "delete" removed from list (don't need to expose trash now, but could be a future feature to restore tasks)~~
+~~- Delete button marks task as Inactive~~
 - smaller button only on hover. 
 
 > STATUS
-- status currently loops through, inactive to active and back through. This isn't quite right. 
-so it stops at inactive, but what if a user needs to go to a previous status?
-Active: 'Active', > unfilled black circle
-  InProgress: 'In Progress', > half filled black circle >> move to the top?
-  Completed: 'Completed', > filled black circle plus cross off item >> stays in order
+~~- status currently loops through, inactive to active and back through. This isn't quite right. ~~
+  so it stops at inactive, but what if a user needs to go to a previous status?
+~~- set circle status shapes~~
+ ~~Active: 'Active', > unfilled black circle~~
+  ~~InProgress: 'In Progress', > half filled black circle >> move to the top?~~
+  ~~Completed: 'Completed', > filled black circle plus cross off item >> stays in order~~
   confetti
-  Archived: 'Archived', grey circle and line through todo + italics >> drops to the end of the list, but still visable
+  ~~Archived: 'Archived', grey circle and line through todo + italics >> drops to the end of the list, but still visable~~
   
 
 > SETTINGS
-menu - signout button in settings menu
---  fonts and colors >> add settings api > gear, drop down, three choices for each setting (does the menu come from the bottom so you can see how the changes look)
+~~menu - signout button in settings menu~~
+~~--  fonts and colors >> add settings api > gear, drop down, three choices for each setting (does the menu come from the bottom so you can see how the changes look)~~
 
 LOGIN SIGN UP
-- add hint for password requirements
-- use specific error messages?
+~~- add hint for password requirements~~
+~~- use specific error messages?~~
 
 > MODEL
-- add completed_date
+~~- add completed_date~~
 - Events?
-- description, 
-- date
-- Created date datetime, if no assigned_date, created date is use 
-- time.
+~~- description,~~ 
+~~- date~~
+~~- Created date datetime, if no assigned_date, created date is use ~~
+~~- time.~~
 
 > EXTRAS
 - completed celebration - confetti? canvas-confetti
+
 
 # 6/12
 
@@ -111,9 +277,9 @@ login/signup
   
   >> click archived status button, it gets replicated and added to the top of the list as active
 
-delete button
+~~delete button~~
   Inactive: 'Inactive', > "delete" removed from list (don't need to expose trash now, but could be a future feature to restore tasks)
-- does the delete button mark a task as Inactive? yes 
+~~- does the delete button mark a task as Inactive? yes ~~
 - make delete button smaller// only shows on hover
 
 - color themes... I was intentionally thinking about a symbol rather than color incase someone is color blind. but it will also work with color themes, different colors would be the same circle steps
@@ -127,10 +293,11 @@ delete button
 >> Notes for assumptions etc write up
 (what a todo task management application is)
 - any time somethign seems like magic or a black box, that's a thing to dig into
+"delete" removed from list (don't need to expose trash now, but could be a future feature to restore tasks)
 
 
 DONE - change title to TodosToDo ->>  ( Do I stick with TodosToDo? Did I want it to be The Index Card? That might take too much explaining. and it doesn't look like an index card...)
-
+The List
 
 
 # 6/11

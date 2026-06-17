@@ -1,7 +1,6 @@
 # Product Requirements Document — todostodo
 
 ---
->>> COMMENTS (from ari)
 ## 1. Project Purpose
 
 A simple, accessible to-do web application that is enjoyable to use. The interface is minimal and easy to use, responds to window size and mobile screens, and lets users customize the look to their preference. The goal is a tool that feels as simple and straightforward as writing a to do list by hand.
@@ -27,13 +26,9 @@ A simple, accessible to-do web application that is enjoyable to use. The interfa
 - As a user, signing up automatically logs me in — I am not redirected to a separate login step after registration.
 - As a user, I can log in to my account with my username or email and password.
 
->>> TODO: make sure JWT set up is safe
-@https://workos.com/blog/secure-jwt-storage
-
 
 ### Todo (Entry) Item - component displaying a Todo
 - Each todo item displays: a status indicator and a description (A rough wireframe is at @uglywireframe.png item B.)
-
 - As a user, when I click away from the description input text field the value is saved and displayed as plain text in place of the input.
 - As a user, when I click on a saved item the input field reappears pre-filled with the existing description so I can edit it.
 
@@ -56,11 +51,9 @@ A simple, accessible to-do web application that is enjoyable to use. The interfa
 - A delete button (a heavy lined X) appears on the right edge of each row.
 - When there are no Todo Items to list, the default display is an empty Item. It looks similar to other Todo Items, but has it's own bullet (which is not a status.)
 
-
 ### Status Indicator
 - Each item has a status: `Active`, `In Progress`, `Completed`, `Archived`, or `Inactive`
 - The button on the left toggles the status, each click switches to the next status in order of the above list. 
-? `Inactive` items stay in the list for the rest of the session but are deleted on signout
 
 ### Settings
 - There is a gear icon button at the top left of the page when clicked a dropdown list with the font options displays and when a user clicks on an option, the dropdown closes, and the font changes.
@@ -151,10 +144,4 @@ facts, ideas, thoughts, observations > capture data and information you don't wa
 
 ---
 
-## Still to do
-
-**Settings needs an endpoint**
-add a dedicated GET /api/settings + PUT /api/settings 
-
-The underlying reasoning stands: as settings grows beyond fonts (timezone, color scheme, notification prefs), it belongs on its own resource endpoint rather than being grafted onto the auth /me response. The temptation when implementing it will be to tack it onto CurrentUserInfo() since you already have that call on page load — but that muddies the separation between auth and user preferences.
 

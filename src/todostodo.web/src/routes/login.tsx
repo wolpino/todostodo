@@ -10,6 +10,7 @@ import {
 import { authQueryOptions, useLogin, useRegister } from '@/hooks/useAuth'
 import { authErrorMessage, PASSWORD_REQUIREMENTS_HINT } from '@/lib/authErrors'
 import { AppShell } from '@/components/layout/AppShell'
+import { APP_GREEN } from '@/lib/appTheme'
 
 export const Route = createFileRoute('/login')({
   beforeLoad: async ({ context }) => {
@@ -72,13 +73,15 @@ function LoginPage() {
   }
 
   return (
-    <AppShell>
+    <AppShell bordered={false}>
       <Box w="full" px={4} pt="18vh" pb={8}>
         <Text
           textAlign="center"
           fontWeight="600"
           letterSpacing="-0.02em"
           mb={8}
+          color={APP_GREEN}
+          fontSize="24px"
         >
           TodosToDo
         </Text>

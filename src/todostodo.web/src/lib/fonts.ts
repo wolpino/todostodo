@@ -1,4 +1,9 @@
-export type FontId = 'comic-shanns' | 'courier-prime' | 'caveat'
+export type FontId = 'comic-shanns' | 'courier-prime' | 'patrick-hand'
+
+/** Legacy font ids still stored for some users. */
+const LEGACY_FONT_ALIASES: Record<string, FontId> = {
+  caveat: 'patrick-hand',
+}
 
 export const FONT_OPTIONS: { id: FontId; label: string; stack: string }[] = [
   {
@@ -12,13 +17,19 @@ export const FONT_OPTIONS: { id: FontId; label: string; stack: string }[] = [
     stack: "'Courier Prime', ui-monospace, monospace",
   },
   {
-    id: 'caveat',
-    label: 'Caveat',
-    stack: "'Caveat', cursive",
+    id: 'patrick-hand',
+    label: 'Patrick Hand',
+    stack: "'Patrick Hand', cursive",
   },
 ]
 
 export const DEFAULT_FONT: FontId = 'comic-shanns'
 
+export const normalizeFontId = (font: string | null | undefined): FontId | undefined => {
+  if (!font) return undefined
+  const aliased = LEGACY_FONT_ALIASES[font] ?? font
+  return FONT_OPTIONS.find((f) => f.id === aliased)?.id
+}
+
 export const fontStackFor = (font: string | null | undefined): string =>
-  FONT_OPTIONS.find((f) => f.id === font)?.stack ?? FONT_OPTIONS[0].stack
+  FONT_OPTIONS.find((f) => f.id === normalizeFontId(font))?.stack ?? FONT_OPTIONS[0].stack

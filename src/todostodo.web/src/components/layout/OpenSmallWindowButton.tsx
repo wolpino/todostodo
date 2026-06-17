@@ -1,8 +1,9 @@
 import { IconButton } from '@chakra-ui/react'
+import { headerIconButtonProps } from '@/lib/appTheme'
 
 function PopOutIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <rect
         x="4"
         y="8"
@@ -51,11 +52,8 @@ export function OpenSmallWindowButton() {
     <IconButton
       aria-label="Open in small window"
       title="Open in small window"
-      variant="ghost"
-      size="sm"
-      color="gray.600"
-      _dark={{ color: 'gray.300' }}
       onClick={openSmallWindow}
+      {...headerIconButtonProps}
     >
       <PopOutIcon />
     </IconButton>

@@ -7,6 +7,7 @@ import {
 } from '@/api/generated'
 import type { CreateEntryRequest, UpdateEntryRequest } from '@/api/generated'
 import { HttpError } from '@/lib/httpError'
+import { broadcastSync } from '@/lib/crossTabSync'
 import { toAnyEntry } from '@/types/entries'
 import type { AnyEntry } from '@/types/entries'
 
@@ -39,6 +40,7 @@ export const useCreateEntry = () => {
         newEntry,
         ...old,
       ])
+      broadcastSync({ type: 'entries-changed' }) // tell other tabs/windows to refetch
     },
   })
 }
@@ -66,6 +68,10 @@ export const useUpdateEntry = () => {
       if (ctx?.previous) {
         queryClient.setQueryData(ENTRIES_QUERY_KEY, ctx.previous)
       }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ENTRIES_QUERY_KEY })
+      broadcastSync({ type: 'entries-changed' }) // tell other tabs/windows to refetch
     },
   })
 }
@@ -96,6 +102,7 @@ export const useDeleteEntry = () => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ENTRIES_QUERY_KEY })
+      broadcastSync({ type: 'entries-changed' }) // tell other tabs/windows to refetch
     },
   })
 }

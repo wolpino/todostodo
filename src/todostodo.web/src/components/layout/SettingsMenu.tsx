@@ -12,11 +12,12 @@ import {
 } from '@chakra-ui/react'
 import { useLogout } from '@/hooks/useAuth'
 import { useSettings, useUpdateSettings } from '@/hooks/useSettings'
-import { DEFAULT_FONT, FONT_OPTIONS, type FontId } from '@/lib/fonts'
+import { DEFAULT_FONT, FONT_OPTIONS, normalizeFontId, type FontId } from '@/lib/fonts'
+import { headerIconButtonProps } from '@/lib/appTheme'
 
 function GearIcon() {
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" aria-hidden="true">
       <path
         d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"
         stroke="currentColor"
@@ -38,10 +39,7 @@ const SettingsGearButton = forwardRef<HTMLButtonElement, ComponentProps<typeof I
       <IconButton
         ref={ref}
         aria-label="Open settings"
-        variant="ghost"
-        size="sm"
-        color="gray.600"
-        _dark={{ color: 'gray.300' }}
+        {...headerIconButtonProps}
         {...props}
       >
         <GearIcon />
@@ -56,7 +54,7 @@ function SettingsPanelBody() {
   const { data: settings } = useSettings()
   const updateSettings = useUpdateSettings()
 
-  const activeFont = (settings?.font as FontId | undefined) ?? DEFAULT_FONT
+  const activeFont = normalizeFontId(settings?.font) ?? DEFAULT_FONT
 
   const handleFontSelect = (font: FontId) => {
     if (font === activeFont) return

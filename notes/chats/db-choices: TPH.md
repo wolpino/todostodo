@@ -1,3 +1,4 @@
+
 TPH is the strategy EF Core uses when multiple C# classes that share an inheritance hierarchy are all stored in a single database table. Your codebase is a great example — let me use it directly.
 
 ---
