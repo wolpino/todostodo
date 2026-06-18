@@ -100,13 +100,8 @@ Decoupled SPA + API.
 
 
 ## 4. Assumptions
-
-Things I assumed true for this build:
-
-- Single user, first-party web app (no sharing between users yet)
 - In-memory DB is acceptable for demo even though data does not survive restart
-- Cookie auth needs same-origin or dev proxy
-- Register auto-logs-in; I assumed that's fine for a personal todo app
+- Register auto-logs-in is fine for a personal todo app -- and removes extra clicks
 - Users will have a small list size — no pagination or virtualization yet
 - Desktop-first narrow window; mobile works but not primary design target for MVP
 
