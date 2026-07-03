@@ -118,16 +118,28 @@ Early bug: all users saw all todos → fixed + AuthorizationTests
 
 ---
 
-## Incident Triage Script (any "what would you do if…")
 
-1. **Scope** — who, when, % affected, deploy correlation?
-2. **Mitigate** — rollback / feature flag / disable endpoint
-3. **Diagnose** — logs (Serilog), errors (Sentry), recent changes
-4. **Fix** — smallest safe change
-5. **Communicate** — status + ETA to PM/support
-6. **Prevent** — test, monitor, runbook, postmortem
+**Health checks:** Endpoints the orchestrator (Kubernetes, Azure App Service) polls.
 
-**Example (their app):** "Todos disappeared after deploy" → in-memory DB reset on restart → persistent DB + health check + integration test.
+| Endpoint | Checks | Example response |
+|----------|--------|------------------|
+| `GET /health/live` | Process up | 200 OK |
+| `GET /health/ready` | Can serve traffic? DB reachable? | 200 or 503 |
+
+**Example:** After deploy, K8s calls `/health/ready` every 10s. SQLite connection dead → 503 → pod removed from load balancer until fixed.
+
+**Metrics:** Numbers over time for dashboards/alerts.
+
+| Metric | Example use |
+|--------|-------------|
+| `http_requests_total{status="500"}` | Alert if 500 rate spikes |
+| `http_request_duration_seconds` | p95 latency regression |
+| `auth_login_failures_total` | Brute-force signal |
+| Custom: `entry_create_total` | Business activity |
+
+**Your app today:** Serilog **logs** requests (text/structured) — good for debugging, not the same as metrics. Production = Serilog → aggregator **plus** Prometheus/Application Insights counters.
+
+**Interview line:** "I have structured logging and a global exception handler; health checks and metrics would be the next ops layer for orchestration and alerting at Ezra scale."
 
 ---
 

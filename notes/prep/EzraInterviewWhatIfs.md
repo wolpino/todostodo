@@ -2,6 +2,18 @@
 
 **Practice out loud.** Each answer: direct answer → reasoning → what you'd do at scale (if applicable).
 
+
+
+## Incident Triage Script (any "what would you do if…")
+
+1. **Scope** — who, when, % affected, deploy correlation?
+2. **Mitigate** — rollback / feature flag / disable endpoint
+3. **Diagnose** — logs (Serilog), errors (Sentry), recent changes
+4. **Fix** — smallest safe change
+5. **Communicate** — status + ETA to PM/support
+6. **Prevent** — test, monitor, runbook, postmortem
+
+**Example (their app):** "Todos disappeared after deploy" → in-memory DB reset on restart → persistent DB + health check + integration test.
 ---
 
 ## Scale and data
@@ -11,12 +23,23 @@
 **Today:** Unbounded `GET /api/Entry`, client-side sort — fine for demo, breaks at scale.
 
 **Fix (in order):**
+
 1. Server pagination — `?page=1&pageSize=50`, default sort by status priority then `ModifiedAt`
 2. Index on `(UserId, Status, ModifiedAt)` in Postgres
 3. Virtualize list in React — render only visible rows
 4. Move sort/filter to API for mobile clients
 
-**Senior note:** Don't add caching until metrics show read pressure — invalidation is harder than pagination.
+**Senior note:** Don't add caching until metrics show read pressure — invalidation is harder than pagination.  
+
+**List virtualization** (or “windowing”) means the UI only renders the rows that are **visible on screen** (plus a small buffer), not every item in the dataset.
+
+**Without virtualization:** 10,000 todos → 10,000 DOM nodes → slow scroll, high memory, janky updates.
+
+**With virtualization:** Still 10,000 items in memory/data, but maybe ~20 DOM nodes — one per visible row. As you scroll, rows are recycled: old ones unmount, new ones mount.
+
+**In your take-home:** The todo list renders **all** entries from React Query. Fine for small lists; breaks at thousands of rows. Fix = pagination on the API **and** a virtualized list component on the frontend (e.g. `@tanstack/react-virtual`, `react-window`).
+
+**Interview one-liner:** “Virtualization keeps DOM size constant regardless of list length — you only paint what’s in the viewport.”
 
 ---
 
@@ -37,6 +60,69 @@ Cookie sessions are in-memory per instance. User hits instance B with session fr
 **Fix:** Distributed session store — Redis (usual for ASP.NET Core) or SQL Server session state. Sticky sessions are a weaker shortcut.
 
 **Resume tie:** Worked with Redis at Zapier scale — same pattern.
+
+```markdown
+### 3 API instances
+
+
+**One API instance** = one running copy of your ASP.NET Core app (e.g. `dotnet run` on `:5162`, or one Docker container).
+
+**3 API instances** = three identical copies behind a **load balancer** for capacity and reliability:
+
+```
+
+Browser → Load balancer → API instance 1
+                       → API instance 2
+                       → API instance 3
+                              ↓
+                         shared database
+
+```
+
+Each request goes to one instance. If one crashes, others keep serving. This is **horizontal scaling**.
+
+### Why it breaks your cookie auth today
+
+With cookie sessions, login creates **session state in that API process's memory**. The cookie is just an ID pointing to that state.
+
+- Login hits **instance 1** → session lives in instance 1's RAM
+- Next request hits **instance 2** → instance 2 has no record of that session → **401 Unauthorized**
+
+User appears logged out even though the cookie is still valid. [DESIGN.md §5](DESIGN.md): cookie sessions work for a single instance; multiple instances need shared session storage.
+```
+
+```markdown
+### Redis session store
+
+**Redis** = fast in-memory store shared by all API instances.
+
+Instead of each server keeping sessions locally:
+
+```
+
+Instance 1 ──┐
+Instance 2 ──┼──→ Redis (shared sessions)
+Instance 3 ──┘
+
+```
+
+1. Login on instance 1 → session written to Redis (keyed by session id from cookie)
+2. Next request on instance 2 → reads same session from Redis → still logged in
+
+ASP.NET Core supports this via **distributed cache / session store** (Redis is common; SQL Server session state is an alternative).
+
+### Alternatives (know the tradeoffs)
+
+| Approach | Pros | Cons |
+|----------|------|------|
+| **Redis session store** | All instances share login state; proper fix | Extra infra to run and monitor |
+| **Sticky sessions** | Load balancer always routes same user to same instance | Weaker — instance death logs users out; uneven load |
+| **JWT (stateless)** | Scales easily, no shared store | Hard server-side logout (why you chose cookies) |
+
+### Interview one-liner
+
+> "Three API instances means three copies of the app behind a load balancer. My cookie sessions are in-memory per process, so a request landing on a different instance than login would 401. I'd add a distributed session store like Redis so all instances read the same session data."
+```
 
 ---
 
@@ -149,3 +235,4 @@ Not shameful — it's judgment.
 3. Playwright: register → create → status cycle → logout (cookies)
 4. Fix Completed → Archived edge case in pop-out
 5. Cookie-based integration test path (not just Bearer)
+
