@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 
 namespace todostodo.api.Models;
 
+// Thin Identity user — Id type is string (default). Extend here for profile fields if needed.
 public class User : IdentityUser
 {
-    // this class is intentionally left blank, it serves as a placeholder for the user id type
 }

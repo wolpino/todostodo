@@ -9,15 +9,15 @@ using todostodo.api.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// using Serilog for logging, structured  and integrates cleanly with ILogger
-// better than defaul logger for scalling, has cloud sink capabilities with datadog, properties become searchable
+// Structured logging — searchable properties (e.g. UserId on request logs) for production debugging.
 builder.Host.UseSerilog((ctx, config) =>
     config
         .ReadFrom.Configuration(ctx.Configuration)
         .Enrich.FromLogContext()
         .WriteTo.Console());
 
-// SQLite in-memory per project requirements. Connection must stay open for DB lifetime.
+// SQLite in-memory for demo. The connection must stay open for the app's lifetime —
+// closing it wipes the in-memory database.
 var connectionString = builder.Configuration.GetConnectionString("Default") ?? "Data Source=:memory:";
 var connection = new SqliteConnection(connectionString);
 connection.Open();
@@ -35,17 +35,12 @@ builder.Services.ConfigureApplicationCookie(options =>
 // adds Identity services to the dependency injection container
 builder.Services.AddAuthorization();
 
-// activate API endpoints for Identity
-// by default cookies and proprietary tokens are activated >> issuesd at login if the useCookies query string param is true
-// this calls what would be AddAuthentication() on a non-Identity API
+// Identity API endpoints (/register, /login, /manage/*). Pass useCookies=true on login
+// to issue a session cookie instead of a bearer token — matches the SPA's fetch client.
 builder.Services.AddIdentityApiEndpoints<User>().AddEntityFrameworkStores<AppDbContext>();
 
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-// replacement for swagger
 builder.Services.AddOpenApi();
-
 builder.Services.AddControllers();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -57,6 +52,7 @@ builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
     ?? ["http://localhost:5173"];
 
+// AllowCredentials is required for cookie auth from the Vite dev origin.
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: "todostodo.web", policy =>
@@ -70,10 +66,9 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// map identity api endpoints
 app.MapIdentityApi<User>();
 
-// Explicit logout — MapIdentityApi doesn't expose this in .NET 10
+// MapIdentityApi does not expose logout in .NET 10 — needed for server-side session invalidation.
 app.MapPost("/logout", async (SignInManager<User> signInManager) =>
 {
     await signInManager.SignOutAsync();
@@ -85,13 +80,14 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+// Demo schema bootstrap — no EF migrations; data is lost when the process exits.
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     dbContext.Database.EnsureCreated();
 }
 
-// UseExceptionHandler must be first so it wraps all subsequent middleware exceptions.
+// First in the pipeline so all downstream middleware exceptions are caught.
 app.UseExceptionHandler();
 
 app.UseAuthentication();
@@ -102,6 +98,7 @@ app.UseSwaggerUI();
 
 app.UseSerilogRequestLogging(options =>
 {
+    // Attach UserId to every request log when authenticated — aids multi-tenant debugging.
     options.EnrichDiagnosticContext = (diag, ctx) =>
     {
         var userId = ctx.User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -112,6 +109,7 @@ app.UseSerilogRequestLogging(options =>
 
 app.UseCors("todostodo.web");
 
+// Production: API serves the Vite build from wwwroot on a single port (Docker).
 if (app.Environment.IsProduction())
 {
     app.UseDefaultFiles();
@@ -122,6 +120,7 @@ app.MapControllers();
 
 if (app.Environment.IsProduction())
 {
+    // SPA client-side routes (e.g. /login) fall back to index.html.
     app.MapFallbackToFile("index.html");
 }
 

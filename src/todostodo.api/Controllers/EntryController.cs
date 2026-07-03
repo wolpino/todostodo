@@ -18,6 +18,7 @@ namespace todostodo.api.Controllers;
 public class EntryController(AppDbContext db, ILogger<EntryController> logger) : ControllerBase
 {
     // Extracted once per action rather than inline to keep action bodies readable.
+    // get the logged-in user’s ID so every query is scoped to them
     private string? CurrentUserId => User.FindFirstValue(ClaimTypes.NameIdentifier);
 
     [HttpGet]
@@ -73,7 +74,7 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             Title = req.Title,
             Status = req.Status,
             Kind = req.Kind,
-            UserId = userId,
+            UserId = userId, // from claim — never req or route
             AssignedDate = req.AssignedDate,
             AssignedTime = req.AssignedTime,
         };
@@ -114,7 +115,7 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             return NotFound();
         }
 
-        // TODO?: separate validation to a separate method
+        // TODO: separate validation to a separate method
         if (!string.IsNullOrEmpty(req.Title) && entry.Title != req.Title)
             entry.Title = req.Title;
 
@@ -124,7 +125,7 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             if (req.Status.Value == EntryStatus.Completed)
                 entry.CompletedAt = DateTime.UtcNow;
         }
-        // for MVP, kind is not updatable
+        // for MVP, kind is not updatable (no entry kind for it to change to)
         // if (req.Kind.HasValue && entry.Kind != req.Kind.Value)
         //     entry.Kind = req.Kind.Value;
 
@@ -151,6 +152,8 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
         var userId = CurrentUserId;
         if (userId is null) return Unauthorized();
 
+        // Same single-query ownership pattern as GET /{id}: 404 for both
+        // "not found" and "found but owned by someone else".
         var entry = await db.Entries
             .FirstOrDefaultAsync(e => e.Id == id && e.UserId == userId);
 
@@ -162,6 +165,7 @@ public class EntryController(AppDbContext db, ILogger<EntryController> logger) :
             return NotFound();
         }
 
+        // Soft delete — row stays in the DB for a future trash/restore feature.
         entry.Status = EntryStatus.Inactive;
         entry.ModifiedAt = DateTime.UtcNow;
         await db.SaveChangesAsync();
