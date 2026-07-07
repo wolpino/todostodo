@@ -10,18 +10,12 @@
 
 ### Key points to explain
 
-1. **`[Authorize]` on the class (line 17)** — secure default is opt-out, not opt-in. New endpoints inherit auth automatically.
-
-2. **`CurrentUserId` from claim (line 21)** — never trust UserId from request body.
-
+1. `**[Authorize]` on the class (line 17)** — secure default is opt-out, not opt-in. New endpoints inherit auth automatically.
+2. `**CurrentUserId` from claim (line 21)** — never trust UserId from request body.
 3. **GET list (lines 31–33)** — filters `UserId == userId AND Status != Inactive`. Soft-deleted rows excluded.
-
 4. **GET by id (lines 47–48)** — single query with `Id AND UserId`. Returns **404** for missing OR other user's entry.
-
 5. **Create (lines 71–76)** — stamps `UserId = userId` from claim only.
-
 6. **Update/Delete (lines 105–106, 154–155)** — same ownership query. Warning log on rejected cross-user attempts (possible probing).
-
 7. **Delete = soft delete (line 165)** — sets `Status = Inactive`, row preserved for future trash/restore.
 
 ### If they ask "show me the security fix"
@@ -84,12 +78,14 @@ Unhandled exception → GlobalExceptionHandler → 500 ProblemDetails + Error lo
 
 ### Test layers
 
-| Layer | File | What it proves |
-|-------|------|----------------|
-| Unit (ownership logic) | AuthorizationTests.cs | Cross-user GET/PUT/DELETE → 404; DB unchanged |
-| Unit (controllers) | EntryControllerTests.cs | CRUD, soft delete, timestamps |
-| Integration (pipeline) | AuthFlowIntegrationTests.cs | 401 without token; register/login/logout flow |
-| Integration (HTTP) | EntryEndpointIntegrationTests.cs | Validation 400; CORS allow/deny |
+
+| Layer                  | File                             | What it proves                                |
+| ---------------------- | -------------------------------- | --------------------------------------------- |
+| Unit (ownership logic) | AuthorizationTests.cs            | Cross-user GET/PUT/DELETE → 404; DB unchanged |
+| Unit (controllers)     | EntryControllerTests.cs          | CRUD, soft delete, timestamps                 |
+| Integration (pipeline) | AuthFlowIntegrationTests.cs      | 401 without token; register/login/logout flow |
+| Integration (HTTP)     | EntryEndpointIntegrationTests.cs | Validation 400; CORS allow/deny               |
+
 
 ### Tests to name if asked
 
@@ -114,13 +110,16 @@ Worth mentioning if architecture comes up:
 
 ## Quick navigation cheat sheet
 
-| Topic | Go to |
-|-------|-------|
-| Auth scoping | EntryController.cs lines 17, 31–33, 47–48 |
-| Soft delete | EntryController.cs line 165 |
-| Optimistic UX | useEntries.ts lines 59–75 |
-| Cross-tab sync | crossTabSync.ts |
-| Error handling | GlobalExceptionHandler.cs |
-| Auth tests | AuthorizationTests.cs |
-| Tradeoffs doc | notes/DESIGN.md §3 |
-| Known gaps | notes/DESIGN.md §8 |
+
+| Topic          | Go to                                     |
+| -------------- | ----------------------------------------- |
+| Auth scoping   | EntryController.cs lines 17, 31–33, 47–48 |
+| Soft delete    | EntryController.cs line 165               |
+| Optimistic UX  | useEntries.ts lines 59–75                 |
+| Cross-tab sync | crossTabSync.ts                           |
+| Error handling | GlobalExceptionHandler.cs                 |
+| Auth tests     | AuthorizationTests.cs                     |
+| Tradeoffs doc  | notes/DESIGN.md §3                        |
+| Known gaps     | notes/DESIGN.md §8                        |
+
+

@@ -59,12 +59,6 @@ Cookie sessions are in-memory per instance. User hits instance B with session fr
 
 **Fix:** Distributed session store — Redis (usual for ASP.NET Core) or SQL Server session state. Sticky sessions are a weaker shortcut.
 
-**Resume tie:** Worked with Redis at Zapier scale — same pattern.
-
-```markdown
-### 3 API instances
-
-
 **One API instance** = one running copy of your ASP.NET Core app (e.g. `dotnet run` on `:5162`, or one Docker container).
 
 **3 API instances** = three identical copies behind a **load balancer** for capacity and reliability:

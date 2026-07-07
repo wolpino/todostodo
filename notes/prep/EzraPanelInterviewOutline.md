@@ -7,6 +7,7 @@
 **Full prep docs:**
 | Doc | Contents |
 |-----|----------|
+| [EzraInterviewCodeWalkthrough.md](EzraInterviewCodeWalkthrough.md) | **"Walk me through your code"** — bulleted spoken outline |
 | [EzraInterviewNarrative.md](EzraInterviewNarrative.md) | 2-min script + 10-min walkthrough |
 | [EzraInterviewSTARStories.md](EzraInterviewSTARStories.md) | STAR stories (Zapier, Lighter, compliance) |
 | [EzraInterviewCodeTour.md](EzraInterviewCodeTour.md) | EntryController, useEntries, tests |
