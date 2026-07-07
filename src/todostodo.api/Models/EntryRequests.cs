@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace todostodo.api.Models;
 
+// No UserId on these DTOs — ownership comes from the authenticated user's claim only.
 public record CreateEntryRequest(
     [Required][MaxLength(200)] string Title,
     EntryStatus Status = EntryStatus.Active,
@@ -10,6 +11,7 @@ public record CreateEntryRequest(
     TimeOnly? AssignedTime = null
 );
 
+// Partial update: only non-null fields are applied in the controller.
 public record UpdateEntryRequest(
     [Required] int Id,
     [MaxLength(200)] string? Title,

@@ -34,13 +34,10 @@ I interpreted this to be a todo list application, with additional features to ma
 
 I've been working in Python for the last 5 years and while I think C# made a good foundation to use with Python (thinking OOP) I wasn't remembering much. So I needed to review C#, but I was also eager to see what I could do with Copilot. Because I learn fastest by doing and seeing what fails and what doesn't, I dove in without review so I could start looking at code, and use Copilot to deal with all the C# questions.
 
-  
 It ultimately helped me review a lot of C# which came back easier than I expected. BUT, I think I remembered enough C# to remind me how much I don't know, and therefore can't easily check the generated code.  Which means I found myself in a messy repo that didn't work. While I hesitated at first, after some crazy looking generated tests, I wiped the whole project to start with a different approach. 
-
 
 I do this when drafting stories, my thought patterns are really web like, so I can get a big picture but it comes from smaller details. So moving to a clean page/clean repo helps me reset my focus and decide how to move forward. 
 I used VSC to set up the project and get scaffolding and general understanding in the simplest changes possible. (this was because I'd read a number of posts about people having issues with .Net in Cursor), I also knew I'd understanding it best if I went through the foundational steps. And set up testing and tests.
-
 
 Moving back to Cursor I added rules for .Net and react and Vite, and spent time working out the plan for the rest of the app. I also made a bad wireframe to have a visual to aim for, and understand what components to make. This is when I also decided I didn't need the ability to set time/date in the MVP. Useful, but functional without.
 

@@ -7,6 +7,10 @@ using todostodo.api.Models;
 
 namespace todostodo.api.Controllers;
 
+/// <summary>
+/// Per-user UI preferences. Same auth and ownership rules as <see cref="EntryController"/>:
+/// settings are always scoped to the authenticated user's id from the identity claim.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 [Authorize]
@@ -14,6 +18,8 @@ public class SettingsController(AppDbContext db, ILogger<SettingsController> log
 {
     public const string DefaultFont = "comic-shanns";
 
+    // Server-side allowlist — the frontend only offers these fonts, but we validate
+    // here so a crafted PUT cannot persist an arbitrary string.
     private static readonly HashSet<string> AllowedFonts =
         [DefaultFont, "courier-prime", "patrick-hand", "caveat"];
 
@@ -30,6 +36,7 @@ public class SettingsController(AppDbContext db, ILogger<SettingsController> log
         var settings = await db.Settings.FirstOrDefaultAsync(s => s.UserId == userId);
         if (settings is null)
         {
+            // Lazy-create on first GET so registration doesn't need a separate settings step.
             settings = new Settings { Font = DefaultFont, UserId = userId };
             db.Settings.Add(settings);
             await db.SaveChangesAsync();
@@ -51,6 +58,7 @@ public class SettingsController(AppDbContext db, ILogger<SettingsController> log
         if (!AllowedFonts.Contains(req.Font))
             return BadRequest();
 
+        // Upsert: first font change may arrive before GET has created the row.
         var settings = await db.Settings.FirstOrDefaultAsync(s => s.UserId == userId);
         if (settings is null)
         {
